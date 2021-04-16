@@ -1,13 +1,13 @@
-// package com.rivernine.crypto;
+package com.rivernine.crypto;
 
-// import org.junit.jupiter.api.Test;
-// import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
-// @SpringBootTest
-// class CryptoApplicationTests {
+@SpringBootTest
+class CryptoApplicationTests {
 
-// 	@Test
-// 	void contextLoads() {
-// 	}
+	@Test
+	void contextLoads() {
+	}
 
-// }
+}
