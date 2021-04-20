@@ -20,7 +20,7 @@ public class CryptoController {
   public CryptoResponseDto cryptoDto(@RequestParam("name") String name, @RequestParam("amount") int amount) {
     return new CryptoResponseDto(name, amount);
   }
-
+  
   // @PutMapping("/api/v1/posts")
   // public Long save(@RequestBody CryptoSaveRequestDto requestDto){
   //   return cryptoService.save(requestDto);
