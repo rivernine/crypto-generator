@@ -1,3 +1,4 @@
+package com.rivernine.crypto.web.service;
 // package com.rivernine.crypto.service;
 
 // import com.rivernine.crypto.web.dto.CryptoSaveRequestDto;

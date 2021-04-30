@@ -1,11 +1,11 @@
-package com.rivernine.crypto.web.dto;
+// package com.rivernine.crypto.web.dto;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+// import lombok.Getter;
+// import lombok.RequiredArgsConstructor;
 
-@Getter
-@RequiredArgsConstructor
-public class CryptoResponseDto {
-  private final String name;
-  private final int amount;
-}
+// @Getter
+// @RequiredArgsConstructor
+// public class CryptoResponseDto {
+//   private final String name;
+//   private final int amount;
+// }
