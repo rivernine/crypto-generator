@@ -1,2 +1,2 @@
 # 😎
-![](https://github.com/rivernine/crypto-generator.git)
+![](https://media.giphy.com/media/RigoXzvWlvSvVvbTpd/giphy.gif)
