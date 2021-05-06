@@ -3,6 +3,7 @@ package com.rivernine.cryptoGenerator.web.controller;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.rivernine.cryptoGenerator.domain.crypto.Crypto;
+import com.rivernine.cryptoGenerator.web.dto.CryptoResponseDto;
 import com.rivernine.cryptoGenerator.web.dto.CryptoSaveDto;
 import com.rivernine.cryptoGenerator.web.service.CryptoService;
 
@@ -46,18 +47,21 @@ public class CryptoController {
 
     for( int i = 0; i < jsonObjectArray.length; i++ ){
       JsonObject jsonObject = jsonObjectArray[i];
-      cryptoService.save(CryptoSaveDto.builder()
-                          .market(jsonObject.get("market").getAsString())
-                          .price(jsonObject.get("trade_price").getAsDouble())
-                          .build());
+      CryptoSaveDto cryptoSaveDto = CryptoSaveDto.builder()
+                                      .market(jsonObject.get("market").getAsString())
+                                      .price(jsonObject.get("trade_price").getAsDouble())
+                                      .build();
+      cryptoService.save(cryptoSaveDto);
       result.addProperty(jsonObject.get("market").getAsString(), jsonObject.get("trade_price").getAsDouble());
     }
 
     return result.toString();
   }
 
-  // @GetMapping("/findAll")
-  // public 
+  @GetMapping("/markets/{id}")
+  public CryptoResponseDto findById ( @PathVariable Long id){
+    return cryptoService.findById(id);
+  }
 
   // private final CryptoService cryptoService;
 

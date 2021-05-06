@@ -20,7 +20,8 @@ dependencies {
 		'com.google.code.gson:gson',															// Gson
 		'com.h2database:h2'																				// Inmemory DB
 	)
-
+	
+	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
