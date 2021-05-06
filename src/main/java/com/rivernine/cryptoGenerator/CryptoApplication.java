@@ -1,4 +1,4 @@
-package com.rivernine.crypto;
+package com.rivernine.cryptoGenerator;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

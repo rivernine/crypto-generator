@@ -1,4 +1,4 @@
-package com.rivernine.crypto.web.dto;
+package com.rivernine.cryptoGenerator.web.dto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -1,4 +1,4 @@
-package com.rivernine.crypto;
+package com.rivernine.cryptoGenerator;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

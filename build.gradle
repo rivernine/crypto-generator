@@ -13,18 +13,14 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.projectlombok:lombok'
+	implementation (
+		'org.springframework.boot:spring-boot-starter-web',				// Rest
+		'org.springframework.boot:spring-boot-starter-data-jpa',	// JPA
+		'org.projectlombok:lombok',																// Lombok
+		'com.google.code.gson:gson',															// Gson
+		'com.h2database:h2'																				// Inmemory DB
+	)
 
-	//// Json library
-	// JsonObject
-	// Serialization, Deserialization
-	// implementation 'com.fasterxml.jackson.core:jackson-databind'
-	implementation 'com.google.code.gson:gson'
-	
-
-	// implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	// implementation 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

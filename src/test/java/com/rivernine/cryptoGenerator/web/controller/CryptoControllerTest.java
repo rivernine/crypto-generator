@@ -1,11 +1,13 @@
-package com.rivernine.crypto.web.controller;
+package com.rivernine.cryptoGenerator.web.controller;
 
-import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.rivernine.cryptoGenerator.domain.crypto.CryptoRepository;
+import com.rivernine.cryptoGenerator.web.dto.CryptoSaveDto;
+
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -20,6 +22,9 @@ public class CryptoControllerTest {
   @Autowired
   private MockMvc mvc;
 
+  @Autowired
+  private CryptoRepository cryptoRepository;
+
   @Test
   public void return_hello() throws Exception {
     String hello = "hello";
@@ -30,24 +35,31 @@ public class CryptoControllerTest {
   }
 
   @Test
-  public void return_cryptoDto() throws Exception {
-    String name = "hello";
-    int amount = 1000;
-
-    mvc.perform(get("/hello/dto")
-                .param("name", name)
-                .param("amount", String.valueOf(amount)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.name", is(name)))
-            .andExpect(jsonPath("$.amount", is(amount)));
-  }
-
-
-  @Test
   public void return_upbit() throws Exception {
     String markets = "KRW-BTC";
 
     mvc.perform(get("/price/KRW-BTC"))
-          .andExpect(status().isOk())
+          .andExpect(status().isOk());
   }
+
+  @AfterAll
+  public void tearDown() throws Exception {
+    cryptoRepository.deleteAll();
+  }
+
+  // @Test
+  // public void Crypto_save() throws Exception{
+  //   String market = "KRW-BTC";
+  //   Double price = 60000000.000000;
+  //   CryptoSaveDto saveDto = CryptoSaveDto.builder()
+  //                             .market(market)
+  //                             .price(price)
+  //                             .build();
+
+  //   String url = "http://localhost:8080/api/v1/crypto";
+
+  //   ResponseEntity<Long> responseEntity = restTemplate.cryptoFor
+
+
+  // }
 }

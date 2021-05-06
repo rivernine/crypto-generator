@@ -1,8 +1,10 @@
-package com.rivernine.crypto.web.controller;
+package com.rivernine.cryptoGenerator.web.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.rivernine.cryptoGenerator.domain.crypto.Crypto;
+import com.rivernine.cryptoGenerator.web.dto.CryptoSaveDto;
+import com.rivernine.cryptoGenerator.web.service.CryptoService;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,9 +12,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @RestController
 public class CryptoController {
   
+  private final CryptoService cryptoService;
+
   RestTemplate restTemplate = new RestTemplate();
   Gson gson = new Gson();
 
@@ -39,11 +46,18 @@ public class CryptoController {
 
     for( int i = 0; i < jsonObjectArray.length; i++ ){
       JsonObject jsonObject = jsonObjectArray[i];
-      result.addProperty(jsonObject.get("market").getAsString(), jsonObject.get("trade_price").getAsString());
+      cryptoService.save(CryptoSaveDto.builder()
+                          .market(jsonObject.get("market").getAsString())
+                          .price(jsonObject.get("trade_price").getAsDouble())
+                          .build());
+      result.addProperty(jsonObject.get("market").getAsString(), jsonObject.get("trade_price").getAsDouble());
     }
 
     return result.toString();
   }
+
+  // @GetMapping("/findAll")
+  // public 
 
   // private final CryptoService cryptoService;
 
