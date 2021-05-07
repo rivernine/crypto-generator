@@ -1,8 +1,7 @@
 package com.rivernine.cryptoGenerator.web.service;
 
-import java.util.List;
-
 import com.rivernine.cryptoGenerator.domain.crypto.Crypto;
+import com.rivernine.cryptoGenerator.domain.crypto.CryptoId;
 import com.rivernine.cryptoGenerator.domain.crypto.CryptoRepository;
 import com.rivernine.cryptoGenerator.web.dto.CryptoResponseDto;
 import com.rivernine.cryptoGenerator.web.dto.CryptoSaveDto;
@@ -18,8 +17,8 @@ public class CryptoService {
   private final CryptoRepository cryptoRepository;
 
   @Transactional
-  public Long save(CryptoSaveDto requestDto){
-    return cryptoRepository.save(requestDto.toEntity()).getId();
+  public CryptoId save(CryptoSaveDto requestDto){
+    return cryptoRepository.save(requestDto.toEntity()).getCryptoId();
   }
 
   @Transactional

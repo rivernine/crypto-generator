@@ -25,11 +25,12 @@ public class CryptoRepositoryTest {
 
   @Test
   public void crypto_save() {
+    CryptoId cryptoId = new CryptoId()
     String market = "KRW-BTC";
     Double price = 60000000.000000;
     
     cryptoRepository.save(Crypto.builder()
-                                .market(market)
+                                .cryptoId(cryptoId)
                                 .price(price)
                                 .build());
     

@@ -50,6 +50,9 @@ public class CryptoController {
       CryptoSaveDto cryptoSaveDto = CryptoSaveDto.builder()
                                       .market(jsonObject.get("market").getAsString())
                                       .price(jsonObject.get("trade_price").getAsDouble())
+                                      .trade_volume(jsonObject.get("trade_volume").getAsDouble())
+                                      .acc_trade_volume(jsonObject.get("acc_trade_volume").getAsDouble())
+                                      .acc_trade_volume_24h(jsonObject.get("acc_trade_volume_24h").getAsDouble())
                                       .build();
       cryptoService.save(cryptoSaveDto);
       result.addProperty(jsonObject.get("market").getAsString(), jsonObject.get("trade_price").getAsDouble());

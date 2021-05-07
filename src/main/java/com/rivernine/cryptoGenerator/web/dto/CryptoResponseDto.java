@@ -1,19 +1,24 @@
 package com.rivernine.cryptoGenerator.web.dto;
 
 import com.rivernine.cryptoGenerator.domain.crypto.Crypto;
+import com.rivernine.cryptoGenerator.domain.crypto.CryptoId;
 
 import lombok.Getter;
 
 @Getter
 public class CryptoResponseDto {
-  private Long id;
-  private String market;
+  private CryptoId cryptoId;
   private Double price;
+  private Double trade_volume;
+  private Double acc_trade_volume;
+  private Double acc_trade_volume_24h;
 
   public CryptoResponseDto(Crypto entity) {
-    this.id = entity.getId();
-    this.market = entity.getMarket();
+    this.cryptoId = entity.getCryptoId();
     this.price = entity.getPrice();
+    this.trade_volume = entity.getTrade_volume();
+    this.acc_trade_volume = entity.getAcc_trade_volume();
+    this.acc_trade_volume_24h = entity.getAcc_trade_volume_24h();
   }
 
 }
