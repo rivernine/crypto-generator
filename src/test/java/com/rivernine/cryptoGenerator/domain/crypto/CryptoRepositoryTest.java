@@ -23,21 +23,22 @@ public class CryptoRepositoryTest {
     cryptoRepository.deleteAll();
   }
 
-  // @Test
-  // public void crypto_save() {
-  //   CryptoId cryptoId = new CryptoId()
-  //   String market = "KRW-BTC";
-  //   Double price = 60000000.000000;
+  @Test
+  public void crypto_save() {
+    cryptoRepository.save(Crypto.builder()
+                            .market("KRW-BTC")
+                            .trade_date_kst("20210509")
+                            .trade_time_kst("220227")
+                            .price(60000000.0000)
+                            .trade_volume(1000.0000)
+                            .acc_trade_volume(2000.0000)
+                            .acc_trade_volume_24h(3000.0000)
+                            .build());
     
-  //   cryptoRepository.save(Crypto.builder()
-  //                               .cryptoId(cryptoId)
-  //                               .price(price)
-  //                               .build());
-    
-  //   List<Crypto> cryptoList = cryptoRepository.findAll();
+    List<Crypto> cryptoList = cryptoRepository.findAll();
 
-  //   Crypto crypto = cryptoList.get(0);
-  //   assertThat(crypto.getMarket()).isEqualTo(market);
-  //   assertThat(crypto.getPrice()).isEqualTo(price);
-  // }
+    Crypto crypto = cryptoList.get(0);
+    assertThat(crypto.getMarket()).isEqualTo("KRW-BTC");
+    assertThat(crypto.getPrice()).isEqualTo(60000000.0000);
+  }
 }
