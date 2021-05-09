@@ -17,14 +17,13 @@ public class CryptoService {
   private final CryptoRepository cryptoRepository;
 
   @Transactional
-  public CryptoId save(CryptoSaveDto requestDto){
-    return cryptoRepository.save(requestDto.toEntity()).getCryptoId();
+  public String save(CryptoSaveDto requestDto){
+    return cryptoRepository.save(requestDto.toEntity()).getMarket();
   }
 
   @Transactional
-  public CryptoResponseDto findById(Long id) {
-    Crypto entity = cryptoRepository.findById(id)
-                      .orElseThrow(() -> new IllegalArgumentException("해당 정보가 없습니다. id=" + id));
+  public CryptoResponseDto findByMarket(String market) {
+    Crypto entity = cryptoRepository.findByMarket(market);
 
     return new CryptoResponseDto(entity);
   }

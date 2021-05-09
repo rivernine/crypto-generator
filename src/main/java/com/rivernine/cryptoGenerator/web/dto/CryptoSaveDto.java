@@ -10,15 +10,19 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class CryptoSaveDto {
-  private CryptoId cryptoId;
+  private String market;
+  private String trade_date_kst;
+  private String trade_time_kst;  
   private Double price;  
   private Double trade_volume;
   private Double acc_trade_volume;
   private Double acc_trade_volume_24h;
   
   @Builder
-  public CryptoSaveDto(CryptoId crpytoId, Double price, Double trade_volume, Double acc_trade_volume, Double acc_trade_volume_24h) {
-    this.cryptoId = crpytoId;
+  public CryptoSaveDto(String market, String trade_date_kst, String trade_time_kst, Double price, Double trade_volume, Double acc_trade_volume, Double acc_trade_volume_24h) {
+    this.market = market;
+    this.trade_date_kst = trade_date_kst;
+    this.trade_time_kst = trade_time_kst;
     this.price = price;
     this.trade_volume = trade_volume;
     this.acc_trade_volume = acc_trade_volume;
@@ -27,7 +31,9 @@ public class CryptoSaveDto {
 
   public Crypto toEntity() {
     return Crypto.builder()
-            .cryptoId(cryptoId)
+            .market(market)
+            .trade_date_kst(trade_date_kst)
+            .trade_time_kst(trade_time_kst)
             .price(price)
             .trade_volume(trade_volume)
             .acc_trade_volume(acc_trade_volume)

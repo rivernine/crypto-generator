@@ -2,7 +2,6 @@ package com.rivernine.cryptoGenerator.web.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.rivernine.cryptoGenerator.domain.crypto.Crypto;
 import com.rivernine.cryptoGenerator.web.dto.CryptoResponseDto;
 import com.rivernine.cryptoGenerator.web.dto.CryptoSaveDto;
 import com.rivernine.cryptoGenerator.web.service.CryptoService;
@@ -36,7 +35,7 @@ public class CryptoController {
   public String getAccessKey(){
     return accessKey;
   }
-
+  
   // markets: KRW-BTC 형식으로 기입. ','로 구분하여 다중처리도 가능
   @GetMapping("/price/{markets}")
   public String getPrice(@PathVariable("markets") String markets) {  
@@ -49,6 +48,8 @@ public class CryptoController {
       JsonObject jsonObject = jsonObjectArray[i];
       CryptoSaveDto cryptoSaveDto = CryptoSaveDto.builder()
                                       .market(jsonObject.get("market").getAsString())
+                                      .trade_date_kst(jsonObject.get("trade_date_kst").getAsString())
+                                      .trade_time_kst(jsonObject.get("trade_time_kst").getAsString())
                                       .price(jsonObject.get("trade_price").getAsDouble())
                                       .trade_volume(jsonObject.get("trade_volume").getAsDouble())
                                       .acc_trade_volume(jsonObject.get("acc_trade_volume").getAsDouble())
@@ -61,9 +62,9 @@ public class CryptoController {
     return result.toString();
   }
 
-  @GetMapping("/markets/{id}")
-  public CryptoResponseDto findById ( @PathVariable Long id){
-    return cryptoService.findById(id);
+  @GetMapping("/market/{market}")
+  public CryptoResponseDto findByMarket ( @PathVariable String market){
+    return cryptoService.findByMarket(market);
   }
 
   // private final CryptoService cryptoService;

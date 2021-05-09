@@ -7,14 +7,18 @@ import lombok.Getter;
 
 @Getter
 public class CryptoResponseDto {
-  private CryptoId cryptoId;
+  private String market;
+  private String trade_date_kst;
+  private String trade_time_kst;  
   private Double price;
   private Double trade_volume;
   private Double acc_trade_volume;
   private Double acc_trade_volume_24h;
-
+  
   public CryptoResponseDto(Crypto entity) {
-    this.cryptoId = entity.getCryptoId();
+    this.market = entity.getMarket();
+    this.trade_date_kst = entity.getTrade_date_kst();
+    this.trade_time_kst = entity.getTrade_time_kst();
     this.price = entity.getPrice();
     this.trade_volume = entity.getTrade_volume();
     this.acc_trade_volume = entity.getAcc_trade_volume();
