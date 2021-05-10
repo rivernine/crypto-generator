@@ -1,13 +1,12 @@
-package com.rivernine.cryptoGenerator.schedule;
+package com.rivernine.cryptoGenerator.schedule.collectMarket;
 
-import java.util.Date;
 import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.rivernine.cryptoGenerator.domain.crypto.Crypto;
-import com.rivernine.cryptoGenerator.schedule.dto.CollectMarketSaveDto;
-import com.rivernine.cryptoGenerator.schedule.service.CollectMarketService;
+import com.rivernine.cryptoGenerator.schedule.collectMarket.dto.CollectMarketSaveDto;
+import com.rivernine.cryptoGenerator.schedule.collectMarket.service.CollectMarketService;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,17 +17,18 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Component
-public class CollectMarketJob {
+public class CollectMarketJobConfiguration {
 
-	@Value("${markets}")
-	private String markets;
-	RestTemplate restTemplate = new RestTemplate();
+  RestTemplate restTemplate = new RestTemplate();
   Gson gson = new Gson();
 
+	@Value("${markets}")
+	private String markets;  
+  
   private final CollectMarketService collectMarketService;
 
-  @Scheduled(fixedDelay = 1000)
-  public void collect() {
+  @Scheduled(fixedRateString = "${schedule.collectDelay}")
+  public void collectMarketJob() {
 		JsonObject result = new JsonObject();    
 
     String jsonString = restTemplate.getForObject("https://api.upbit.com/v1/ticker?markets=" + markets, String.class);
@@ -47,12 +47,11 @@ public class CollectMarketJob {
                                       .build();
       collectMarketService.save(collectMarketSaveDto);
       result.addProperty(jsonObject.get("market").getAsString(), jsonObject.get("trade_price").getAsDouble());
-    System.out.println(new Date());
     }
   } 
 
   @Scheduled(fixedDelay = 10000)
-  public void check_collect() {
+  public void checkCollectMarketJob() {
     List<Crypto> cryptoList = collectMarketService.findAll();
 
     for( Crypto crypto: cryptoList ) {

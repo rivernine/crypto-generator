@@ -1,4 +1,4 @@
-package com.rivernine.cryptoGenerator.schedule.dto;
+package com.rivernine.cryptoGenerator.schedule.collectMarket.dto;
 
 import com.rivernine.cryptoGenerator.domain.crypto.Crypto;
 

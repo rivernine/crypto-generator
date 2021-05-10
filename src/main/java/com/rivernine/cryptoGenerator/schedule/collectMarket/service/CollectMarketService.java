@@ -1,4 +1,4 @@
-package com.rivernine.cryptoGenerator.schedule.service;
+package com.rivernine.cryptoGenerator.schedule.collectMarket.service;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import javax.transaction.Transactional;
 
 import com.rivernine.cryptoGenerator.domain.crypto.Crypto;
 import com.rivernine.cryptoGenerator.domain.crypto.CryptoRepository;
-import com.rivernine.cryptoGenerator.schedule.dto.CollectMarketSaveDto;
+import com.rivernine.cryptoGenerator.schedule.collectMarket.dto.CollectMarketSaveDto;
 
 import org.springframework.stereotype.Service;
 
