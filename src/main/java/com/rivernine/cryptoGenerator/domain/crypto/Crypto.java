@@ -21,7 +21,7 @@ import lombok.ToString;
 @Entity
 @IdClass(CryptoId.class)
 public class Crypto {
-  private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddhhmmss");
+  private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
   @Id
   private String market;
   @Id

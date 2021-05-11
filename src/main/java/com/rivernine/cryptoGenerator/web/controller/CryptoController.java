@@ -36,10 +36,10 @@ public class CryptoController {
     return accessKey;
   }
 
-  @GetMapping("/price/{startDate}")
-  public List<Crypto> findByTradeDateBetween( @PathVariable String startDate){
-    return cryptoService.findByTradeDateBetween(startDate);
-  }
+  // @GetMapping("/price/{startDate}")
+  // public List<Crypto> findByTradeDateBetween( @PathVariable String startDate){
+  //   return cryptoService.findByTradeDateBetween(startDate);
+  // }
 
   // private final CryptoService cryptoService;
 

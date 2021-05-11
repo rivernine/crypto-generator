@@ -26,16 +26,16 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Configuration
 public class AnalysisMarketJobConfiguration {
-  private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddhhmmss");
+  // private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddhhmmss");
 
   private final JobBuilderFactory jobBuilderFactory;
   private final StepBuilderFactory stepBuilderFactory;
-  private final EntityManagerFactory entityManagerFactory;
+  // private final EntityManagerFactory entityManagerFactory;
   private final AnalysisMarketService analysisMarketService;
   
-  @Value("${chunkSize}")
+  @Value("${schedule.chunkSize}")
   private int chunkSize;
-  @Value("${analysisScope}")
+  @Value("${schedule.analysisScope}")
   private int analysisScope;
 
   @Bean
@@ -56,7 +56,10 @@ public class AnalysisMarketJobConfiguration {
     return stepBuilderFactory.get("analysisStep")
             .tasklet((stepContribution, chunkContext) -> {
               // 분석 단계
-              List<Crypto> list = analysisMarketService.findByTradeDateAfter(LocalDateTime.now().minusNanos(analysisScope));
+              List<Crypto> cryptoList = analysisMarketService.findByTradeDateAfter(LocalDateTime.now().minusSeconds(analysisScope));
+              for( Crypto crypto: cryptoList ){
+                System.out.println(crypto);
+              }
               stepContribution.setExitStatus(ExitStatus.FAILED);
               return RepeatStatus.FINISHED;
             }).build();

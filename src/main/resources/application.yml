@@ -4,7 +4,7 @@ upbit:
 schedule:
   chunkSize: 100  
   collectDelay: 1000  # 시세수집 주기(ms)
-  analysisScope: 60000  # 분석범위 (ms)
+  analysisScope: 10  # 분석범위 (s)
 
 spring:
   jpa:
@@ -14,3 +14,4 @@ spring:
     hikari:
       jdbc-url: jdbc:h2:mem:testdb;MODE=MYSQL
       username: rivernine
+  batch.job.names: ${job.name:NONE}

@@ -24,13 +24,12 @@ public class CollectMarketJobConfiguration {
 
 	@Value("${upbit.markets}")
 	private String markets;  
-  
+
   private final CollectMarketService collectMarketService;
 
   // @Scheduled(fixedRateString = "${schedule.collectDelay}")
   public void collectMarketJob() {
-		JsonObject result = new JsonObject();    
-
+		// JsonObject result = new JsonObject();    
     String jsonString = restTemplate.getForObject("https://api.upbit.com/v1/ticker?markets=" + markets, String.class);
     JsonObject[] jsonObjectArray = gson.fromJson(jsonString, JsonObject[].class);
 
@@ -45,7 +44,7 @@ public class CollectMarketJobConfiguration {
                                       .accTradeVolume24h(jsonObject.get("acc_trade_volume_24h").getAsDouble())
                                       .build();
       collectMarketService.save(collectMarketSaveDto);
-      System.out.println(collectMarketSaveDto);
+      // System.out.println(collectMarketSaveDto);
       // result.addProperty(jsonObject.get("market").getAsString(), jsonObject.get("trade_price").getAsDouble());
     }
   } 
