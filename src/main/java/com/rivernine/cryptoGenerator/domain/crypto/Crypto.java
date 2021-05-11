@@ -1,5 +1,8 @@
 package com.rivernine.cryptoGenerator.domain.crypto;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -18,11 +21,11 @@ import lombok.ToString;
 @Entity
 @IdClass(CryptoId.class)
 public class Crypto {
- 
+  private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddhhmmss");
   @Id
   private String market;
   @Id
-  private String tradeDate;
+  private LocalDateTime tradeDate;
 
   @Column(nullable = false)
   private Double price;
@@ -33,7 +36,7 @@ public class Crypto {
   @Builder
   public Crypto(String market, String tradeDate, Double price, Double tradeVolume, Double accTradeVolume, Double accTradeVolume24h){
     this.market = market;
-    this.tradeDate = tradeDate;
+    this.tradeDate = LocalDateTime.parse(tradeDate, FORMATTER);
     this.price = price;
     this.tradeVolume = tradeVolume;
     this.accTradeVolume = accTradeVolume;

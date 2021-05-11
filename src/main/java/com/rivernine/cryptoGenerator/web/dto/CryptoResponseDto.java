@@ -1,14 +1,17 @@
 package com.rivernine.cryptoGenerator.web.dto;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import com.rivernine.cryptoGenerator.domain.crypto.Crypto;
-import com.rivernine.cryptoGenerator.domain.crypto.CryptoId;
 
 import lombok.Getter;
 
 @Getter
 public class CryptoResponseDto {
+
   private String market;
-  private String tradeDate;
+  private LocalDateTime tradeDate;
   private Double price;
   private Double tradeVolume;
   private Double accTradeVolume;

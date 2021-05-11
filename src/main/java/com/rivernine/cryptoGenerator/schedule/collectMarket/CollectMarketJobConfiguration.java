@@ -22,7 +22,7 @@ public class CollectMarketJobConfiguration {
   RestTemplate restTemplate = new RestTemplate();
   Gson gson = new Gson();
 
-	@Value("${markets}")
+	@Value("${upbit.markets}")
 	private String markets;  
   
   private final CollectMarketService collectMarketService;

@@ -21,8 +21,8 @@ public class CryptoService {
   //   return cryptoRepository.save(requestDto.toEntity()).getMarket();
   // }
 
-  @Transactional
-  public List<Crypto> findByTradeDateBetween(String startDate) {
-    return cryptoRepository.findByTradeDateBetween(startDate, "20220101000000");
-  }
+  // @Transactional
+  // public List<Crypto> findByTradeDateBetween(String startDate) {
+  //   return cryptoRepository.findByTradeDateBetween(startDate, "20220101000000");
+  // }
 }

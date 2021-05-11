@@ -1,6 +1,7 @@
 package com.rivernine.cryptoGenerator.domain.crypto;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 
@@ -12,9 +13,9 @@ public class CryptoId implements Serializable {
   private String market;
 
   @Column(nullable = false)
-  private String tradeDate;
+  private LocalDateTime tradeDate;
 
-  public CryptoId(String market, String tradeDate) {
+  public CryptoId(String market, LocalDateTime tradeDate) {
     this.market = market;
     this.tradeDate = tradeDate;
   }

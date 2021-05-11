@@ -19,8 +19,8 @@ public class JobScheduler {
     collectMarketJobConfiguration.collectMarketJob();
   }
 
-  @Scheduled(fixedDelay = 10000)
-  public void runCheckCollectMarketJob() {
-    collectMarketJobConfiguration.checkCollectMarketJob();
-  }
+  // @Scheduled(fixedDelay = 10000)
+  // public void runCheckCollectMarketJob() {
+  //   collectMarketJobConfiguration.checkCollectMarketJob();
+  // }
 }
