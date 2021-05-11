@@ -12,14 +12,10 @@ public class CryptoId implements Serializable {
   private String market;
 
   @Column(nullable = false)
-  private String trade_date_kst;
+  private String tradeDate;
 
-  @Column(nullable = false)
-  private String trade_time_kst;  
-
-  public CryptoId(String market, String trade_date_kst, String trade_time_kst) {
+  public CryptoId(String market, String tradeDate) {
     this.market = market;
-    this.trade_date_kst = trade_date_kst;
-    this.trade_time_kst = trade_time_kst;
+    this.tradeDate = tradeDate;
   }
 }

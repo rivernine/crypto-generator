@@ -1,30 +1,28 @@
-// package com.rivernine.cryptoGenerator.web.service;
+package com.rivernine.cryptoGenerator.web.service;
 
-// import com.rivernine.cryptoGenerator.domain.crypto.Crypto;
-// import com.rivernine.cryptoGenerator.domain.crypto.CryptoId;
-// import com.rivernine.cryptoGenerator.domain.crypto.CryptoRepository;
-// import com.rivernine.cryptoGenerator.web.dto.CryptoResponseDto;
-// import com.rivernine.cryptoGenerator.web.dto.CryptoSaveDto;
+import java.util.List;
 
-// import org.springframework.stereotype.Service;
-// import org.springframework.transaction.annotation.Transactional;
+import com.rivernine.cryptoGenerator.domain.crypto.Crypto;
+import com.rivernine.cryptoGenerator.domain.crypto.CryptoRepository;
+import com.rivernine.cryptoGenerator.web.dto.CryptoResponseDto;
 
-// import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-// @RequiredArgsConstructor
-// @Service
-// public class CryptoService {
-//   private final CryptoRepository cryptoRepository;
+import lombok.RequiredArgsConstructor;
 
-//   @Transactional
-//   public String save(CryptoSaveDto requestDto){
-//     return cryptoRepository.save(requestDto.toEntity()).getMarket();
-//   }
+@RequiredArgsConstructor
+@Service
+public class CryptoService {
+  private final CryptoRepository cryptoRepository;
 
-//   // @Transactional
-//   // public CryptoResponseDto findByMarket(String market) {
-//   //   Crypto entity = cryptoRepository.findByMarket(market);
+  // @Transactional
+  // public String save(CryptoSaveDto requestDto){
+  //   return cryptoRepository.save(requestDto.toEntity()).getMarket();
+  // }
 
-//   //   return new CryptoResponseDto(entity);
-//   // }
-// }
+  @Transactional
+  public List<Crypto> findByTradeDateBetween(String startDate) {
+    return cryptoRepository.findByTradeDateBetween(startDate, "20220101000000");
+  }
+}

@@ -5,38 +5,37 @@ import com.rivernine.cryptoGenerator.domain.crypto.Crypto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@ToString
 @Getter
 @NoArgsConstructor
 public class CollectMarketSaveDto {
   private String market;
-  private String trade_date_kst;
-  private String trade_time_kst;  
+  private String tradeDate;  
   private Double price;  
-  private Double trade_volume;
-  private Double acc_trade_volume;
-  private Double acc_trade_volume_24h;
+  private Double tradeVolume;
+  private Double accTradeVolume;
+  private Double accTradeVolume24h;
   
   @Builder
-  public CollectMarketSaveDto(String market, String trade_date_kst, String trade_time_kst, Double price, Double trade_volume, Double acc_trade_volume, Double acc_trade_volume_24h) {
+  public CollectMarketSaveDto(String market, String tradeDate, Double price, Double tradeVolume, Double accTradeVolume, Double accTradeVolume24h) {
     this.market = market;
-    this.trade_date_kst = trade_date_kst;
-    this.trade_time_kst = trade_time_kst;
+    this.tradeDate = tradeDate;
     this.price = price;
-    this.trade_volume = trade_volume;
-    this.acc_trade_volume = acc_trade_volume;
-    this.acc_trade_volume_24h = acc_trade_volume_24h;
+    this.tradeVolume = tradeVolume;
+    this.accTradeVolume = accTradeVolume;
+    this.accTradeVolume24h = accTradeVolume24h;
   }
 
   public Crypto toEntity() {
     return Crypto.builder()
             .market(market)
-            .trade_date_kst(trade_date_kst)
-            .trade_time_kst(trade_time_kst)
+            .tradeDate(tradeDate)
             .price(price)
-            .trade_volume(trade_volume)
-            .acc_trade_volume(acc_trade_volume)
-            .acc_trade_volume_24h(acc_trade_volume_24h)
+            .tradeVolume(tradeVolume)
+            .accTradeVolume(accTradeVolume)
+            .accTradeVolume24h(accTradeVolume24h)
             .build();
   }
 }

@@ -5,5 +5,6 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CryptoRepository extends JpaRepository<Crypto, Long>{
-    List<Crypto> findByMarket(String market);
+
+  List<Crypto> findByTradeDateBetween(String startDate, String endDate);
 }

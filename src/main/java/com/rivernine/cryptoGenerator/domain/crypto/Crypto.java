@@ -9,7 +9,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@ToString
 @Data
 @Getter
 @NoArgsConstructor
@@ -20,24 +22,21 @@ public class Crypto {
   @Id
   private String market;
   @Id
-  private String trade_date_kst;
-  @Id
-  private String trade_time_kst;  
+  private String tradeDate;
 
   @Column(nullable = false)
   private Double price;
-  private Double trade_volume;
-  private Double acc_trade_volume;
-  private Double acc_trade_volume_24h;
+  private Double tradeVolume;
+  private Double accTradeVolume;
+  private Double accTradeVolume24h;
 
   @Builder
-  public Crypto(String market, String trade_date_kst, String trade_time_kst, Double price, Double trade_volume, Double acc_trade_volume, Double acc_trade_volume_24h){
+  public Crypto(String market, String tradeDate, Double price, Double tradeVolume, Double accTradeVolume, Double accTradeVolume24h){
     this.market = market;
-    this.trade_date_kst = trade_date_kst;
-    this.trade_time_kst = trade_time_kst;
+    this.tradeDate = tradeDate;
     this.price = price;
-    this.trade_volume = trade_volume;
-    this.acc_trade_volume = acc_trade_volume;
-    this.acc_trade_volume_24h = acc_trade_volume_24h;
+    this.tradeVolume = tradeVolume;
+    this.accTradeVolume = accTradeVolume;
+    this.accTradeVolume24h = accTradeVolume24h;
   }
 }
