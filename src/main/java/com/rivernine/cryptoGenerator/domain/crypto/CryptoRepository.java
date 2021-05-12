@@ -7,7 +7,7 @@ import com.rivernine.cryptoGenerator.schedule.analysisMarket.dto.AnalysisMarketR
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CryptoRepository extends JpaRepository<Crypto, Long>{
+public interface CryptoRepository extends JpaRepository<Crypto, CryptoId>{
   List<Crypto> findByTradeDateBetween(LocalDateTime startDate, LocalDateTime endDate);
   List<AnalysisMarketResponseDto> findByTradeDateAfter(LocalDateTime date);
 }

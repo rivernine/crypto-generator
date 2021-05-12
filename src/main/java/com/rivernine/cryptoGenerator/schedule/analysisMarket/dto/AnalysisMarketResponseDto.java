@@ -11,7 +11,6 @@ import lombok.ToString;
 
 @ToString
 @Getter
-@NoArgsConstructor
 public class AnalysisMarketResponseDto {
   private String market;
   private LocalDateTime tradeDate;  
@@ -20,7 +19,6 @@ public class AnalysisMarketResponseDto {
   private Double accTradeVolume;
   private Double accTradeVolume24h;
   
-  @Builder
   public AnalysisMarketResponseDto(Crypto entity) {
     this.market = entity.getMarket();
     this.tradeDate = entity.getTradeDate();

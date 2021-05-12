@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.EntityManagerFactory;
 
 import com.rivernine.cryptoGenerator.domain.crypto.Crypto;
+import com.rivernine.cryptoGenerator.domain.expected.ExpectedRepository;
 import com.rivernine.cryptoGenerator.schedule.analysisMarket.dto.AnalysisMarketResponseDto;
 import com.rivernine.cryptoGenerator.schedule.analysisMarket.service.AnalysisMarketService;
 
@@ -47,16 +48,16 @@ public class AnalysisMarketJobConfiguration {
             .end()
             .from(analysisStep())
             .on("*")
-            .to(tradeStep())
+            .to(saveStep())
             .end()
             .build();
   }
 
+  // Analysis
   @Bean
   public Step analysisStep() {
     return stepBuilderFactory.get("analysisStep")
-            .tasklet((stepContribution, chunkContext) -> {
-              // 분석 단계
+            .tasklet((stepContribution, chunkContext) -> {              
               List<AnalysisMarketResponseDto> analysisMarketList = analysisMarketService.findByTradeDateAfter(LocalDateTime.now().minusSeconds(analysisScope));
               for( AnalysisMarketResponseDto analysisMarket: analysisMarketList ){
                 System.out.println(analysisMarket);
@@ -66,11 +67,12 @@ public class AnalysisMarketJobConfiguration {
             }).build();
   }
 
+  // Save
   @Bean
-  public Step tradeStep() {
-    return stepBuilderFactory.get("tradeStep")
+  public Step saveStep() {
+    return stepBuilderFactory.get("saveStep")
             .tasklet((stepContribution, chunkContext) -> {
-              // 거래 단계
+              // ExpectedRepository.save(Expected().builder().build())
               return RepeatStatus.FINISHED;
             }).build();
   }

@@ -18,8 +18,8 @@ public class CollectMarketService {
   private final CryptoRepository cryptoRepository;
 
   @Transactional
-  public String save(CollectMarketSaveDto collectMarketSaveDto){
-    return cryptoRepository.save(collectMarketSaveDto.toEntity()).getMarket();
+  public void save(CollectMarketSaveDto collectMarketSaveDto){
+    cryptoRepository.save(collectMarketSaveDto.toEntity());
   }
 
   @Transactional
