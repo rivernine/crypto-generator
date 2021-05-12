@@ -47,19 +47,17 @@ public class JobScheduler {
     }
   }
 
-  Double tmpPrice = 5000.0;
-
   // Trade market
   // 실시간 가격 비교 후 거래
-  @Scheduled(fixedDelay = 500)
-  public void runTradeMarketJob() {
-    Double currentPrice = tradeMarketJobConfiguration.getMarketJob();
-    if(tradeMarketJobConfiguration.comparePrice(currentPrice)){
-      // buy
-    } else {
-      // 
-    }
-  }
+  // @Scheduled(fixedDelay = 500)
+  // public void runTradeMarketJob() {
+  //   Double currentPrice = tradeMarketJobConfiguration.getMarketJob();
+  //   if(tradeMarketJobConfiguration.comparePrice(currentPrice)){
+  //     // buy
+  //   } else {
+  //     // 
+  //   }
+  // }
 
   // @Scheduled(fixedDelay = 10000)
   // public void runCheckCollectMarketJob() {

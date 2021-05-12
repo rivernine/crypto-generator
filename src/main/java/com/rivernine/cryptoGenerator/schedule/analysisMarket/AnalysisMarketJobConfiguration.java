@@ -58,10 +58,11 @@ public class AnalysisMarketJobConfiguration {
   public Step analysisStep() {
     return stepBuilderFactory.get("analysisStep")
             .tasklet((stepContribution, chunkContext) -> {              
-              List<AnalysisMarketResponseDto> analysisMarketList = analysisMarketService.findByTradeDateAfter(LocalDateTime.now().minusSeconds(analysisScope));
-              for( AnalysisMarketResponseDto analysisMarket: analysisMarketList ){
-                System.out.println(analysisMarket);
-              }
+              System.out.println(LocalDateTime.now().minusSeconds(analysisScope));
+              // List<AnalysisMarketResponseDto> analysisMarketList = analysisMarketService.findByTradeDateAfter(LocalDateTime.now().minusSeconds(analysisScope));
+              // for( AnalysisMarketResponseDto analysisMarket: analysisMarketList ){
+              //   System.out.println(analysisMarket);
+              // }
               stepContribution.setExitStatus(ExitStatus.FAILED);
               return RepeatStatus.FINISHED;
             }).build();
