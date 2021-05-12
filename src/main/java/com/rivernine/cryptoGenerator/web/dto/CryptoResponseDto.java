@@ -1,7 +1,6 @@
 package com.rivernine.cryptoGenerator.web.dto;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import com.rivernine.cryptoGenerator.domain.crypto.Crypto;
 

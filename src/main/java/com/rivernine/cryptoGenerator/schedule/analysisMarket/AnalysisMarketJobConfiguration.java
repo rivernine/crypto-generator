@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.EntityManagerFactory;
 
 import com.rivernine.cryptoGenerator.domain.crypto.Crypto;
+import com.rivernine.cryptoGenerator.schedule.analysisMarket.dto.AnalysisMarketResponseDto;
 import com.rivernine.cryptoGenerator.schedule.analysisMarket.service.AnalysisMarketService;
 
 import org.springframework.batch.core.ExitStatus;
@@ -56,9 +57,9 @@ public class AnalysisMarketJobConfiguration {
     return stepBuilderFactory.get("analysisStep")
             .tasklet((stepContribution, chunkContext) -> {
               // 분석 단계
-              List<Crypto> cryptoList = analysisMarketService.findByTradeDateAfter(LocalDateTime.now().minusSeconds(analysisScope));
-              for( Crypto crypto: cryptoList ){
-                System.out.println(crypto);
+              List<AnalysisMarketResponseDto> analysisMarketList = analysisMarketService.findByTradeDateAfter(LocalDateTime.now().minusSeconds(analysisScope));
+              for( AnalysisMarketResponseDto analysisMarket: analysisMarketList ){
+                System.out.println(analysisMarket);
               }
               stepContribution.setExitStatus(ExitStatus.FAILED);
               return RepeatStatus.FINISHED;

@@ -24,7 +24,6 @@ public class JobScheduler {
   private final Job job;
 
   private final CollectMarketJobConfiguration collectMarketJobConfiguration;
-  // private final AnalysisMarketJobConfiguration analysisMarketJobConfiguration;
 
   @Scheduled(fixedRateString = "${schedule.collectDelay}")
   public void runCollectMarketJob() {
