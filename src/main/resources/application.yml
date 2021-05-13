@@ -11,8 +11,10 @@ upbit:
 schedule:
   chunkSize: 100  
   collectDelay: 1000  # 시세수집 주기(ms)
-  analysisScope: 10  # 분석범위 (s)
-batch.job.names: ${job.name:NONE}
+testParameter:
+  currentStatus: ${currentStatus:0} # 0: 매수전 1: 매수후
+  analysisForBuyReturn: ${analysisForBuyReturn:false}
+  analysisForSellReturn: ${analysisForSellReturn:false}
 
 ---
 

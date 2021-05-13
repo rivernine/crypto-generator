@@ -1,7 +1,6 @@
 package com.rivernine.cryptoGenerator.schedule.analysisForBuyMarket;
 
-import java.time.LocalDateTime;
-
+import com.rivernine.cryptoGenerator.common.UpbitApi;
 import com.rivernine.cryptoGenerator.schedule.analysisForBuyMarket.service.AnalysisForBuyMarketService;
 
 import org.springframework.batch.core.ExitStatus;
@@ -13,6 +12,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,52 +21,50 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Configuration
 public class AnalysisForBuyMarketJobConfiguration {
-  // private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddhhmmss");
+  public static final String JOB_NAME = "analysisForBuyMarket";
 
   private final JobBuilderFactory jobBuilderFactory;
   private final StepBuilderFactory stepBuilderFactory;
-  // private final EntityManagerFactory entityManagerFactory;
   private final AnalysisForBuyMarketService analysisForBuyMarketService;
+  private final UpbitApi upbitApi;
   
   @Value("${schedule.chunkSize}")
   private int chunkSize;
-  @Value("${schedule.analysisScope}")
-  private int analysisScope;
 
-  @Bean
+  @Bean(name = JOB_NAME)
+  @Primary
   public Job analysisForBuyMarketJob() {
-    return jobBuilderFactory.get("analysisForBuyMarketJob")
+    return jobBuilderFactory.get(JOB_NAME)
             .start(analysisStep())
             .on("FAILED")
             .end()
             .from(analysisStep())
             .on("*")
-            .to(saveStep())
+            .to(buyStep())
             .end()
             .build();
   }
 
-  // Analysis
-  @Bean
+  @Bean(name = JOB_NAME + "_analysisStep")
   public Step analysisStep() {
-    return stepBuilderFactory.get("analysisStep")
+    return stepBuilderFactory.get(JOB_NAME + "_analysisStep")
             .tasklet((stepContribution, chunkContext) -> {              
-              System.out.println(LocalDateTime.now().minusSeconds(analysisScope));
-              // List<AnalysisMarketResponseDto> analysisMarketList = analysisMarketService.findByTradeDateAfter(LocalDateTime.now().minusSeconds(analysisScope));
-              // for( AnalysisMarketResponseDto analysisMarket: analysisMarketList ){
-              //   System.out.println(analysisMarket);
-              // }
-              stepContribution.setExitStatus(ExitStatus.FAILED);
+              log.info(JOB_NAME + "_analysisStep");
+              if(analysisForBuyMarketService.analysis()){
+                stepContribution.setExitStatus(ExitStatus.COMPLETED);  
+              } else {
+                stepContribution.setExitStatus(ExitStatus.FAILED);
+              }
               return RepeatStatus.FINISHED;
             }).build();
   }
 
-  // Save
-  @Bean
-  public Step saveStep() {
-    return stepBuilderFactory.get("saveStep")
+  @Bean(name = JOB_NAME + "_buyStep")
+  public Step buyStep() {
+    return stepBuilderFactory.get(JOB_NAME + "_buyStep")
             .tasklet((stepContribution, chunkContext) -> {
-              // ExpectedRepository.save(Expected().builder().build())
+              log.info(JOB_NAME + "_buyStep");
+              upbitApi.buyMarket();
               return RepeatStatus.FINISHED;
             }).build();
   }
