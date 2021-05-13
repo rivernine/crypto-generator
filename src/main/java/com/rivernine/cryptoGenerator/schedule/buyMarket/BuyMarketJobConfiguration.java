@@ -1,9 +1,7 @@
-package com.rivernine.cryptoGenerator.schedule.tradeMarket;
+package com.rivernine.cryptoGenerator.schedule.buyMarket;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.rivernine.cryptoGenerator.schedule.tradeMarket.dto.ExpectedResponseDto;
-import com.rivernine.cryptoGenerator.schedule.tradeMarket.service.TradeMarketService;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -13,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Component
-public class TradeMarketJobConfiguration {
+public class BuyMarketJobConfiguration {
 
   RestTemplate restTemplate = new RestTemplate();
   Gson gson = new Gson();
@@ -21,9 +19,12 @@ public class TradeMarketJobConfiguration {
 	@Value("${upbit.markets}")
 	private String markets;  
 
-  private final TradeMarketService tradeMarketService;
+  public void buyMarketJob() {
+    Double currentPrice = getCurrentPrice();
 
-  public Double getMarketJob() {
+  }
+
+  public Double getCurrentPrice() {
     String jsonString = restTemplate.getForObject("https://api.upbit.com/v1/ticker?markets=" + markets, String.class);
     JsonObject[] jsonObjectArray = gson.fromJson(jsonString, JsonObject[].class);
 

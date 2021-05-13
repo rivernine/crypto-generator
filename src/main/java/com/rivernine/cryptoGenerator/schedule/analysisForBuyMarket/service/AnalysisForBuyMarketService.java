@@ -1,4 +1,4 @@
-package com.rivernine.cryptoGenerator.schedule.analysisMarket.service;
+package com.rivernine.cryptoGenerator.schedule.analysisForBuyMarket.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,15 +13,15 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
-public class AnalysisMarketService {
+public class AnalysisForBuyMarketService {
   private final CryptoRepository cryptoRepository;
 
   // @Transactional
   // public List<AnalysisMarketResponseDto> findByTradeDateAfter(LocalDateTime date) {
   //   return cryptoRepository.findByTradeDateAfter(date);
   // }
-  @Transactional
-  public List<Crypto> findByTradeDateAfter(LocalDateTime date) {
-    return cryptoRepository.findByTradeDateAfter(date);
-  }
+  // @Transactional
+  // public List<Crypto> findByTradeDateAfter(LocalDateTime date) {
+  //   return cryptoRepository.findByTradeDateAfter(date);
+  // }
 }

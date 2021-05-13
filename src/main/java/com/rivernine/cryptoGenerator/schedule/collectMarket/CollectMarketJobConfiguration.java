@@ -2,16 +2,13 @@ package com.rivernine.cryptoGenerator.schedule.collectMarket;
 
 import java.util.List;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.rivernine.cryptoGenerator.common.UpbitApi;
 import com.rivernine.cryptoGenerator.domain.crypto.Crypto;
 import com.rivernine.cryptoGenerator.schedule.collectMarket.dto.CollectMarketSaveDto;
 import com.rivernine.cryptoGenerator.schedule.collectMarket.service.CollectMarketService;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,37 +16,24 @@ import lombok.RequiredArgsConstructor;
 @Component
 public class CollectMarketJobConfiguration {
 
-  RestTemplate restTemplate = new RestTemplate();
-  Gson gson = new Gson();
-
-	@Value("${upbit.markets}")
-	private String markets;  
-
   private final CollectMarketService collectMarketService;
 
-  // @Scheduled(fixedRateString = "${schedule.collectDelay}")
-  public void collectMarketJob() {
-		// JsonObject result = new JsonObject();    
-    String jsonString = restTemplate.getForObject("https://api.upbit.com/v1/ticker?markets=" + markets, String.class);
-    JsonObject[] jsonObjectArray = gson.fromJson(jsonString, JsonObject[].class);
+  private final UpbitApi upbitApi;
 
-    for( int i = 0; i < jsonObjectArray.length; i++ ){
-      JsonObject jsonObject = jsonObjectArray[i];
-      CollectMarketSaveDto collectMarketSaveDto = CollectMarketSaveDto.builder()
-                                      .market(jsonObject.get("market").getAsString())
-                                      .tradeDate(jsonObject.get("trade_date_kst").getAsString()+jsonObject.get("trade_time_kst").getAsString())
-                                      .price(jsonObject.get("trade_price").getAsDouble())
-                                      .tradeVolume(jsonObject.get("trade_volume").getAsDouble())
-                                      .accTradeVolume(jsonObject.get("acc_trade_volume").getAsDouble())
-                                      .accTradeVolume24h(jsonObject.get("acc_trade_volume_24h").getAsDouble())
-                                      .build();
-      collectMarketService.save(collectMarketSaveDto);
-      // System.out.println(collectMarketSaveDto);
-      // result.addProperty(jsonObject.get("market").getAsString(), jsonObject.get("trade_price").getAsDouble());
-    }
+  public void collectMarketJob() {
+    JsonObject jsonObject = upbitApi.getMarket();
+    CollectMarketSaveDto collectMarketSaveDto = CollectMarketSaveDto.builder()
+                                    .market(jsonObject.get("market").getAsString())
+                                    .tradeDate(jsonObject.get("trade_date_kst").getAsString()+jsonObject.get("trade_time_kst").getAsString())
+                                    .price(jsonObject.get("trade_price").getAsDouble())
+                                    .tradeVolume(jsonObject.get("trade_volume").getAsDouble())
+                                    .accTradeVolume(jsonObject.get("acc_trade_volume").getAsDouble())
+                                    .accTradeVolume24h(jsonObject.get("acc_trade_volume_24h").getAsDouble())
+                                    .build();
+    collectMarketService.save(collectMarketSaveDto);
+
   } 
 
-  // @Scheduled(fixedDelay = 10000)
   public void checkCollectMarketJob() {
     List<Crypto> cryptoList = collectMarketService.findAll();
 

@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import com.rivernine.cryptoGenerator.schedule.collectMarket.CollectMarketJobConfiguration;
-import com.rivernine.cryptoGenerator.schedule.tradeMarket.TradeMarketJobConfiguration;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
@@ -25,7 +24,6 @@ public class JobScheduler {
   private final Job job;
 
   private final CollectMarketJobConfiguration collectMarketJobConfiguration;
-  private final TradeMarketJobConfiguration tradeMarketJobConfiguration;
 
   // Collect markets
   @Scheduled(fixedRateString = "${schedule.collectDelay}")

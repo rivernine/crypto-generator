@@ -1,6 +1,6 @@
 upbit:
   accessKey: ${accessKey:NONE}
-  markets: ${markets:NONE}
+  markets: ${markets:krw-btc}
 schedule:
   chunkSize: 100  
   collectDelay: 1000  # 시세수집 주기(ms)

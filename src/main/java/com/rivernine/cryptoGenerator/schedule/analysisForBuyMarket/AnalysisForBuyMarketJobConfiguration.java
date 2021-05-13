@@ -1,15 +1,8 @@
-package com.rivernine.cryptoGenerator.schedule.analysisMarket;
+package com.rivernine.cryptoGenerator.schedule.analysisForBuyMarket;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 
-import javax.persistence.EntityManagerFactory;
-
-import com.rivernine.cryptoGenerator.domain.crypto.Crypto;
-import com.rivernine.cryptoGenerator.domain.expected.ExpectedRepository;
-import com.rivernine.cryptoGenerator.schedule.analysisMarket.dto.AnalysisMarketResponseDto;
-import com.rivernine.cryptoGenerator.schedule.analysisMarket.service.AnalysisMarketService;
+import com.rivernine.cryptoGenerator.schedule.analysisForBuyMarket.service.AnalysisForBuyMarketService;
 
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
@@ -27,13 +20,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @Configuration
-public class AnalysisMarketJobConfiguration {
+public class AnalysisForBuyMarketJobConfiguration {
   // private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddhhmmss");
 
   private final JobBuilderFactory jobBuilderFactory;
   private final StepBuilderFactory stepBuilderFactory;
   // private final EntityManagerFactory entityManagerFactory;
-  private final AnalysisMarketService analysisMarketService;
+  private final AnalysisForBuyMarketService analysisForBuyMarketService;
   
   @Value("${schedule.chunkSize}")
   private int chunkSize;
@@ -41,8 +34,8 @@ public class AnalysisMarketJobConfiguration {
   private int analysisScope;
 
   @Bean
-  public Job analysisMarketJob() {
-    return jobBuilderFactory.get("analysisMarketJob")
+  public Job analysisForBuyMarketJob() {
+    return jobBuilderFactory.get("analysisForBuyMarketJob")
             .start(analysisStep())
             .on("FAILED")
             .end()

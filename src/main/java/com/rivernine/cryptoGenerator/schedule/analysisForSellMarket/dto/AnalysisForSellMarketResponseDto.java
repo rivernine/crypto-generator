@@ -1,4 +1,4 @@
-package com.rivernine.cryptoGenerator.schedule.analysisMarket.dto;
+package com.rivernine.cryptoGenerator.schedule.analysisForSellMarket.dto;
 
 import java.time.LocalDateTime;
 
@@ -11,7 +11,7 @@ import lombok.ToString;
 
 @ToString
 @Getter
-public class AnalysisMarketResponseDto {
+public class AnalysisForSellMarketResponseDto {
   private String market;
   private LocalDateTime tradeDate;  
   private Double price;  
@@ -19,7 +19,7 @@ public class AnalysisMarketResponseDto {
   private Double accTradeVolume;
   private Double accTradeVolume24h;
   
-  public AnalysisMarketResponseDto(Crypto entity) {
+  public AnalysisForSellMarketResponseDto(Crypto entity) {
     this.market = entity.getMarket();
     this.tradeDate = entity.getTradeDate();
     this.price = entity.getPrice();

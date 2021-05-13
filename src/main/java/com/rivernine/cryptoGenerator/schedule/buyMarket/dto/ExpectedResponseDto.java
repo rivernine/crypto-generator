@@ -1,4 +1,4 @@
-package com.rivernine.cryptoGenerator.schedule.tradeMarket.dto;
+package com.rivernine.cryptoGenerator.schedule.buyMarket.dto;
 
 import com.rivernine.cryptoGenerator.domain.expected.Expected;
 

@@ -1,4 +1,4 @@
-package com.rivernine.cryptoGenerator.schedule.tradeMarket.service;
+package com.rivernine.cryptoGenerator.schedule.buyMarket.service;
 
 import java.util.Optional;
 
@@ -6,7 +6,7 @@ import javax.transaction.Transactional;
 
 import com.rivernine.cryptoGenerator.domain.expected.Expected;
 import com.rivernine.cryptoGenerator.domain.expected.ExpectedRepository;
-import com.rivernine.cryptoGenerator.schedule.tradeMarket.dto.ExpectedResponseDto;
+import com.rivernine.cryptoGenerator.schedule.buyMarket.dto.ExpectedResponseDto;
 
 import org.springframework.stereotype.Service;
 
