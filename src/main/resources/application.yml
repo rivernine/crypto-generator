@@ -1,3 +1,10 @@
+spring:
+  profiles:
+    active: mariadb
+    group:
+      mariadb: local-mariadb
+      h2db: local-h2db
+
 upbit:
   accessKey: ${accessKey:NONE}
   markets: ${markets:krw-btc}
@@ -5,8 +12,14 @@ schedule:
   chunkSize: 100  
   collectDelay: 1000  # 시세수집 주기(ms)
   analysisScope: 10  # 분석범위 (s)
+batch.job.names: ${job.name:NONE}
+
+---
 
 spring:
+  config:
+    activate:
+      on-profile: local-h2db
   jpa:
     show-sql: true
     properties.hibernate.dialect.storage_engine: innodb
@@ -14,4 +27,26 @@ spring:
     hikari:
       jdbc-url: jdbc:h2:mem:testdb;MODE=MYSQL
       username: rivernine
-  batch.job.names: ${job.name:NONE}
+  h2.console:
+    enabled: true
+    path: /h2-console
+    settings.web-allow-others: true
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: local-mariadb
+  datasource:
+    url: jdbc:mariadb://172.17.0.1:3306/cryptodb
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: 
+    password: 
+    hikari:
+      connection-timeout: 60000 # 1min
+      maximum-pool-size: 20
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create # 변경된 스키마만 적용 (none/update/validate/create/create-drop)
