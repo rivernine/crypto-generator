@@ -26,7 +26,6 @@ public class AnalysisForBuyMarketJobConfiguration {
   private final JobBuilderFactory jobBuilderFactory;
   private final StepBuilderFactory stepBuilderFactory;
   private final AnalysisForBuyMarketService analysisForBuyMarketService;
-  private final UpbitApi upbitApi;
   
   @Value("${schedule.chunkSize}")
   private int chunkSize;
@@ -64,7 +63,8 @@ public class AnalysisForBuyMarketJobConfiguration {
     return stepBuilderFactory.get(JOB_NAME + "_buyStep")
             .tasklet((stepContribution, chunkContext) -> {
               log.info(JOB_NAME + "_buyStep");
-              upbitApi.buyMarket();
+              analysisForBuyMarketService.buy();
+              stepContribution.setExitStatus(ExitStatus.COMPLETED);
               return RepeatStatus.FINISHED;
             }).build();
   }
