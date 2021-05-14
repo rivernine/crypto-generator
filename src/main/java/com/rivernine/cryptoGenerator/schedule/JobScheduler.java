@@ -1,13 +1,8 @@
 package com.rivernine.cryptoGenerator.schedule;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 import com.rivernine.cryptoGenerator.schedule.collectMarket.CollectMarketJobConfiguration;
 
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,8 +28,10 @@ public class JobScheduler {
   @Autowired
   private final Job analysisForAskMarketJob;
 
+  private final Status status;
+
   @Value("${testParameter.currentStatus}")
-  private int currentStatus;
+  private int currentStatus = ;
   @Value("${upbit.market}")	
   private String market;  
 

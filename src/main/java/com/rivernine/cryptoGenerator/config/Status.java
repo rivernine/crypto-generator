@@ -3,7 +3,6 @@ package com.rivernine.cryptoGenerator.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,11 +13,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-class Status {
-  private int currentStatus;
+class StatusProperties {
 
-  @Builder
-  public Status(int currentStatus) {
-    this.currentStatus = currentStatus;
-  }
+  @Value("${testParameter.currentStatus}")
+  public int currentStatus;
+
 }
