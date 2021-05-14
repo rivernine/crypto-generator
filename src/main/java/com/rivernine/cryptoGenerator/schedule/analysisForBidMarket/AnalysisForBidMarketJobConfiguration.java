@@ -1,6 +1,6 @@
 package com.rivernine.cryptoGenerator.schedule.analysisForBidMarket;
 
-import com.rivernine.cryptoGenerator.common.UpbitApi;
+import com.rivernine.cryptoGenerator.schedule.analysisForBidMarket.dto.BidMarketResponseDto;
 import com.rivernine.cryptoGenerator.schedule.analysisForBidMarket.service.AnalysisForBidMarketService;
 
 import org.springframework.batch.core.ExitStatus;
@@ -25,10 +25,14 @@ public class AnalysisForBidMarketJobConfiguration {
 
   private final JobBuilderFactory jobBuilderFactory;
   private final StepBuilderFactory stepBuilderFactory;
-  private final AnalysisForBidMarketService analysisForBuyMarketService;
+  private final AnalysisForBidMarketService analysisForBidMarketService;
   
   @Value("${schedule.chunkSize}")
   private int chunkSize;
+  @Value("${upbit.market}")
+  private String market;
+  @Value("${upbit.price}")
+  private int price;
 
   @Bean(name = JOB_NAME)
   @Primary
@@ -49,7 +53,7 @@ public class AnalysisForBidMarketJobConfiguration {
     return stepBuilderFactory.get(JOB_NAME + "_analysisStep")
             .tasklet((stepContribution, chunkContext) -> {              
               log.info(JOB_NAME + "_analysisStep");
-              if(analysisForBuyMarketService.analysis()){
+              if(analysisForBidMarketService.analysis(market)){
                 stepContribution.setExitStatus(ExitStatus.COMPLETED);  
               } else {
                 stepContribution.setExitStatus(ExitStatus.FAILED);
@@ -63,7 +67,8 @@ public class AnalysisForBidMarketJobConfiguration {
     return stepBuilderFactory.get(JOB_NAME + "_bidStep")
             .tasklet((stepContribution, chunkContext) -> {
               log.info(JOB_NAME + "_bidStep");
-              analysisForBuyMarketService.bid();
+              BidMarketResponseDto bidMarketResponseDto = analysisForBidMarketService.bid(market, Integer.toString(price));
+              log.info("Complete request bid, UUID: " + bidMarketResponseDto.getUuid());
               stepContribution.setExitStatus(ExitStatus.COMPLETED);
               return RepeatStatus.FINISHED;
             }).build();

@@ -1,36 +1,40 @@
 package com.rivernine.cryptoGenerator.schedule.analysisForBidMarket.service;
 
-import com.rivernine.cryptoGenerator.common.UpbitApi;
-import com.rivernine.cryptoGenerator.domain.crypto.CryptoRepository;
-import com.rivernine.cryptoGenerator.schedule.analysisForBidMarket.algorithm.SimpleAlgorithm;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 
-import org.springframework.beans.factory.annotation.Value;
+import com.google.gson.JsonObject;
+import com.rivernine.cryptoGenerator.common.CryptoApi;
+import com.rivernine.cryptoGenerator.schedule.analysisForBidMarket.algorithm.SimpleAlgorithm;
+import com.rivernine.cryptoGenerator.schedule.analysisForBidMarket.dto.BidMarketResponseDto;
+
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
+@ToString
 @RequiredArgsConstructor
 @Service
 public class AnalysisForBidMarketService {
 
-  private final CryptoRepository cryptoRepository;
-  private final UpbitApi upbitApi;
+  private final CryptoApi cryptoApi;
+  private final SimpleAlgorithm simpleAlgorithm;
 
-  @Value("${testParameter.analysisForBidReturn}")
-  private Boolean analysisForBidReturn;
-
-  private SimpleAlgorithm simpleAlgorithm;
-
-  public Boolean analysis() {
+  public Boolean analysis(String market) {
     return simpleAlgorithm.simpleAlgorithm();
   }
 
-  public void bid() {
-    try {
-    upbitApi.bidMarket();
-    } catch ( Exception e ) {
-      e.printStackTrace();
-    }
+  public BidMarketResponseDto bid(String market, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+    JsonObject response = cryptoApi.postBidOrders(market, price);
+    return BidMarketResponseDto.builder()
+            .uuid(response.get("uuid").getAsString())
+            .market(response.get("market").getAsString())
+            .price(response.get("price").getAsString())
+            .avg_price(response.get("avg_price").getAsString())
+            .build();
   }
 
 }

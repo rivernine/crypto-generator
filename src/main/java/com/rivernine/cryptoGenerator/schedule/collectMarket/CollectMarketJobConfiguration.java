@@ -3,7 +3,7 @@ package com.rivernine.cryptoGenerator.schedule.collectMarket;
 import java.util.List;
 
 import com.google.gson.JsonObject;
-import com.rivernine.cryptoGenerator.common.UpbitApi;
+import com.rivernine.cryptoGenerator.common.CryptoApi;
 import com.rivernine.cryptoGenerator.domain.crypto.Crypto;
 import com.rivernine.cryptoGenerator.schedule.collectMarket.dto.CollectMarketSaveDto;
 import com.rivernine.cryptoGenerator.schedule.collectMarket.service.CollectMarketService;
@@ -18,10 +18,10 @@ public class CollectMarketJobConfiguration {
 
   private final CollectMarketService collectMarketService;
 
-  private final UpbitApi upbitApi;
+  private final CryptoApi cryptoApi;
 
-  public void collectMarketJob() {
-    JsonObject jsonObject = upbitApi.getMarket();
+  public void collectMarketJob(String market) {
+    JsonObject jsonObject = cryptoApi.getMarket(market);
     CollectMarketSaveDto collectMarketSaveDto = CollectMarketSaveDto.builder()
                                     .market(jsonObject.get("market").getAsString())
                                     .tradeDate(jsonObject.get("trade_date_kst").getAsString()+jsonObject.get("trade_time_kst").getAsString())
@@ -31,15 +31,14 @@ public class CollectMarketJobConfiguration {
                                     .accTradeVolume24h(jsonObject.get("acc_trade_volume_24h").getAsDouble())
                                     .build();
     collectMarketService.save(collectMarketSaveDto);
-
   } 
 
-  public void checkCollectMarketJob() {
-    List<Crypto> cryptoList = collectMarketService.findAll();
+  // public void checkCollectMarketJob() {
+  //   List<Crypto> cryptoList = collectMarketService.findAll();
 
-    for( Crypto crypto: cryptoList ) {
-      System.out.println(crypto.getMarket() + " " + crypto.getTradeDate());
-      System.out.println(String.format("%.4f", crypto.getPrice()) + " || " + String.format("%.8f", crypto.getTradeVolume()));
-    }
-  }
+  //   for( Crypto crypto: cryptoList ) {
+  //     System.out.println(crypto.getMarket() + " " + crypto.getTradeDate());
+  //     System.out.println(String.format("%.4f", crypto.getPrice()) + " || " + String.format("%.8f", crypto.getTradeVolume()));
+  //   }
+  // }
 }

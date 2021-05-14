@@ -62,7 +62,7 @@ public class AnalysisForAskMarketJobConfiguration {
     return stepBuilderFactory.get(JOB_NAME + "_askStep")
             .tasklet((stepContribution, chunkContext) -> {
               log.info(JOB_NAME + "_askStep");
-              upbitApi.sellMarket();
+              // upbitApi.sellMarket();
               return RepeatStatus.FINISHED;
             }).build();
   }

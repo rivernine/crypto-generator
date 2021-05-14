@@ -10,11 +10,17 @@ upbit:
   secretKey: ${secretKey:NONE}
   # markets: ${markets:krw-btc}
   market: ${market:krw-btc}
+  price: ${price:10000}
+
 schedule:
   chunkSize: 100  
-  collectDelay: 1000  # 시세수집 주기(ms)
+  collectDelay: 10000  # 시세수집 주기(ms)
 testParameter:
-  currentStatus: ${currentStatus:0} # 0: 매수전 1: 매수후
+  # 0: 프로그램 시작상태
+  # 1: 매수 전 
+  # 10: 매수주문완료, 11: 매수체결
+  # 20: 매도주문완료
+  currentStatus: ${currentStatus:1}
   analysisForBidReturn: ${analysisForBidReturn:false}
   analysisForAskReturn: ${analysisForAskReturn:false}
 
