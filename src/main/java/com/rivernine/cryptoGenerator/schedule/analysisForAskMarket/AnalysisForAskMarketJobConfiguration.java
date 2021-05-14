@@ -1,7 +1,7 @@
-package com.rivernine.cryptoGenerator.schedule.analysisForSellMarket;
+package com.rivernine.cryptoGenerator.schedule.analysisForAskMarket;
 
 import com.rivernine.cryptoGenerator.common.UpbitApi;
-import com.rivernine.cryptoGenerator.schedule.analysisForSellMarket.service.AnalysisForSellMarketService;
+import com.rivernine.cryptoGenerator.schedule.analysisForAskMarket.service.AnalysisForAskMarketService;
 
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
@@ -19,26 +19,26 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @Configuration
-public class AnalysisForSellMarketJobConfiguration {
-  public static final String JOB_NAME = "analysisForSellMarket";
+public class AnalysisForAskMarketJobConfiguration {
+  public static final String JOB_NAME = "analysisForAskMarket";
 
   private final JobBuilderFactory jobBuilderFactory;
   private final StepBuilderFactory stepBuilderFactory;
-  private final AnalysisForSellMarketService analysisForSellMarketService;
+  private final AnalysisForAskMarketService analysisForAskMarketService;
   private final UpbitApi upbitApi;
   
   @Value("${schedule.chunkSize}")
   private int chunkSize;
 
   @Bean(name = JOB_NAME)
-  public Job analysisForSellMarketJob() {
+  public Job analysisForAskMarketJob() {
     return jobBuilderFactory.get(JOB_NAME)
             .start(analysisStep())
             .on("FAILED")
             .end()
             .from(analysisStep())
             .on("*")
-            .to(sellStep())
+            .to(askStep())
             .end()
             .build();
   }
@@ -48,7 +48,7 @@ public class AnalysisForSellMarketJobConfiguration {
     return stepBuilderFactory.get(JOB_NAME + "_analysisStep")
             .tasklet((stepContribution, chunkContext) -> {              
               log.info(JOB_NAME + "_analysisStep");
-              if(analysisForSellMarketService.analysis()){
+              if(analysisForAskMarketService.analysis()){
                 stepContribution.setExitStatus(ExitStatus.COMPLETED);  
               } else {
                 stepContribution.setExitStatus(ExitStatus.FAILED);  
@@ -57,11 +57,11 @@ public class AnalysisForSellMarketJobConfiguration {
             }).build();
   }
 
-  @Bean(name = JOB_NAME + "_sellStep")
-  public Step sellStep() {
-    return stepBuilderFactory.get(JOB_NAME + "_sellStep")
+  @Bean(name = JOB_NAME + "_askStep")
+  public Step askStep() {
+    return stepBuilderFactory.get(JOB_NAME + "_askStep")
             .tasklet((stepContribution, chunkContext) -> {
-              log.info(JOB_NAME + "_sellStep");
+              log.info(JOB_NAME + "_askStep");
               upbitApi.sellMarket();
               return RepeatStatus.FINISHED;
             }).build();

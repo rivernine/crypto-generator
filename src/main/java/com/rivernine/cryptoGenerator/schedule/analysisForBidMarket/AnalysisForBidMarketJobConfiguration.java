@@ -1,7 +1,7 @@
-package com.rivernine.cryptoGenerator.schedule.analysisForBuyMarket;
+package com.rivernine.cryptoGenerator.schedule.analysisForBidMarket;
 
 import com.rivernine.cryptoGenerator.common.UpbitApi;
-import com.rivernine.cryptoGenerator.schedule.analysisForBuyMarket.service.AnalysisForBuyMarketService;
+import com.rivernine.cryptoGenerator.schedule.analysisForBidMarket.service.AnalysisForBidMarketService;
 
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
@@ -20,26 +20,26 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @Configuration
-public class AnalysisForBuyMarketJobConfiguration {
-  public static final String JOB_NAME = "analysisForBuyMarket";
+public class AnalysisForBidMarketJobConfiguration {
+  public static final String JOB_NAME = "analysisForBidMarket";
 
   private final JobBuilderFactory jobBuilderFactory;
   private final StepBuilderFactory stepBuilderFactory;
-  private final AnalysisForBuyMarketService analysisForBuyMarketService;
+  private final AnalysisForBidMarketService analysisForBuyMarketService;
   
   @Value("${schedule.chunkSize}")
   private int chunkSize;
 
   @Bean(name = JOB_NAME)
   @Primary
-  public Job analysisForBuyMarketJob() {
+  public Job analysisForBidMarketJob() {
     return jobBuilderFactory.get(JOB_NAME)
             .start(analysisStep())
             .on("FAILED")
             .end()
             .from(analysisStep())
             .on("*")
-            .to(buyStep())
+            .to(bidStep())
             .end()
             .build();
   }
@@ -58,12 +58,12 @@ public class AnalysisForBuyMarketJobConfiguration {
             }).build();
   }
 
-  @Bean(name = JOB_NAME + "_buyStep")
-  public Step buyStep() {
-    return stepBuilderFactory.get(JOB_NAME + "_buyStep")
+  @Bean(name = JOB_NAME + "_bidStep")
+  public Step bidStep() {
+    return stepBuilderFactory.get(JOB_NAME + "_bidStep")
             .tasklet((stepContribution, chunkContext) -> {
-              log.info(JOB_NAME + "_buyStep");
-              analysisForBuyMarketService.buy();
+              log.info(JOB_NAME + "_bidStep");
+              analysisForBuyMarketService.bid();
               stepContribution.setExitStatus(ExitStatus.COMPLETED);
               return RepeatStatus.FINISHED;
             }).build();

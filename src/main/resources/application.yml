@@ -1,20 +1,22 @@
 spring:
   profiles:
-    active: mariadb
+    active: h2db
     group:
       mariadb: local-mariadb
       h2db: local-h2db
 
 upbit:
   accessKey: ${accessKey:NONE}
-  markets: ${markets:krw-btc}
+  secretKey: ${secretKey:NONE}
+  # markets: ${markets:krw-btc}
+  market: ${market:krw-btc}
 schedule:
   chunkSize: 100  
   collectDelay: 1000  # 시세수집 주기(ms)
 testParameter:
   currentStatus: ${currentStatus:0} # 0: 매수전 1: 매수후
-  analysisForBuyReturn: ${analysisForBuyReturn:false}
-  analysisForSellReturn: ${analysisForSellReturn:false}
+  analysisForBidReturn: ${analysisForBidReturn:false}
+  analysisForAskReturn: ${analysisForAskReturn:false}
 
 ---
 

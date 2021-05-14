@@ -1,4 +1,4 @@
-package com.rivernine.cryptoGenerator.schedule.analysisForBuyMarket.algorithm;
+package com.rivernine.cryptoGenerator.schedule.analysisForBidMarket.algorithm;
 
 import org.springframework.stereotype.Component;
 

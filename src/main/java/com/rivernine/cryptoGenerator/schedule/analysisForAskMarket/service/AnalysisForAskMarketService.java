@@ -1,4 +1,4 @@
-package com.rivernine.cryptoGenerator.schedule.analysisForSellMarket.service;
+package com.rivernine.cryptoGenerator.schedule.analysisForAskMarket.service;
 
 import com.rivernine.cryptoGenerator.domain.crypto.CryptoRepository;
 
@@ -9,14 +9,14 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
-public class AnalysisForSellMarketService {
+public class AnalysisForAskMarketService {
   private final CryptoRepository cryptoRepository;
 
-  @Value("${testParameter.analysisForSellReturn}")
-  private Boolean analysisForSellReturn;
+  @Value("${testParameter.analysisForAskReturn}")
+  private Boolean analysisForAskReturn;
 
   public Boolean analysis() {
-    return analysisForSellReturn;
+    return analysisForAskReturn;
   }
 
 }

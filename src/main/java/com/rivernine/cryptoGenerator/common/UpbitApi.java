@@ -37,6 +37,12 @@ public class UpbitApi {
 
 	@Value("${upbit.markets}")
 	private String markets;  
+  @Value("${upbit.market}")
+	private String market;  
+  @Value("${upbit.accessKey}")
+	private String accessKey;  
+  @Value("${upbit.secretKey}")
+	private String secretKey;  
 
   public JsonObject[] getMarkets(){
     String jsonString = restTemplate.getForObject("https://api.upbit.com/v1/ticker?markets=" + markets, String.class);
@@ -45,25 +51,24 @@ public class UpbitApi {
   }
 
   public JsonObject getMarket(){
-    return getMarkets()[0];
+    String jsonString = restTemplate.getForObject("https://api.upbit.com/v1/ticker?markets=" + market, String.class);
+    JsonObject[] jsonObjectArray = gson.fromJson(jsonString, JsonObject[].class);
+    return jsonObjectArray[0];
   }
 
   public Double getMarketPrice(){
     return getMarket().get("trade_price").getAsDouble();
   }
 
-  public void buyMarket() throws NoSuchAlgorithmException, UnsupportedEncodingException {
+  public void bidMarket() throws NoSuchAlgorithmException, UnsupportedEncodingException {
     System.out.println("<<< buyMarket >>>");
-    String accessKey = System.getenv("UPBIT_OPEN_API_ACCESS_KEY");
-    String secretKey = System.getenv("UPBIT_OPEN_API_SECRET_KEY");
-    String serverUrl = System.getenv("UPBIT_OPEN_API_SERVER_URL");
-
+    
     HashMap<String, String> params = new HashMap<>();
-    params.put("market", "KRW-BTC");
+    params.put("market", market);
     params.put("side", "bid");
-    params.put("volume", "0.01");
+    // params.put("volume", "0.01");  // 시장가 매수 시 null
     params.put("price", "100");
-    params.put("ord_type", "limit");
+    params.put("ord_type", "price");
 
     ArrayList<String> queryElements = new ArrayList<>();
     for(Map.Entry<String, String> entity : params.entrySet()) {
@@ -89,7 +94,7 @@ public class UpbitApi {
 
     try {
         HttpClient client = HttpClientBuilder.create().build();
-        HttpPost request = new HttpPost(serverUrl + "/v1/orders");
+        HttpPost request = new HttpPost("https://api.upbit.com/v1/orders");
         request.setHeader("Content-Type", "application/json");
         request.addHeader("Authorization", authenticationToken);
         request.setEntity(new StringEntity(new Gson().toJson(params)));

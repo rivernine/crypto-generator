@@ -26,13 +26,13 @@ public class JobScheduler {
   private final JobLauncher jobLauncher;
   private final CollectMarketJobConfiguration collectMarketJobConfiguration;
 
-  @Qualifier("analysisForBuyMarket")
+  @Qualifier("analysisForBidMarket")
   @Autowired
-  private final Job analysisForBuyMarketJob;
+  private final Job analysisForBidMarketJob;
 
-  @Qualifier("analysisForSellMarket")
+  @Qualifier("analysisForAskMarket")
   @Autowired
-  private final Job analysisForSellMarketJob;
+  private final Job analysisForAskMarketJob;
 
   @Value("${testParameter.currentStatus}")
   private int currentStatus;
@@ -52,11 +52,11 @@ public class JobScheduler {
                                           .toJobParameters();
       log.info("currentStatus : " + Integer.toString(currentStatus));
       if (currentStatus == 0){
-        log.info("This is Buy Job !!!!");
-        jobLauncher.run(analysisForBuyMarketJob, jobParameters);
+        log.info("This is Bid Job !!!!");
+        jobLauncher.run(analysisForBidMarketJob, jobParameters);
       } else if (currentStatus == 1){
-        log.info("This is Sell Job !!!!");
-        jobLauncher.run(analysisForSellMarketJob, jobParameters);
+        log.info("This is Ask Job !!!!");
+        jobLauncher.run(analysisForAskMarketJob, jobParameters);
       }
     } catch (Exception e) {
       log.info(e.getMessage());
