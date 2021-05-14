@@ -39,9 +39,7 @@ public class UpbitApiTests {
       String price = "5000";
       String ordType = "price";
 
-      String accessKey = "ZauMaQpd981oKUqA98KaSmP5Jw8moZF0aGcJxmp1";  
-      String secretKey = "lxNuxDNpxvzZs69ErIFC7T5rqliubp5QIUlyiraD";  
-      String serverUrl = "https://api.upbit.com";
+      
 
 
       Gson gson = new Gson();
