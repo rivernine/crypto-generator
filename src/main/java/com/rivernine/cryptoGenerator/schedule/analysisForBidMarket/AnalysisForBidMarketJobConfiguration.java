@@ -39,7 +39,8 @@ public class AnalysisForBidMarketJobConfiguration {
   public Job analysisForBidMarketJob() {
     return jobBuilderFactory.get(JOB_NAME)
             .start(analysisStep())
-            .on("FAILED")
+            // .on("FAILED")
+            .on("*")
             .end()
             .from(analysisStep())
             .on("*")

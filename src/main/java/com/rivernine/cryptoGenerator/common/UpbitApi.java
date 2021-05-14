@@ -57,7 +57,8 @@ public class UpbitApi {
     HashMap<String, String> params = new HashMap<>();
     params.put("market", market);
     params.put("side", side);
-    params.put("volume", volume);
+    if(!volume.equals("-1"))
+      params.put("volume", volume);
     params.put("price", price);
     params.put("ord_type", ordType);
 

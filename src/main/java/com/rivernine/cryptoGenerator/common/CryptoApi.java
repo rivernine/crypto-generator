@@ -35,7 +35,7 @@ public class CryptoApi {
   
   // 시장가 매수
   public JsonObject postBidOrders(String market, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-    return upbitApi.postOrders(market, "bid", null, price, "price");
+    return upbitApi.postOrders(market, "bid", "-1", price, "price");
   }
 
   // 지정가 매수

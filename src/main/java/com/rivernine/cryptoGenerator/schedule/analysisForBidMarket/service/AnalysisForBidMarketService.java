@@ -32,8 +32,6 @@ public class AnalysisForBidMarketService {
     return BidMarketResponseDto.builder()
             .uuid(response.get("uuid").getAsString())
             .market(response.get("market").getAsString())
-            .price(response.get("price").getAsString())
-            .avg_price(response.get("avg_price").getAsString())
             .build();
   }
 

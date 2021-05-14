@@ -10,8 +10,6 @@ public class SimpleAlgorithm {
   private Boolean analysisForBidReturn;
 
   public Boolean simpleAlgorithm() {
-    System.out.println("simpleAlgorithm");    
-    System.out.println(analysisForBidReturn);
     return analysisForBidReturn;
   }
 }

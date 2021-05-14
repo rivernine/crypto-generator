@@ -9,8 +9,8 @@ upbit:
   accessKey: ${accessKey:NONE}
   secretKey: ${secretKey:NONE}
   # markets: ${markets:krw-btc}
-  market: ${market:krw-btc}
-  price: ${price:10000}
+  market: ${market:KRW-BTC}
+  price: ${price:5000}
 
 schedule:
   chunkSize: 100  

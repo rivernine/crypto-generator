@@ -34,7 +34,7 @@ public class JobScheduler {
   private final Job analysisForAskMarketJob;
 
   @Value("${testParameter.currentStatus}")
-  private static int currentStatus;
+  private int currentStatus;
   @Value("${upbit.market}")	
   private String market;  
 
@@ -46,23 +46,24 @@ public class JobScheduler {
   }
 
   // Analysis market
-  // @Scheduled(fixedDelay = 5000)
+  @Scheduled(fixedDelay = 5000)
   public void runAnalysisMarketJob() {
     try {
-      
+      log.info(Integer.toString(currentStatus));
       switch(currentStatus) {
         case 0:        
           // 프로그램 시작상태
           // db에서 현재 저장된 상태를 읽어옴
+          log.info("[currentStatus: 0] Application Start! ");
           break;
         case 1:
           // 매수 전 상태
           // 분석 후 매수주문
-          log.info("[currentStatus: 0] Crypto Start! ");
-          log.info("[currentStatus: 0] Run analysis for bid.");
-          jobLauncher.run(analysisForBidMarketJob, new JobParametersBuilder()
-                                                        .addString("requestDate", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
-                                                        .toJobParameters());
+          log.info("[currentStatus: 1] Crypto Start! ");
+          log.info("[currentStatus: 1] Run analysis for bid.");
+          // jobLauncher.run(analysisForBidMarketJob, new JobParametersBuilder()
+          //                                               .addString("requestDate", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
+          //                                               .toJobParameters());
           currentStatus = 10;
           break;
         case 10:
