@@ -5,7 +5,7 @@ import java.security.NoSuchAlgorithmException;
 
 import com.google.gson.JsonObject;
 import com.rivernine.cryptoGenerator.common.CryptoApi;
-import com.rivernine.cryptoGenerator.schedule.analysisForBidMarket.algorithm.SimpleAlgorithm;
+import com.rivernine.cryptoGenerator.schedule.analysisForBidMarket.algorithm.SimpleBidAlgorithm;
 import com.rivernine.cryptoGenerator.schedule.analysisForBidMarket.dto.BidMarketResponseDto;
 
 import org.springframework.stereotype.Service;
@@ -21,18 +21,25 @@ import lombok.extern.slf4j.Slf4j;
 public class AnalysisForBidMarketService {
 
   private final CryptoApi cryptoApi;
-  private final SimpleAlgorithm simpleAlgorithm;
+  private final SimpleBidAlgorithm simpleBidAlgorithm;
 
-  public Boolean analysis(String market) {
-    return simpleAlgorithm.simpleAlgorithm();
+  public Boolean analysis() {
+    return simpleBidAlgorithm.algorithm();
   }
 
   public BidMarketResponseDto bid(String market, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException{
-    JsonObject response = cryptoApi.postBidOrders(market, price);
-    return BidMarketResponseDto.builder()
-            .uuid(response.get("uuid").getAsString())
-            .market(response.get("market").getAsString())
-            .build();
+    JsonObject response = cryptoApi.postBidOrders(market, price);    
+    try {
+      return BidMarketResponseDto.builder()
+      .uuid(response.get("uuid").getAsString())
+      .market(response.get("market").getAsString())
+      .success(true)
+      .build();
+    } catch (Exception e) {
+      return BidMarketResponseDto.builder()
+      .success(false)
+      .build();
+    }
   }
 
 }

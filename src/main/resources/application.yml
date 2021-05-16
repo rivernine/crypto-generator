@@ -14,13 +14,14 @@ upbit:
 
 schedule:
   chunkSize: 100  
-  collectDelay: 10000  # 시세수집 주기(ms)
+  collectDelay: ${collectDelay:10000} # 시세수집 주기(ms)
+  analysisDelay: ${analysisDelay:500} # 분석 주기(ms)
 testParameter:
   # 0: 프로그램 시작상태
   # 1: 매수 전 
   # 10: 매수주문완료, 11: 매수체결
   # 20: 매도주문완료
-  currentStatus: ${currentStatus:1}
+  currentStatus: ${currentStatus:0}
   analysisForBidReturn: ${analysisForBidReturn:false}
   analysisForAskReturn: ${analysisForAskReturn:false}
 

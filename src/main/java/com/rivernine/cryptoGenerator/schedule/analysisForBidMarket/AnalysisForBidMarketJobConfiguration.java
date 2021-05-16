@@ -1,5 +1,6 @@
 package com.rivernine.cryptoGenerator.schedule.analysisForBidMarket;
 
+import com.rivernine.cryptoGenerator.config.StatusProperties;
 import com.rivernine.cryptoGenerator.schedule.analysisForBidMarket.dto.BidMarketResponseDto;
 import com.rivernine.cryptoGenerator.schedule.analysisForBidMarket.service.AnalysisForBidMarketService;
 
@@ -26,7 +27,8 @@ public class AnalysisForBidMarketJobConfiguration {
   private final JobBuilderFactory jobBuilderFactory;
   private final StepBuilderFactory stepBuilderFactory;
   private final AnalysisForBidMarketService analysisForBidMarketService;
-  
+  private final StatusProperties statusProperties;
+
   @Value("${schedule.chunkSize}")
   private int chunkSize;
   @Value("${upbit.market}")
@@ -39,12 +41,16 @@ public class AnalysisForBidMarketJobConfiguration {
   public Job analysisForBidMarketJob() {
     return jobBuilderFactory.get(JOB_NAME)
             .start(analysisStep())
-            // .on("FAILED")
-            .on("*")
+            .on("FAILED")
             .end()
             .from(analysisStep())
             .on("*")
             .to(bidStep())
+            .on("FAILED")
+            .end()
+            .from(bidStep())
+            .on("*")
+            .to(setStatusStep())
             .end()
             .build();
   }
@@ -54,7 +60,7 @@ public class AnalysisForBidMarketJobConfiguration {
     return stepBuilderFactory.get(JOB_NAME + "_analysisStep")
             .tasklet((stepContribution, chunkContext) -> {              
               log.info(JOB_NAME + "_analysisStep");
-              if(analysisForBidMarketService.analysis(market)){
+              if(analysisForBidMarketService.analysis()){
                 stepContribution.setExitStatus(ExitStatus.COMPLETED);  
               } else {
                 stepContribution.setExitStatus(ExitStatus.FAILED);
@@ -69,8 +75,26 @@ public class AnalysisForBidMarketJobConfiguration {
             .tasklet((stepContribution, chunkContext) -> {
               log.info(JOB_NAME + "_bidStep");
               BidMarketResponseDto bidMarketResponseDto = analysisForBidMarketService.bid(market, Integer.toString(price));
-              log.info("Complete request bid, UUID: " + bidMarketResponseDto.getUuid());
-              stepContribution.setExitStatus(ExitStatus.COMPLETED);
+              if(bidMarketResponseDto.getSuccess()){
+                log.info("Success request bid, UUID: " + bidMarketResponseDto.getUuid());
+                stepContribution.setExitStatus(ExitStatus.COMPLETED);   
+              } else {
+                log.info("Failed request bid");
+                stepContribution.setExitStatus(ExitStatus.FAILED); 
+              }
+              return RepeatStatus.FINISHED;
+            }).build();
+  }
+
+  
+  @Bean(name = JOB_NAME + "_setStatusStep")
+  public Step setStatusStep() {
+    return stepBuilderFactory.get(JOB_NAME + "_setStatusStep")
+            .tasklet((stepContribution, chunkContext) -> {
+              log.info(JOB_NAME + "_setStatusStep");
+              log.info("Set status (1 -> 10)");
+              statusProperties.setCurrentStatus(10);
+              stepContribution.setExitStatus(ExitStatus.COMPLETED); 
               return RepeatStatus.FINISHED;
             }).build();
   }

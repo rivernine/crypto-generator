@@ -9,10 +9,12 @@ import lombok.ToString;
 public class BidMarketResponseDto {
   private String uuid;
   private String market;
-  
+  private Boolean success;
+
   @Builder
-  public BidMarketResponseDto(String uuid, String market) {
+  public BidMarketResponseDto(String uuid, String market, Boolean success) {
     this.uuid = uuid;
     this.market = market;
+    this.success = success;
   }
 }

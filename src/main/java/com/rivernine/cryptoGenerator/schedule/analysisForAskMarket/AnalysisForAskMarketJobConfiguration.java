@@ -1,6 +1,7 @@
 package com.rivernine.cryptoGenerator.schedule.analysisForAskMarket;
 
-import com.rivernine.cryptoGenerator.common.UpbitApi;
+import com.rivernine.cryptoGenerator.config.StatusProperties;
+import com.rivernine.cryptoGenerator.schedule.analysisForAskMarket.dto.AskMarketResponseDto;
 import com.rivernine.cryptoGenerator.schedule.analysisForAskMarket.service.AnalysisForAskMarketService;
 
 import org.springframework.batch.core.ExitStatus;
@@ -25,10 +26,13 @@ public class AnalysisForAskMarketJobConfiguration {
   private final JobBuilderFactory jobBuilderFactory;
   private final StepBuilderFactory stepBuilderFactory;
   private final AnalysisForAskMarketService analysisForAskMarketService;
-  private final UpbitApi upbitApi;
+  private final StatusProperties statusProperties;
   
   @Value("${schedule.chunkSize}")
   private int chunkSize;
+  @Value("${upbit.market}")
+  private String market;
+  private String volume;
 
   @Bean(name = JOB_NAME)
   public Job analysisForAskMarketJob() {
@@ -39,6 +43,11 @@ public class AnalysisForAskMarketJobConfiguration {
             .from(analysisStep())
             .on("*")
             .to(askStep())
+            .on("FAILED")
+            .end()
+            .from(askStep())
+            .on("*")
+            .to(setStatusStep())
             .end()
             .build();
   }
@@ -57,12 +66,33 @@ public class AnalysisForAskMarketJobConfiguration {
             }).build();
   }
 
+
   @Bean(name = JOB_NAME + "_askStep")
   public Step askStep() {
     return stepBuilderFactory.get(JOB_NAME + "_askStep")
             .tasklet((stepContribution, chunkContext) -> {
               log.info(JOB_NAME + "_askStep");
-              // upbitApi.sellMarket();
+              AskMarketResponseDto askMarketResponseDto = analysisForAskMarketService.ask(market, volume);
+              if(askMarketResponseDto.getSuccess()){
+                log.info("Success request ask, UUID: " + askMarketResponseDto.getUuid());
+                stepContribution.setExitStatus(ExitStatus.COMPLETED);   
+              } else {
+                log.info("Failed request ask");
+                stepContribution.setExitStatus(ExitStatus.FAILED); 
+              }
+              return RepeatStatus.FINISHED;
+            }).build();
+  }
+
+
+  @Bean(name = JOB_NAME + "_setStatusStep")
+  public Step setStatusStep() {
+    return stepBuilderFactory.get(JOB_NAME + "_setStatusStep")
+            .tasklet((stepContribution, chunkContext) -> {
+              log.info(JOB_NAME + "_setStatusStep");
+              log.info("Set status (11 -> 20)");
+              statusProperties.setCurrentStatus(20);
+              stepContribution.setExitStatus(ExitStatus.COMPLETED); 
               return RepeatStatus.FINISHED;
             }).build();
   }

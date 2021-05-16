@@ -44,12 +44,20 @@ public class CryptoApi {
   }
 
   // 시장가 매도
-  public void postAskOrders(String market, String volume) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-    upbitApi.postOrders(market, "ask", volume, null, "market");
+  public JsonObject postAskOrders(String market, String volume) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    return upbitApi.postOrders(market, "ask", volume, "-1", "market");
   }
 
   // 지정가 매도
   public void postAskOrdersSetPrice(String market, String volume, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     upbitApi.postOrders(market, "bid", volume, price, "limit");
+  }
+
+  public JsonObject getOrdersChanceForBid(String market) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+    return upbitApi.getOrdersChance(market).get("bid_account").getAsJsonObject();
+  }
+
+  public JsonObject getOrdersChanceForAsk(String market) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+    return upbitApi.getOrdersChance(market).get("ask_account").getAsJsonObject();
   }
 }
