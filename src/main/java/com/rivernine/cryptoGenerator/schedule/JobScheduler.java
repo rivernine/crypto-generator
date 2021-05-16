@@ -56,14 +56,13 @@ public class JobScheduler {
         case 0:        
           // 프로그램 시작상태
           // db에서 현재 저장된 상태를 읽어옴
-          log.info("[currentStatus: 0] Application Start! ");
-          statusProperties.setCurrentStatus(1);
+          log.info("[currentStatus: 0] [getOrdersChanceForBidJob] ");
+          ordersChanceJobConfiguration.getOrdersChanceForBidJob(market);
           break;
         case 1:
           // 매수 전 상태
           // 분석 후 매수주문
-          log.info("[currentStatus: 1] Crypto Start! ");
-          log.info("[currentStatus: 1] Run analysis for bid.");
+          log.info("[currentStatus: 1] [analysisForBidMarketJob] ");
           jobLauncher.run(analysisForBidMarketJob, new JobParametersBuilder()
                                                         .addString("requestDate", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
                                                         .toJobParameters());
@@ -71,26 +70,23 @@ public class JobScheduler {
         case 10:
           // 매수주문완료 상태
           // 체결 여부를 파악
-          log.info("[currentStatus: 10] Complete request! ");
-          log.info("[currentStatus: 10] Checking response of bidding.");
+          log.info("[currentStatus: 10] [ordersChanceJob] ");
           ordersChanceJobConfiguration.getOrdersChanceForAskJob(market);
           break;
         case 11:
           // 매수체결 상태
           // 분석 후 매도주문
-          log.info("[currentStatus: 11] Complete bidding!");
-          log.info("[currentStatus: 11] Run analysis for ask.");
-          // jobLauncher.run(analysisForAskMarketJob, new JobParametersBuilder()
-          //                                               .addString("requestDate", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
-          //                                               .toJobParameters());
-          statusProperties.setCurrentStatus(20);
+          log.info("[currentStatus: 11] [analysisForAskMarketJob]");
+          jobLauncher.run(analysisForAskMarketJob, new JobParametersBuilder()
+                                                        .addString("requestDate", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
+                                                        .toJobParameters());
           break;
         case 20:
           // 매도주문완료 상태
           // 체결 여부를 파악
           // 체결 시 1로 돌아감
           log.info("[currentStatus: 20] Done!");
-          statusProperties.setCurrentStatus(0);
+          statusProperties.init();
           break;                
       }
     } catch (Exception e) {

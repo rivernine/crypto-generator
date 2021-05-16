@@ -32,7 +32,6 @@ public class AnalysisForAskMarketJobConfiguration {
   private int chunkSize;
   @Value("${upbit.market}")
   private String market;
-  private String volume;
 
   @Bean(name = JOB_NAME)
   public Job analysisForAskMarketJob() {
@@ -43,11 +42,6 @@ public class AnalysisForAskMarketJobConfiguration {
             .from(analysisStep())
             .on("*")
             .to(askStep())
-            .on("FAILED")
-            .end()
-            .from(askStep())
-            .on("*")
-            .to(setStatusStep())
             .end()
             .build();
   }
@@ -55,9 +49,13 @@ public class AnalysisForAskMarketJobConfiguration {
   @Bean(name = JOB_NAME + "_analysisStep")
   public Step analysisStep() {
     return stepBuilderFactory.get(JOB_NAME + "_analysisStep")
-            .tasklet((stepContribution, chunkContext) -> {              
+            .tasklet((stepContribution, chunkContext) -> {      
+              if(statusProperties.getCurrentStatus() != 11){
+                stepContribution.setExitStatus(ExitStatus.FAILED);  
+                return RepeatStatus.FINISHED;
+              }
               log.info(JOB_NAME + "_analysisStep");
-              if(analysisForAskMarketService.analysis()){
+              if(analysisForAskMarketService.analysis(market, statusProperties)) {
                 stepContribution.setExitStatus(ExitStatus.COMPLETED);  
               } else {
                 stepContribution.setExitStatus(ExitStatus.FAILED);  
@@ -72,28 +70,28 @@ public class AnalysisForAskMarketJobConfiguration {
     return stepBuilderFactory.get(JOB_NAME + "_askStep")
             .tasklet((stepContribution, chunkContext) -> {
               log.info(JOB_NAME + "_askStep");
-              AskMarketResponseDto askMarketResponseDto = analysisForAskMarketService.ask(market, volume);
-              if(askMarketResponseDto.getSuccess()){
-                log.info("Success request ask, UUID: " + askMarketResponseDto.getUuid());
-                stepContribution.setExitStatus(ExitStatus.COMPLETED);   
+              AskMarketResponseDto askMarketResponseDto;
+              if( !statusProperties.getAskRunning() || statusProperties.getAskPending() ) {
+                statusProperties.setAskRunning(true);
+                statusProperties.setAskPending(true);
+                askMarketResponseDto = analysisForAskMarketService.ask(market, statusProperties.getOrdersChanceDtoForAsk().getBalance());
+                if(askMarketResponseDto.getSuccess()){
+                  log.info("Success request ask, UUID: " + askMarketResponseDto.getUuid());
+                  log.info("Set status (11 -> 20)");
+                  statusProperties.setCurrentStatus(20);
+                  stepContribution.setExitStatus(ExitStatus.COMPLETED);   
+                  statusProperties.setAskPending(false);
+                } else {
+                  log.info("Failed request ask");
+                  stepContribution.setExitStatus(ExitStatus.FAILED); 
+                }
               } else {
-                log.info("Failed request ask");
+                log.info("Another asking is running");
                 stepContribution.setExitStatus(ExitStatus.FAILED); 
               }
+              
               return RepeatStatus.FINISHED;
             }).build();
   }
 
-
-  @Bean(name = JOB_NAME + "_setStatusStep")
-  public Step setStatusStep() {
-    return stepBuilderFactory.get(JOB_NAME + "_setStatusStep")
-            .tasklet((stepContribution, chunkContext) -> {
-              log.info(JOB_NAME + "_setStatusStep");
-              log.info("Set status (11 -> 20)");
-              statusProperties.setCurrentStatus(20);
-              stepContribution.setExitStatus(ExitStatus.COMPLETED); 
-              return RepeatStatus.FINISHED;
-            }).build();
-  }
 }

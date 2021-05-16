@@ -10,7 +10,7 @@ upbit:
   secretKey: ${secretKey:NONE}
   # markets: ${markets:krw-btc}
   market: ${market:KRW-BTC}
-  price: ${price:5000}
+  balance: ${balance:5000}
 
 schedule:
   chunkSize: 100  

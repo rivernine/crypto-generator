@@ -9,7 +9,7 @@ import requests
 
 
 query = {
-    'market': 'KRW-DOGE',
+    'market': 'KRW-ETH',
 }
 query_string = urlencode(query).encode()
 

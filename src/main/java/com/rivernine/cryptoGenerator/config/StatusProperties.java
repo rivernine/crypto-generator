@@ -19,6 +19,24 @@ public class StatusProperties {
 
   @Value("${testParameter.currentStatus}")
   public int currentStatus;
+  public Double usedBalance;
 
+  public Boolean bidRunning = false;
+  public Boolean bidPending =false;
+  public Boolean askRunning = false;
+  public Boolean askPending =false;
+
+  public OrdersChanceDto ordersChanceDtoForBid;
   public OrdersChanceDto ordersChanceDtoForAsk;
+
+  public void init(){
+    this.currentStatus = -1;
+    this.usedBalance = 0.0;
+    this.bidRunning = false;
+    this.bidPending = false;
+    this.askRunning = false;
+    this.askPending = false;
+    this.ordersChanceDtoForAsk = null;
+    this.ordersChanceDtoForBid = null;
+  }
 }

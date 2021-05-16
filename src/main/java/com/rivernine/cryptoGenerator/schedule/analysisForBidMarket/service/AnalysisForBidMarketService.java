@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 
 import com.google.gson.JsonObject;
 import com.rivernine.cryptoGenerator.common.CryptoApi;
+import com.rivernine.cryptoGenerator.config.StatusProperties;
 import com.rivernine.cryptoGenerator.schedule.analysisForBidMarket.algorithm.SimpleBidAlgorithm;
 import com.rivernine.cryptoGenerator.schedule.analysisForBidMarket.dto.BidMarketResponseDto;
 
@@ -22,24 +23,28 @@ public class AnalysisForBidMarketService {
 
   private final CryptoApi cryptoApi;
   private final SimpleBidAlgorithm simpleBidAlgorithm;
+  private final StatusProperties statusProperties;
 
   public Boolean analysis() {
     return simpleBidAlgorithm.algorithm();
   }
 
-  public BidMarketResponseDto bid(String market, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException{
-    JsonObject response = cryptoApi.postBidOrders(market, price);    
+  public BidMarketResponseDto bid(String market, String price) {
     try {
-      return BidMarketResponseDto.builder()
-      .uuid(response.get("uuid").getAsString())
-      .market(response.get("market").getAsString())
-      .success(true)
-      .build();
+      JsonObject response = cryptoApi.postBidOrders(market, price);    
+      if(response.has("uuid")) {
+        return BidMarketResponseDto.builder()
+                .uuid(response.get("uuid").getAsString())
+                .market(response.get("market").getAsString())
+                .success(true)
+                .build();
+      }
     } catch (Exception e) {
-      return BidMarketResponseDto.builder()
-      .success(false)
-      .build();
+      log.info(e.getMessage());      
     }
+    return BidMarketResponseDto.builder()
+            .success(false)
+            .build();
   }
 
 }

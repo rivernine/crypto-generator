@@ -33,8 +33,8 @@ public class AnalysisForBidMarketJobConfiguration {
   private int chunkSize;
   @Value("${upbit.market}")
   private String market;
-  @Value("${upbit.price}")
-  private int price;
+  @Value("${upbit.balance}")
+  private int balance;
 
   @Bean(name = JOB_NAME)
   @Primary
@@ -46,11 +46,6 @@ public class AnalysisForBidMarketJobConfiguration {
             .from(analysisStep())
             .on("*")
             .to(bidStep())
-            .on("FAILED")
-            .end()
-            .from(bidStep())
-            .on("*")
-            .to(setStatusStep())
             .end()
             .build();
   }
@@ -58,7 +53,11 @@ public class AnalysisForBidMarketJobConfiguration {
   @Bean(name = JOB_NAME + "_analysisStep")
   public Step analysisStep() {
     return stepBuilderFactory.get(JOB_NAME + "_analysisStep")
-            .tasklet((stepContribution, chunkContext) -> {              
+            .tasklet((stepContribution, chunkContext) -> {     
+              if(statusProperties.getCurrentStatus() != 1){
+                stepContribution.setExitStatus(ExitStatus.FAILED);  
+                return RepeatStatus.FINISHED;
+              }         
               log.info(JOB_NAME + "_analysisStep");
               if(analysisForBidMarketService.analysis()){
                 stepContribution.setExitStatus(ExitStatus.COMPLETED);  
@@ -74,28 +73,32 @@ public class AnalysisForBidMarketJobConfiguration {
     return stepBuilderFactory.get(JOB_NAME + "_bidStep")
             .tasklet((stepContribution, chunkContext) -> {
               log.info(JOB_NAME + "_bidStep");
-              BidMarketResponseDto bidMarketResponseDto = analysisForBidMarketService.bid(market, Integer.toString(price));
-              if(bidMarketResponseDto.getSuccess()){
-                log.info("Success request bid, UUID: " + bidMarketResponseDto.getUuid());
-                stepContribution.setExitStatus(ExitStatus.COMPLETED);   
+              BidMarketResponseDto bidMarketResponseDto;
+              if( !statusProperties.getBidRunning() || statusProperties.getBidPending() ){
+                statusProperties.setBidRunning(true);
+                statusProperties.setBidPending(true);
+
+                String myBalance = statusProperties.getOrdersChanceDtoForBid().getBalance();
+                String myBalanceExceptFee = Double.toString(Double.parseDouble(myBalance) * 0.95);
+                bidMarketResponseDto = analysisForBidMarketService.bid(market, myBalanceExceptFee);
+                if(bidMarketResponseDto.getSuccess()){
+                  log.info("Success request bid, UUID: " + bidMarketResponseDto.getUuid());
+                  log.info("Set status (1 -> 10)");
+                  statusProperties.setCurrentStatus(10);
+                  statusProperties.setUsedBalance(Double.parseDouble(myBalanceExceptFee));
+                  stepContribution.setExitStatus(ExitStatus.COMPLETED);
+                  statusProperties.setBidPending(false);
+                } else {
+                  log.info("Failed request bid");
+                  stepContribution.setExitStatus(ExitStatus.FAILED); 
+                }
+                statusProperties.setBidRunning(false);
               } else {
-                log.info("Failed request bid");
+                log.info("Another bidding is running");
                 stepContribution.setExitStatus(ExitStatus.FAILED); 
               }
               return RepeatStatus.FINISHED;
             }).build();
   }
 
-  
-  @Bean(name = JOB_NAME + "_setStatusStep")
-  public Step setStatusStep() {
-    return stepBuilderFactory.get(JOB_NAME + "_setStatusStep")
-            .tasklet((stepContribution, chunkContext) -> {
-              log.info(JOB_NAME + "_setStatusStep");
-              log.info("Set status (1 -> 10)");
-              statusProperties.setCurrentStatus(10);
-              stepContribution.setExitStatus(ExitStatus.COMPLETED); 
-              return RepeatStatus.FINISHED;
-            }).build();
-  }
 }
