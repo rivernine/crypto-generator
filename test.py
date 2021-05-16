@@ -6,10 +6,12 @@ from urllib.parse import urlencode
 
 import requests
 
-
+access_key = "ZauMaQpd981oKUqA98KaSmP5Jw8moZF0aGcJxmp1"
+secret_key = "lxNuxDNpxvzZs69ErIFC7T5rqliubp5QIUlyiraD"
+server_url = "https://api.upbit.com"
 
 query = {
-    'market': 'KRW-ETH',
+    'market': 'KRW-XRP',
 }
 query_string = urlencode(query).encode()
 

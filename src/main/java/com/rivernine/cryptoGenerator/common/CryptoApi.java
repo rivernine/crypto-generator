@@ -29,8 +29,8 @@ public class CryptoApi {
     return upbitApi.getMarket(market);
   }
 
-  public Double getPrice(String market) {
-    return upbitApi.getMarket(market).get("trade_price").getAsDouble();
+  public String getPrice(String market) {
+    return upbitApi.getMarket(market).get("trade_price").getAsString();
   }
   
   // 시장가 매수
