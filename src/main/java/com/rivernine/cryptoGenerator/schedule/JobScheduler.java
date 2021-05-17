@@ -40,6 +40,17 @@ public class JobScheduler {
   @Value("${upbit.market}")	
   private String market;  
 
+  @Qualifier("analysisForBuyMarket")
+  @Autowired
+  private final Job analysisForBuyMarketJob;
+
+  @Qualifier("analysisForSellMarket")
+  @Autowired
+  private final Job analysisForSellMarketJob;
+
+  @Value("${testParameter.currentStatus}")
+  private int currentStatus;
+
   // Collect markets
   // @Scheduled(fixedRateString = "${schedule.collectDelay}")
   public void runCollectMarketJob() {
