@@ -1,7 +1,9 @@
 package com.rivernine.cryptoGenerator.schedule.analysisForAskMarket.algorithm;
 
 import com.rivernine.cryptoGenerator.config.StatusProperties;
+import com.rivernine.cryptoGenerator.schedule.ordersChance.dto.OrdersChanceDtoForAsk;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -10,21 +12,27 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class SimpleAskAlgorithm {
   
-  public Boolean algorithm(Double currentPrice, StatusProperties statusProperties) {
-    // Market balance
-    Double balance = Double.parseDouble(statusProperties.getOrdersChanceDtoForAsk().getBalance());
-    Double avgBuyPrice = Double.parseDouble(statusProperties.getOrdersChanceDtoForAsk().getAvg_buy_price());
-    // KRW
-    Double usedBalance = statusProperties.getUsedBalance();
-    Double askBalance = balance * currentPrice;
-    Double askFee = askBalance * 0.0005;
-    Double bidFee = usedBalance * 0.0005;
+  @Value("${testParameter.skipAskAlgorithm}")
+  private Boolean skipAskAlgorithm;
 
-    Double targetBalance = usedBalance + askFee + bidFee;
-    Double targetPrice = targetBalance / balance;
-    log.info("My average buy price: " + Double.toString(avgBuyPrice));
+  public Boolean algorithm(Double currentPrice, StatusProperties statusProperties) {    
+    OrdersChanceDtoForAsk ordersChanceDtoForAsk = statusProperties.getOrdersChanceDtoForAsk();
+
+    Double tradePaidFee = Double.parseDouble(ordersChanceDtoForAsk.getPaidFee());
+    Double tradePrice = Double.parseDouble(ordersChanceDtoForAsk.getTradePrice());
+    Double tradeVolume = Double.parseDouble(ordersChanceDtoForAsk.getTradeVolume());
+    Double tradeFunds =  Double.parseDouble(ordersChanceDtoForAsk.getTradeFunds());
+
+    Double expectedReturn = currentPrice * tradeVolume;
+    Double threshold = tradeFunds + tradePaidFee;
+    Double targetPrice = threshold / tradeVolume;
+
+    log.info("My average buy price: " + Double.toString(tradePrice));
     log.info("Target price: " + Double.toString(targetPrice));
     
+    if(skipAskAlgorithm)
+      return true;
+      
     if( currentPrice >= targetPrice ){
       return true;
     } else {

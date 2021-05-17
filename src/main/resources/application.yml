@@ -10,7 +10,7 @@ upbit:
   secretKey: ${secretKey:NONE}
   # markets: ${markets:krw-btc}
   market: ${market:KRW-BTC}
-  balance: ${balance:5000}
+  balance: ${balance:-1.0}
 
 schedule:
   chunkSize: 100  
@@ -22,8 +22,8 @@ testParameter:
   # 10: 매수주문완료, 11: 매수체결
   # 20: 매도주문완료
   currentStatus: ${currentStatus:0}
-  analysisForBidReturn: ${analysisForBidReturn:false}
-  analysisForAskReturn: ${analysisForAskReturn:false}
+  skipBidAlgorithm: ${skipBidAlgorithm:false}
+  skipAskAlgorithm: ${skipAskAlgorithm:false}
 
 ---
 

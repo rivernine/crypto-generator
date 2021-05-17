@@ -8,17 +8,15 @@ import lombok.ToString;
 @ToString
 @Getter
 @NoArgsConstructor
-public class OrdersChanceDto {
+public class OrdersChanceDtoForBid {
   private String currency;
   private String balance;  
   private String locked;  
-  private String avg_buy_price;
   
   @Builder
-  public OrdersChanceDto(String currency, String balance, String locked, String avg_buy_price) {
+  public OrdersChanceDtoForBid(String currency, String balance, String locked) {
     this.currency = currency;
     this.balance = balance;
     this.locked = locked;
-    this.avg_buy_price = avg_buy_price;
   }
 }

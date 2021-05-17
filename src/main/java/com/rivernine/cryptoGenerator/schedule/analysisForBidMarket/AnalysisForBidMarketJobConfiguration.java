@@ -34,7 +34,7 @@ public class AnalysisForBidMarketJobConfiguration {
   @Value("${upbit.market}")
   private String market;
   @Value("${upbit.balance}")
-  private int balance;
+  private Double balance;
 
   @Bean(name = JOB_NAME)
   @Primary
@@ -58,7 +58,6 @@ public class AnalysisForBidMarketJobConfiguration {
                 stepContribution.setExitStatus(ExitStatus.FAILED);  
                 return RepeatStatus.FINISHED;
               }         
-              log.info(JOB_NAME + "_analysisStep");
               if(analysisForBidMarketService.analysis()){
                 stepContribution.setExitStatus(ExitStatus.COMPLETED);  
               } else {
@@ -72,22 +71,24 @@ public class AnalysisForBidMarketJobConfiguration {
   public Step bidStep() {
     return stepBuilderFactory.get(JOB_NAME + "_bidStep")
             .tasklet((stepContribution, chunkContext) -> {
-              log.info(JOB_NAME + "_bidStep");
-              BidMarketResponseDto bidMarketResponseDto;
               if( !statusProperties.getBidRunning() || statusProperties.getBidPending() ){
                 statusProperties.setBidRunning(true);
                 statusProperties.setBidPending(true);
 
                 String myBalance = statusProperties.getOrdersChanceDtoForBid().getBalance();
                 String myBalanceExceptFee = Double.toString(Double.parseDouble(myBalance) * 0.95);
-                bidMarketResponseDto = analysisForBidMarketService.bid(market, myBalanceExceptFee);
+                if(balance != -1.0){
+                  myBalanceExceptFee = Double.toString(balance);
+                }
+                BidMarketResponseDto bidMarketResponseDto = analysisForBidMarketService.bid(market, myBalanceExceptFee);
+
                 if(bidMarketResponseDto.getSuccess()){
                   log.info("Success request bid, UUID: " + bidMarketResponseDto.getUuid());
                   log.info("Set status (1 -> 10)");
-                  statusProperties.setCurrentStatus(10);
-                  statusProperties.setUsedBalance(Double.parseDouble(myBalanceExceptFee));
                   stepContribution.setExitStatus(ExitStatus.COMPLETED);
+                  statusProperties.setUuid(bidMarketResponseDto.getUuid());
                   statusProperties.setBidPending(false);
+                  statusProperties.setCurrentStatus(10);
                 } else {
                   log.info("Failed request bid");
                   stepContribution.setExitStatus(ExitStatus.FAILED); 

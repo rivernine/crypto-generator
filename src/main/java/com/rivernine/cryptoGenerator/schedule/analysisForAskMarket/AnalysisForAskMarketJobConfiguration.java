@@ -54,7 +54,6 @@ public class AnalysisForAskMarketJobConfiguration {
                 stepContribution.setExitStatus(ExitStatus.FAILED);  
                 return RepeatStatus.FINISHED;
               }
-              log.info(JOB_NAME + "_analysisStep");
               if(analysisForAskMarketService.analysis(market, statusProperties)) {
                 stepContribution.setExitStatus(ExitStatus.COMPLETED);  
               } else {
@@ -69,27 +68,26 @@ public class AnalysisForAskMarketJobConfiguration {
   public Step askStep() {
     return stepBuilderFactory.get(JOB_NAME + "_askStep")
             .tasklet((stepContribution, chunkContext) -> {
-              log.info(JOB_NAME + "_askStep");
-              AskMarketResponseDto askMarketResponseDto;
               if( !statusProperties.getAskRunning() || statusProperties.getAskPending() ) {
                 statusProperties.setAskRunning(true);
                 statusProperties.setAskPending(true);
-                askMarketResponseDto = analysisForAskMarketService.ask(market, statusProperties.getOrdersChanceDtoForAsk().getBalance());
+                String myTotalBalance = statusProperties.getOrdersChanceDtoForAsk().getTradeVolume();
+                AskMarketResponseDto askMarketResponseDto = analysisForAskMarketService.ask(market, myTotalBalance);
                 if(askMarketResponseDto.getSuccess()){
                   log.info("Success request ask, UUID: " + askMarketResponseDto.getUuid());
                   log.info("Set status (11 -> 20)");
-                  statusProperties.setCurrentStatus(20);
                   stepContribution.setExitStatus(ExitStatus.COMPLETED);   
+                  statusProperties.setCurrentStatus(20);
                   statusProperties.setAskPending(false);
                 } else {
                   log.info("Failed request ask");
                   stepContribution.setExitStatus(ExitStatus.FAILED); 
                 }
+                statusProperties.setAskRunning(false);
               } else {
                 log.info("Another asking is running");
                 stepContribution.setExitStatus(ExitStatus.FAILED); 
               }
-              
               return RepeatStatus.FINISHED;
             }).build();
   }

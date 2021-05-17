@@ -41,7 +41,7 @@ public class JobScheduler {
   private String market;  
 
   // Collect markets
-  @Scheduled(fixedRateString = "${schedule.collectDelay}")
+  // @Scheduled(fixedRateString = "${schedule.collectDelay}")
   public void runCollectMarketJob() {
     // collectMarketJobConfiguration.collectMarketJob(market);
     log.info("runCollectMarketJob()");
@@ -51,7 +51,7 @@ public class JobScheduler {
   @Scheduled(fixedRateString = "${schedule.analysisDelay}")
   public void runAnalysisMarketJob() {
     try {
-      log.info(Integer.toString(statusProperties.getCurrentStatus()));
+      log.info("[Current Status: " + Integer.toString(statusProperties.getCurrentStatus()) + "]");
       switch(statusProperties.getCurrentStatus()) {
         case 0:        
           // 프로그램 시작상태
@@ -70,8 +70,8 @@ public class JobScheduler {
         case 10:
           // 매수주문완료 상태
           // 체결 여부를 파악
-          log.info("[currentStatus: 10] [ordersChanceJob] ");
-          ordersChanceJobConfiguration.getOrdersChanceForAskJob(market);
+          log.info("[currentStatus: 10] [getOrdersChanceForAskJob] ");
+          ordersChanceJobConfiguration.getOrdersChanceForAskJob(market, statusProperties.getUuid());
           break;
         case 11:
           // 매수체결 상태

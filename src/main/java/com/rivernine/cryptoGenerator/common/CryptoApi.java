@@ -29,8 +29,8 @@ public class CryptoApi {
     return upbitApi.getMarket(market);
   }
 
-  public String getPrice(String market) {
-    return upbitApi.getMarket(market).get("trade_price").getAsString();
+  public Double getPrice(String market) {
+    return upbitApi.getMarket(market).get("trade_price").getAsDouble();
   }
   
   // 시장가 매수
@@ -59,5 +59,9 @@ public class CryptoApi {
 
   public JsonObject getOrdersChanceForAsk(String market) throws NoSuchAlgorithmException, UnsupportedEncodingException{
     return upbitApi.getOrdersChance(market).get("ask_account").getAsJsonObject();
+  }
+
+  public JsonObject getOrder(String uuid) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    return upbitApi.getOrder(uuid);
   }
 }

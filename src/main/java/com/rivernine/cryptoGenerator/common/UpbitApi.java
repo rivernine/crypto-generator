@@ -152,9 +152,11 @@ public class UpbitApi {
     return result;
   }
 
-  public void getOrder() throws NoSuchAlgorithmException, UnsupportedEncodingException {    
+  public JsonObject getOrder(String uuid) throws NoSuchAlgorithmException, UnsupportedEncodingException {    
+    JsonObject result = null;
+
     HashMap<String, String> params = new HashMap<>();
-    params.put("uuid", "9ca023a5-851b-4fec-9f0a-48cd83c2eaae");
+    params.put("uuid", uuid);
 
     ArrayList<String> queryElements = new ArrayList<>();
     for(Map.Entry<String, String> entity : params.entrySet()) {
@@ -187,10 +189,14 @@ public class UpbitApi {
         HttpResponse response = client.execute(request);
         HttpEntity entity = response.getEntity();
 
-        System.out.println(EntityUtils.toString(entity, "UTF-8"));
+        String jsonString = EntityUtils.toString(entity, "UTF-8");
+        System.out.println(jsonString);
+        result = gson.fromJson(jsonString, JsonObject.class);
     } catch (IOException e) {
         e.printStackTrace();
     }
+    
+    return result;
   }
 
 }

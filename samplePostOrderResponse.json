@@ -1,0 +1,17 @@
+{
+  "uuid": "4eec4626-491c-4552-8673-d18c1fedfaeb",
+  "side": "bid",
+  "ord_type": "price",
+  "price": "5000.0",
+  "state": "wait",
+  "market": "KRW-DOGE",
+  "created_at": "2021-05-17T10:56:02+09:00",
+  "volume": null,
+  "remaining_volume": null,
+  "reserved_fee": "2.5",
+  "remaining_fee": "2.5",
+  "paid_fee": "0.0",
+  "locked": "5002.5",
+  "executed_volume": "0.0",
+  "trades_count": 0
+}
