@@ -6,7 +6,7 @@ build/
 !**/src/test/**/build/
 
 start.bat
-test.py
+python/test.py
 
 ### STS ###
 .apt_generated

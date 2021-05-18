@@ -28,6 +28,7 @@ public class SimpleAskAlgorithm {
     Double targetPrice = threshold / tradeVolume;
 
     log.info("My average buy price: " + Double.toString(tradePrice));
+    log.info("Current price: " + Double.toString(currentPrice));
     log.info("Target price: " + Double.toString(targetPrice));
     
     if(skipAskAlgorithm)
