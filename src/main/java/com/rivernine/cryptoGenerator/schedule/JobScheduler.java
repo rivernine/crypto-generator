@@ -60,7 +60,7 @@ public class JobScheduler {
 
   // Analysis market
   @Scheduled(fixedRateString = "${schedule.analysisDelay}")
-  public void runAnalysisMarketJob() {
+  public void runAnalysisMarketBidAskJob() {
     try {
       log.info("[Current Status: " + Integer.toString(statusProperties.getCurrentStatus()) + "]");
       switch(statusProperties.getCurrentStatus()) {
@@ -102,6 +102,14 @@ public class JobScheduler {
       }
     } catch (Exception e) {
       log.info(e.getMessage());
+    }
+  }
+
+  public void runScaleTradingJob() {
+    try {
+
+    } catch (Exception e) {
+      log.info("Exception!!." + e.getMessage());
     }
   }
 }
