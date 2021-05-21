@@ -17,6 +17,5 @@ public class ScaleTradeStatusProperties {
   // 10: analysisForBid
   // 11: bid
   // 12: listen
-  // 13: 
   public int currentStatus;
 }
