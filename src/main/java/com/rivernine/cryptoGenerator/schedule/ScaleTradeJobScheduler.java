@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class JobScheduler {
+public class ScaleTradeJobScheduler {
 
   private final JobLauncher jobLauncher;
   private final CollectMarketJobConfiguration collectMarketJobConfiguration;
@@ -105,4 +105,11 @@ public class JobScheduler {
     }
   }
 
+  public void runScaleTradingJob() {
+    try {
+
+    } catch (Exception e) {
+      log.info("Exception!!." + e.getMessage());
+    }
+  }
 }
