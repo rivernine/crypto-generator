@@ -1,5 +1,10 @@
 package com.rivernine.cryptoGenerator.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.rivernine.cryptoGenerator.schedule.collectMarket.dto.GetCandlesDto;
+
 import org.springframework.stereotype.Component;
 
 import lombok.Getter;
@@ -18,4 +23,9 @@ public class ScaleTradeStatusProperties {
   // 11: bid
   // 12: listen
   public int currentStatus;
+  public List<GetCandlesDto> getCandlesDtoList = new ArrayList<>();
+
+  public void setCandlesDtoList(GetCandlesDto getCandlesDto){
+    getCandlesDtoList.add(getCandlesDto);
+  }
 }

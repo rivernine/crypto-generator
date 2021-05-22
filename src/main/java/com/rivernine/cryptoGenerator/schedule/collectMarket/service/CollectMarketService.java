@@ -6,6 +6,7 @@ import javax.transaction.Transactional;
 
 import com.google.gson.JsonObject;
 import com.rivernine.cryptoGenerator.common.CryptoApi;
+import com.rivernine.cryptoGenerator.config.ScaleTradeStatusProperties;
 import com.rivernine.cryptoGenerator.domain.crypto.Crypto;
 import com.rivernine.cryptoGenerator.domain.crypto.CryptoRepository;
 import com.rivernine.cryptoGenerator.schedule.collectMarket.dto.CollectMarketSaveDto;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class CollectMarketService {
 
+  private final ScaleTradeStatusProperties scaleTradeStatusProperties;
   private final CryptoRepository cryptoRepository;
   private final CryptoApi cryptoApi;
   
@@ -34,7 +36,10 @@ public class CollectMarketService {
   }
 
   public JsonObject[] getCandles(String market, String minutes, String count) {
-    return cryptoApi.getCandles(market, minutes, count);
+    JsonObject[] candles = cryptoApi.getCandles(market, minutes, count);
+    for(JsonObject candle: candles){
+      scaleTradeStatusProperties.
+    }
   }
 
   @Transactional
