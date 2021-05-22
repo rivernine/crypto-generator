@@ -33,6 +33,10 @@ public class CollectMarketService {
               .build();
   }
 
+  public JsonObject[] getCandles(String market, String minutes, String count) {
+    return cryptoApi.getCandles(market, minutes, count);
+  }
+
   @Transactional
   public void save(CollectMarketSaveDto collectMarketSaveDto){
     cryptoRepository.save(collectMarketSaveDto.toEntity());

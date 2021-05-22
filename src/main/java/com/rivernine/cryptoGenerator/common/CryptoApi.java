@@ -29,6 +29,10 @@ public class CryptoApi {
     return upbitApi.getMarket(market);
   }
 
+  public JsonObject[] getCandles(String market, String minutes, String count){
+    return upbitApi.getCandles(market, minutes, count);
+  }
+
   public Double getPrice(String market) {
     return upbitApi.getMarket(market).get("trade_price").getAsDouble();
   }

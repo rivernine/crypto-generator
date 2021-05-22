@@ -3,6 +3,7 @@ package com.rivernine.cryptoGenerator.schedule;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import com.rivernine.cryptoGenerator.config.ScaleTradeStatusProperties;
 import com.rivernine.cryptoGenerator.config.StatusProperties;
 import com.rivernine.cryptoGenerator.schedule.collectMarket.CollectMarketJobConfiguration;
 import com.rivernine.cryptoGenerator.schedule.ordersChance.OrdersChanceJobConfiguration;
@@ -24,51 +25,20 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class ScaleTradeJobScheduler {
 
-  private final JobLauncher jobLauncher;
-  private final CollectMarketJobConfiguration collectMarketJobConfiguration;
-  private final OrdersChanceJobConfiguration ordersChanceJobConfiguration;
-
-  @Qualifier("analysisForBidMarket")
-  @Autowired
-  private final Job analysisForBidMarketJob;
-  @Qualifier("analysisForAskMarket")
-  @Autowired
-  private final Job analysisForAskMarketJob;
-
-  private final StatusProperties statusProperties;
-
   @Value("${upbit.market}")	
   private String market;  
 
-  @Qualifier("analysisForBuyMarket")
-  @Autowired
-  private final Job analysisForBuyMarketJob;
+  private final ScaleTradeStatusProperties scaleTradeStatusProperties;
+  private final CollectMarketJobConfiguration collectMarketJobConfiguration;
 
-  @Qualifier("analysisForSellMarket")
-  @Autowired
-  private final Job analysisForSellMarketJob;
-
-  @Value("${testParameter.currentStatus}")
-  private int currentStatus;
-
-  // Collect markets
-  // @Scheduled(fixedRateString = "${schedule.collectDelay}")
-  public void runCollectMarketJob() {
-    // collectMarketJobConfiguration.collectMarketJob(market);
-    log.info("runCollectMarketJob()");
-  }
-
-  // Analysis market
-  @Scheduled(fixedRateString = "${schedule.analysisDelay}")
-  public void runAnalysisMarketBidAskJob() {
+  // @Scheduled(fixedRateString = "${schedule.analysisDelay}")
+  @Scheduled(fixedDelay = 1000)
+  public void runScaleTradingJob() {
     try {
-      log.info("[Current Status: " + Integer.toString(statusProperties.getCurrentStatus()) + "]");
-      switch(statusProperties.getCurrentStatus()) {
+      switch(scaleTradeStatusProperties.getCurrentStatus()) {
         case 0:        
-          // 프로그램 시작상태
-          // db에서 현재 저장된 상태를 읽어옴
           log.info("[currentStatus: 0] [getOrdersChanceForBidJob] ");
-          ordersChanceJobConfiguration.getOrdersChanceForBidJob(market);
+          collectMarketJobConfiguration.getOrdersChanceForBidJob(market);
           break;
         case 1:
           // 매수 전 상태
@@ -104,12 +74,3 @@ public class ScaleTradeJobScheduler {
       log.info(e.getMessage());
     }
   }
-
-  public void runScaleTradingJob() {
-    try {
-
-    } catch (Exception e) {
-      log.info("Exception!!." + e.getMessage());
-    }
-  }
-}

@@ -52,6 +52,13 @@ public class UpbitApi {
     return jsonObjectArray[0];
   }  
 
+  public JsonObject[] getCandles(String market, String minutes, String count){
+    String jsonString = restTemplate.getForObject(
+                          serverUrl + "/v1/candles/minutes/" + minutes + "?market=" + market + "&count=" + count, String.class);
+    JsonObject[] jsonObjectArray = gson.fromJson(jsonString, JsonObject[].class);
+    return jsonObjectArray;
+  }
+
   public JsonObject postOrders(String market, String side, String volume, String price, String ordType) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     JsonObject result = null;
     HashMap<String, String> params = new HashMap<>();
