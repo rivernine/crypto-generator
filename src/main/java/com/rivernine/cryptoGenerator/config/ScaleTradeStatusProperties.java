@@ -3,7 +3,7 @@ package com.rivernine.cryptoGenerator.config;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.rivernine.cryptoGenerator.schedule.collectMarket.dto.CandleDto;
+import com.rivernine.cryptoGenerator.schedule.getCandle.dto.CandleDto;
 
 import org.springframework.stereotype.Component;
 
@@ -25,12 +25,7 @@ public class ScaleTradeStatusProperties {
   // 11: bid
   // 12: listen
   public int currentStatus;
-  // public List<CandlesDto> candlesDtoList = new ArrayList<>();
   public Map<String, CandleDto> candleDtoMap = new HashMap<>();
-
-  // public void setCandlesDtoList(CandlesDto candlesDto){
-  //   getCandlesDtoList.add(candlesDto);
-  // }
 
   public void addCandlesDtoMap(String key, CandleDto candleDto) {
     if(candleDtoMap.containsKey(key)) {

@@ -22,12 +22,4 @@ public class CollectMarketJobConfiguration {
     CollectMarketSaveDto collectMarketSaveDto = collectMarketService.getMarket(market);
     collectMarketService.save(collectMarketSaveDto);
   } 
-
-  public void getCandlesJob(String market, String minutes, String count) {
-    collectMarketService.getCandles(market, minutes, count);
-  }
-
-  public void printCandlesJob() {
-    collectMarketService.printCandles();
-  }
 }

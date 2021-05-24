@@ -1,12 +1,8 @@
 package com.rivernine.cryptoGenerator.schedule;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 import com.rivernine.cryptoGenerator.config.ScaleTradeStatusProperties;
-import com.rivernine.cryptoGenerator.schedule.collectMarket.CollectMarketJobConfiguration;
+import com.rivernine.cryptoGenerator.schedule.getCandle.GetCandleJobConfiguration;
 
-import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -23,17 +19,21 @@ public class ScaleTradeJobScheduler {
   private String market;  
 
   private final ScaleTradeStatusProperties scaleTradeStatusProperties;
-  private final CollectMarketJobConfiguration collectMarketJobConfiguration;
+  private final GetCandleJobConfiguration getCandleJobConfiguration;
 
-  // @Scheduled(fixedRateString = "${schedule.analysisDelay}")
+  @Scheduled(fixedDelay = 1000)
+  public void runGetCandlesJob() {
+    log.info("[currentStatus: "+scaleTradeStatusProperties.getCurrentStatus()+"] [getCandlesJob market/minutes/count] ");
+    getCandleJobConfiguration.getCandlesJob(market, "1", "2");
+    getCandleJobConfiguration.printCandlesJob();
+  }
+
   @Scheduled(fixedDelay = 1000)
   public void runScaleTradingJob() {
     try {
       switch(scaleTradeStatusProperties.getCurrentStatus()) {
         case 0:        
           log.info("[currentStatus: 0] [getCandlesJob market/minutes/count] ");
-          collectMarketJobConfiguration.getCandlesJob(market, "1", "2");
-          collectMarketJobConfiguration.printCandlesJob();
           break;
         case 1:
           log.info("[currentStatus: 1] [analysisForBidMarketJob] ");
