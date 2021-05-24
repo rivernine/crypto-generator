@@ -40,14 +40,6 @@ public class JobScheduler {
   @Value("${upbit.market}")	
   private String market;  
 
-  @Qualifier("analysisForBuyMarket")
-  @Autowired
-  private final Job analysisForBuyMarketJob;
-
-  @Qualifier("analysisForSellMarket")
-  @Autowired
-  private final Job analysisForSellMarketJob;
-
   @Value("${testParameter.currentStatus}")
   private int currentStatus;
 
@@ -59,7 +51,7 @@ public class JobScheduler {
   }
 
   // Analysis market
-  @Scheduled(fixedRateString = "${schedule.analysisDelay}")
+  // @Scheduled(fixedRateString = "${schedule.analysisDelay}")
   public void runAnalysisMarketBidAskJob() {
     try {
       log.info("[Current Status: " + Integer.toString(statusProperties.getCurrentStatus()) + "]");

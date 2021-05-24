@@ -44,7 +44,7 @@ public class CollectMarketService {
       String candleDateTimeKst = candle.get("candle_date_time_kst").getAsString();
       Double openingPrice = candle.get("opening_price").getAsDouble();
       Double tradePrice = candle.get("trade_price").getAsDouble();
-      Integer flag;
+      int flag;
       if(openingPrice > tradePrice)
         flag = 1;
       else if(openingPrice == tradePrice)
@@ -63,8 +63,12 @@ public class CollectMarketService {
                               .build();
 
       scaleTradeStatusProperties.addCandlesDtoMap(candleDateTimeKst, candleDto);
-      log.info(candleDto.toString());
+      // log.info(candleDto.toString());
     }
+  }
+
+  public void printCandles() {
+    scaleTradeStatusProperties.printCandlesDtoMap();
   }
 
   @Transactional

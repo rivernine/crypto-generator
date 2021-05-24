@@ -26,4 +26,8 @@ public class CollectMarketJobConfiguration {
   public void getCandlesJob(String market, String minutes, String count) {
     collectMarketService.getCandles(market, minutes, count);
   }
+
+  public void printCandlesJob() {
+    collectMarketService.printCandles();
+  }
 }

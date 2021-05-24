@@ -39,4 +39,10 @@ public class ScaleTradeStatusProperties {
       candleDtoMap.put(key, candleDto);
     }
   }
+  
+  public void printCandlesDtoMap() {
+    for(String key: candleDtoMap.keySet()) {
+      log.info(candleDtoMap.get(key).toString());
+    }
+  }
 }

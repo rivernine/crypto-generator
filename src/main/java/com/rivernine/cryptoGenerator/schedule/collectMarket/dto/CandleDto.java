@@ -15,10 +15,10 @@ public class CandleDto {
   private Double highPrice;     // 고가
   private Double lowPrice;      // 저가
   private Double tradePrice;    // 종가
-  private Integer flag;         // -1: 음봉, 0: 보합, 1: 양봉
+  private int flag;         // -1: 음봉, 0: 보합, 1: 양봉
 
   @Builder
-  public CandleDto(String market, String candleDateTime, Double openingPrice, Double highPrice, Double lowPrice, Double tradePrice, Integer flag){
+  public CandleDto(String market, String candleDateTime, Double openingPrice, Double highPrice, Double lowPrice, Double tradePrice, int flag){
     this.market = market;
     this.candleDateTime = candleDateTime;
     this.openingPrice = openingPrice;

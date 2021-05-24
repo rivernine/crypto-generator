@@ -32,7 +32,8 @@ public class ScaleTradeJobScheduler {
       switch(scaleTradeStatusProperties.getCurrentStatus()) {
         case 0:        
           log.info("[currentStatus: 0] [getCandlesJob market/minutes/count] ");
-          collectMarketJobConfiguration.getCandlesJob(market, "5", "1");
+          collectMarketJobConfiguration.getCandlesJob(market, "1", "2");
+          collectMarketJobConfiguration.printCandlesJob();
           break;
         case 1:
           log.info("[currentStatus: 1] [analysisForBidMarketJob] ");
