@@ -23,7 +23,7 @@ public class CollectMarketJobConfiguration {
     collectMarketService.save(collectMarketSaveDto);
   } 
 
-  public JsonObject[] getCandlesJob(String market, String minutes, String count) {
-    return collectMarketService.getCandles(market, minutes, count);
+  public void getCandlesJob(String market, String minutes, String count) {
+    collectMarketService.getCandles(market, minutes, count);
   }
 }

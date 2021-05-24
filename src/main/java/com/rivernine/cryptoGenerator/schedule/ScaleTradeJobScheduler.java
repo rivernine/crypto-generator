@@ -51,3 +51,4 @@ public class ScaleTradeJobScheduler {
       log.info(e.getMessage());
     }
   }
+}

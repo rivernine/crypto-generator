@@ -8,17 +8,17 @@ import lombok.ToString;
 @Getter
 @ToString
 @NoArgsConstructor
-public class GetCandlesDto {
+public class CandleDto {
   private String market;
   private String candleDateTime;
   private Double openingPrice;  // 시가
   private Double highPrice;     // 고가
   private Double lowPrice;      // 저가
   private Double tradePrice;    // 종가
-  private Boolean flag;         // 0: 음봉, 1: 양봉
+  private Integer flag;         // -1: 음봉, 0: 보합, 1: 양봉
 
   @Builder
-  public GetCandlesDto(String market, String candleDateTime, Double openingPrice, Double highPrice, Double lowPrice, Double tradePrice, Boolean flag){
+  public CandleDto(String market, String candleDateTime, Double openingPrice, Double highPrice, Double lowPrice, Double tradePrice, Integer flag){
     this.market = market;
     this.candleDateTime = candleDateTime;
     this.openingPrice = openingPrice;

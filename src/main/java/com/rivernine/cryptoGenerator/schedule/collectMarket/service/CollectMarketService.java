@@ -9,12 +9,15 @@ import com.rivernine.cryptoGenerator.common.CryptoApi;
 import com.rivernine.cryptoGenerator.config.ScaleTradeStatusProperties;
 import com.rivernine.cryptoGenerator.domain.crypto.Crypto;
 import com.rivernine.cryptoGenerator.domain.crypto.CryptoRepository;
+import com.rivernine.cryptoGenerator.schedule.collectMarket.dto.CandleDto;
 import com.rivernine.cryptoGenerator.schedule.collectMarket.dto.CollectMarketSaveDto;
 
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class CollectMarketService {
@@ -25,7 +28,7 @@ public class CollectMarketService {
   
   public CollectMarketSaveDto getMarket(String market) {
     JsonObject jsonObject = cryptoApi.getMarket(market);
-    return  CollectMarketSaveDto.builder()
+    return CollectMarketSaveDto.builder()
               .market(jsonObject.get("market").getAsString())
               .tradeDate(jsonObject.get("trade_date_kst").getAsString()+jsonObject.get("trade_time_kst").getAsString())
               .price(jsonObject.get("trade_price").getAsDouble())
@@ -35,10 +38,32 @@ public class CollectMarketService {
               .build();
   }
 
-  public JsonObject[] getCandles(String market, String minutes, String count) {
+  public void getCandles(String market, String minutes, String count) {
     JsonObject[] candles = cryptoApi.getCandles(market, minutes, count);
     for(JsonObject candle: candles){
-      scaleTradeStatusProperties.
+      String candleDateTimeKst = candle.get("candle_date_time_kst").getAsString();
+      Double openingPrice = candle.get("opening_price").getAsDouble();
+      Double tradePrice = candle.get("trade_price").getAsDouble();
+      Integer flag;
+      if(openingPrice > tradePrice)
+        flag = 1;
+      else if(openingPrice == tradePrice)
+        flag = 0;
+      else
+        flag = -1;
+
+      CandleDto candleDto = CandleDto.builder()
+                              .market(candle.get("market").getAsString())
+                              .candleDateTime(candleDateTimeKst)
+                              .openingPrice(openingPrice)
+                              .highPrice(candle.get("high_price").getAsDouble())
+                              .lowPrice(candle.get("low_price").getAsDouble())
+                              .tradePrice(tradePrice)
+                              .flag(flag)
+                              .build();
+
+      scaleTradeStatusProperties.addCandlesDtoMap(candleDateTimeKst, candleDto);
+      log.info(candleDto.toString());
     }
   }
 
