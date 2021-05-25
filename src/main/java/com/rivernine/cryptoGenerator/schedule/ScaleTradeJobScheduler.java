@@ -49,21 +49,22 @@ public class ScaleTradeJobScheduler {
     }
   }
 
-  public void runGetOrdersChanceForBidJob() {
-    OrdersChanceDtoForBid ordersChanceDtoForBid = ordersChanceJobConfiguration.getOrdersChanceForBidJob(market);
-  }
-
-
   // @Scheduled(fixedDelay = 1000)
   public void runScaleTradingJob() {
     try {
       switch(statusProperties.getCurrentStatus()) {
+        case -1:
+          scaleTradeStatusProperties.init();
+          break;
         case 0:        
           log.info("[analysisCandles to bid");
           runAnalysisCandlesJob();
           break;
         case 1:
           log.info("[bid] ");
+          break;
+        case 11:
+          log.info("[listen to complete]");
           break;
         case 2:
           log.info("[ask] ");

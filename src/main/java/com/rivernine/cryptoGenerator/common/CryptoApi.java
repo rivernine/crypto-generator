@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 
 import com.google.gson.JsonObject;
+import com.rivernine.cryptoGenerator.common.dto.BidMarketResponseDto;
 import com.rivernine.cryptoGenerator.common.service.CryptoApiService;
 
 import org.springframework.stereotype.Component;
@@ -25,7 +26,7 @@ public class CryptoApi {
   }
 
   public Double getPrice(String market) {
-    return cryptoApiService.getMarket(market).get("trade_price").getAsDouble();
+    return cryptoApiService.getPrice(market);
   }
   
   // 시장가 매수
@@ -60,7 +61,7 @@ public class CryptoApi {
     return cryptoApiService.getOrder(uuid);
   }
 
-  public void bid(String market, String price, String volume) throws NoSuchAlgorithmException, UnsupportedEncodingException{
-    cryptoApiService.bid(market, price, volume);
+  public BidMarketResponseDto bid(String market, String price, String volume) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+    return cryptoApiService.bid(market, price, volume);
   }
 }

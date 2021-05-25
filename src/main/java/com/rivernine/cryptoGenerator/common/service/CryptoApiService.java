@@ -66,24 +66,27 @@ public class CryptoApiService {
     return upbitApi.getOrder(uuid);
   }
 
-  public void bid(String market, String price, String volume) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+  public BidMarketResponseDto bid(String market, String price, String volume) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+    BidMarketResponseDto bidMarketResponseDto = BidMarketResponseDto.builder()
+                                    .success(false)
+                                    .build();
     if( !statusProperties.getBidRunning() || statusProperties.getBidPending() ) {
       statusProperties.setBidRunning(true);
       statusProperties.setBidPending(true);
-      String myBalance = statusProperties.getOrdersChanceDtoForBid().getBalance();
+
       List<String> pricePerBidLevel = scaleTradeStatusProperties.getPricePerLevel();
       int level = scaleTradeStatusProperties.getLevel();
       JsonObject response = postBidOrdersSetPrice(market, price, pricePerBidLevel.get(level));
       if(!response.has("error")) {
-        scaleTradeStatusProperties.addBidInfoPerLevel(BidMarketResponseDto.builder()
-                                                        .uuid(response.get("uuid").getAsString())
-                                                        .market(response.get("market").getAsString())
-                                                        .success(true)
-                                                        .build());
+        bidMarketResponseDto.setUuid(response.get("uuid").getAsString());
+        bidMarketResponseDto.setMarket(response.get("market").getAsString());
+        bidMarketResponseDto.setSuccess(true);
+        scaleTradeStatusProperties.addBidInfoPerLevel(bidMarketResponseDto);
         statusProperties.setBidPending(false);
       }
-
       statusProperties.setBidRunning(false);
     }
+
+    return bidMarketResponseDto;
   }
 }
