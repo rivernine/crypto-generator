@@ -39,7 +39,7 @@ public class ScaleTradeJobScheduler {
   }
 
   @Scheduled(fixedDelay = 1000)
-  public void runGetRecentCandlesJob() {
+  public void runAnalysisCandlesJob() {
     log.info("[currentStatus: "+statusProperties.getCurrentStatus()+"] [getRecentCandlesJob] ");
     List<CandleDto> candles = analysisForScaleTradingJobConfiguration.getRecentCandlesJob("1", 2);
     if(analysisForScaleTradingJobConfiguration.analysisCandlesJob(candles)) {
@@ -59,20 +59,21 @@ public class ScaleTradeJobScheduler {
     try {
       switch(statusProperties.getCurrentStatus()) {
         case 0:        
-          log.info("[currentStatus: 0] [getCandlesJob market/minutes/count] ");
+          log.info("[analysisCandles to bid");
+          runAnalysisCandlesJob();
           break;
         case 1:
-          log.info("[currentStatus: 1] [analysisForBidMarketJob] ");
+          log.info("[bid] ");
           break;
-        case 10:
-          log.info("[currentStatus: 10] [getOrdersChanceForAskJob] ");
+        case 2:
+          log.info("[ask] ");
           break;
-        case 11:
-          log.info("[currentStatus: 11] [analysisForAskMarketJob]");
+        case 3:
+          log.info("[analysisCandles to bid/ask]");
           break;
-        case 20:
-          log.info("[currentStatus: 20] Done!");
-          break;                
+        case 6:
+          log.info("Done!");
+          break; 
       }
     } catch (Exception e) {
       log.info(e.getMessage());
