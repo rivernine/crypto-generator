@@ -26,31 +26,36 @@ import lombok.extern.slf4j.Slf4j;
 @Setter
 public class ScaleTradeStatusProperties {
 
-  public int level = 0;
-  public List<String> pricePerLevel = new ArrayList<>(
-    Arrays.asList("6000.0", "20000.0", "100000.0", "500000.0", "2000000.0"));
-  public List<BidMarketResponseDto> bidInfoPerLevel = new ArrayList<>();
-  public Map<LocalDateTime, CandleDto> candleDtoMap = new HashMap<>();
+  public int level;
+  public List<String> pricePerLevel;
+  public List<BidMarketResponseDto> bidInfoPerLevel;
+  public Map<LocalDateTime, CandleDto> candleDtoMap;
 
   public void addCandlesDtoMap(LocalDateTime key, CandleDto candleDto) {
-    if(!candleDtoMap.containsKey(key)) {
-      candleDtoMap.put(key, candleDto);
+    if(!this.candleDtoMap.containsKey(key)) {
+      this.candleDtoMap.put(key, candleDto);
     }
   }
   
   public void printCandlesDtoMap() {
-    for(LocalDateTime key: candleDtoMap.keySet()) {
-      log.info(candleDtoMap.get(key).toString());
+    for(LocalDateTime key: this.candleDtoMap.keySet()) {
+      log.info(this.candleDtoMap.get(key).toString());
     }
   }
 
   public void addBidInfoPerLevel(BidMarketResponseDto bidMarketResponseDto) {
-    bidInfoPerLevel.add(bidMarketResponseDto);
+    this.bidInfoPerLevel.add(bidMarketResponseDto);
+  }
+
+  public void increaseLevel() {
+    this.level++;
   }
 
   public void init() {
-    level = 0;
-    candleDtoMap = new HashMap<>();
-    bidInfoPerLevel = new ArrayList<>();
+    this.level = 0;
+    this.pricePerLevel = new ArrayList<>(
+      Arrays.asList("6000.0", "20000.0", "100000.0", "500000.0", "2000000.0"));
+    this.candleDtoMap = new HashMap<>();
+    this.bidInfoPerLevel = new ArrayList<>();
   }
 }
