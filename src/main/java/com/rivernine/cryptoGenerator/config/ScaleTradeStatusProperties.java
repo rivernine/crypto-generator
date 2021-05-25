@@ -29,9 +29,7 @@ public class ScaleTradeStatusProperties {
   public Map<LocalDateTime, CandleDto> candleDtoMap = new HashMap<>();
 
   public void addCandlesDtoMap(LocalDateTime key, CandleDto candleDto) {
-    if(candleDtoMap.containsKey(key)) {
-      log.info("candlesDtoMap has key: " + key);
-    } else {
+    if(!candleDtoMap.containsKey(key)) {
       candleDtoMap.put(key, candleDto);
     }
   }

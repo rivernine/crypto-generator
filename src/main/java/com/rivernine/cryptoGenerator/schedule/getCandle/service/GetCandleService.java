@@ -25,9 +25,9 @@ public class GetCandleService {
       Double openingPrice = candle.get("opening_price").getAsDouble();
       Double tradePrice = candle.get("trade_price").getAsDouble();
       int flag;
-      if(openingPrice > tradePrice)
+      if(openingPrice.compareTo(tradePrice) == -1)
         flag = 1;
-      else if(openingPrice == tradePrice)
+      else if(openingPrice.compareTo(tradePrice) == 0)
         flag = 0;
       else
         flag = -1;
