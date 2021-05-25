@@ -12,8 +12,8 @@ public class AnalysisForScaleTradingJobConfiguration {
   
   private final AnalysisForScaleTradingService analysisForScaleTradingService;
 
-  public void getRecentCandlesJob(String count){
-    analysisForScaleTradingService.getRecentCandles(count);
+  public void getRecentCandlesJob(String minutes, int count){
+    analysisForScaleTradingService.getRecentCandles(minutes, count);
   }
 
 }

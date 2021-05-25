@@ -1,5 +1,6 @@
 package com.rivernine.cryptoGenerator.config;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,9 +26,9 @@ public class ScaleTradeStatusProperties {
   // 11: bid
   // 12: listen
   public int currentStatus;
-  public Map<String, CandleDto> candleDtoMap = new HashMap<>();
+  public Map<LocalDateTime, CandleDto> candleDtoMap = new HashMap<>();
 
-  public void addCandlesDtoMap(String key, CandleDto candleDto) {
+  public void addCandlesDtoMap(LocalDateTime key, CandleDto candleDto) {
     if(candleDtoMap.containsKey(key)) {
       log.info("candlesDtoMap has key: " + key);
     } else {
@@ -36,7 +37,7 @@ public class ScaleTradeStatusProperties {
   }
   
   public void printCandlesDtoMap() {
-    for(String key: candleDtoMap.keySet()) {
+    for(LocalDateTime key: candleDtoMap.keySet()) {
       log.info(candleDtoMap.get(key).toString());
     }
   }

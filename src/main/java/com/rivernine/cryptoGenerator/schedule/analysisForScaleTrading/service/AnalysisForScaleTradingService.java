@@ -2,6 +2,7 @@ package com.rivernine.cryptoGenerator.schedule.analysisForScaleTrading.service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Map;
 
 import com.rivernine.cryptoGenerator.common.CryptoApi;
@@ -21,11 +22,16 @@ public class AnalysisForScaleTradingService {
   private final ScaleTradeStatusProperties scaleTradeStatusProperties;
   private final CryptoApi cryptoApi;
   
-  public void getRecentCandles(String count) {
+  public void getRecentCandles(String minutes, int count) {
+    List<CandleDto> result;
     LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
-    String current = now.toString() + ":00";
 
-    Map<String, CandleDto> candleDtoMap = scaleTradeStatusProperties.getCandleDtoMap();
-
+    Map<LocalDateTime, CandleDto> candleDtoMap = scaleTradeStatusProperties.getCandleDtoMap();
+    for( int i = 0; i < count; i++ ) {
+      if(candleDtoMap.containsKey(now)) {
+        log.info("getRecentCandles " + candleDtoMap.get(now).toString());
+      }
+      now = now.minusMinutes(Long.parseLong(minutes));
+    }
   }
 }

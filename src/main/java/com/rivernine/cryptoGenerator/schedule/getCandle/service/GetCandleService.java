@@ -1,5 +1,7 @@
 package com.rivernine.cryptoGenerator.schedule.getCandle.service;
 
+import java.time.LocalDateTime;
+
 import com.google.gson.JsonObject;
 import com.rivernine.cryptoGenerator.common.CryptoApi;
 import com.rivernine.cryptoGenerator.config.ScaleTradeStatusProperties;
@@ -40,7 +42,7 @@ public class GetCandleService {
                               .flag(flag)
                               .build();
 
-      scaleTradeStatusProperties.addCandlesDtoMap(candleDateTimeKst, candleDto);
+      scaleTradeStatusProperties.addCandlesDtoMap(LocalDateTime.parse(candleDateTimeKst), candleDto);
     }
   }
 
