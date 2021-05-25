@@ -20,6 +20,25 @@ public class OrdersChanceService {
   private final CryptoApi cryptoApi;
   Gson gson = new Gson();
 
+  public OrdersChanceDtoForBid getOrdersChanceForBid(String market) {
+    try {
+      JsonObject response = cryptoApi.getOrdersChanceForBid(market);
+          
+      if(response.has("currency")) {
+        return OrdersChanceDtoForBid.builder()
+            .currency(response.get("currency").getAsString())
+            .balance(response.get("balance").getAsString())
+            .locked(response.get("locked").getAsString())
+            .build();
+      }
+    } catch (Exception e) {
+      log.info(e.getMessage());     
+    }
+    return OrdersChanceDtoForBid.builder()
+            .currency(null)
+            .build();
+  }
+
   public OrdersChanceDtoForAsk getOrdersChanceForAsk(String market, String uuid) {
     log.info("Start getOrdersChanceForAsk");
     try {
@@ -58,27 +77,5 @@ public class OrdersChanceService {
     }
     return OrdersChanceDtoForAsk.builder()
             .build();
-  }
-
-  public OrdersChanceDtoForBid getOrdersChanceForBid(String market) {
-    try {
-      JsonObject response = cryptoApi.getOrdersChanceForBid(market);
-          
-      if(response.has("currency")) {
-        return OrdersChanceDtoForBid.builder()
-            .currency(response.get("currency").getAsString())
-            .balance(response.get("balance").getAsString())
-            .locked(response.get("locked").getAsString())
-            .build();
-      }
-    } catch (Exception e) {
-      log.info(e.getMessage());     
-    }
-    return OrdersChanceDtoForBid.builder()
-            .currency(null)
-            .build();
-
-            
-  
   }
 }

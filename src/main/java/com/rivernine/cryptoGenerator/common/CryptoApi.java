@@ -2,8 +2,12 @@ package com.rivernine.cryptoGenerator.common;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 import com.google.gson.JsonObject;
+import com.rivernine.cryptoGenerator.common.dto.BidMarketResponseDto;
+import com.rivernine.cryptoGenerator.config.ScaleTradeStatusProperties;
+import com.rivernine.cryptoGenerator.config.StatusProperties;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -24,6 +28,8 @@ public class CryptoApi {
 	private String secretKey;  
 
   private final UpbitApi upbitApi;
+  private final StatusProperties statusProperties;
+  private final ScaleTradeStatusProperties scaleTradeStatusProperties;
 
   public JsonObject getMarket(String market) {
     return upbitApi.getMarket(market);
@@ -43,8 +49,8 @@ public class CryptoApi {
   }
 
   // 지정가 매수
-  public void postBidOrdersSetPrice(String market, String volume, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-    upbitApi.postOrders(market, "bid", volume, price, "limit");
+  public JsonObject postBidOrdersSetPrice(String market, String volume, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    return upbitApi.postOrders(market, "bid", volume, price, "limit");
   }
 
   // 시장가 매도
@@ -67,5 +73,26 @@ public class CryptoApi {
 
   public JsonObject getOrder(String uuid) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     return upbitApi.getOrder(uuid);
+  }
+
+  public void bid(String market, String price, String volume) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+    if( !statusProperties.getBidRunning() || statusProperties.getBidPending() ) {
+      statusProperties.setBidRunning(true);
+      statusProperties.setBidPending(true);
+      String myBalance = statusProperties.getOrdersChanceDtoForBid().getBalance();
+      List<String> pricePerBidLevel = scaleTradeStatusProperties.getPricePerLevel();
+      int level = scaleTradeStatusProperties.getLevel()
+      JsonObject response = postBidOrdersSetPrice(market, price, pricePerBidLevel.get(level));
+      if(!response.has("error")) {
+        scaleTradeStatusProperties.addBidInfoPerLevel(BidMarketResponseDto.builder()
+                                                        .uuid(response.get("uuid").getAsString())
+                                                        .market(response.get("market").getAsString())
+                                                        .success(true)
+                                                        .build());
+        statusProperties.setBidPending(false);
+      }
+
+      statusProperties.setBidRunning(false);
+    }
   }
 }

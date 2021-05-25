@@ -1,7 +1,7 @@
 package com.rivernine.cryptoGenerator.schedule.analysisForBidMarket;
 
 import com.rivernine.cryptoGenerator.config.StatusProperties;
-import com.rivernine.cryptoGenerator.schedule.analysisForBidMarket.dto.BidMarketResponseDto;
+import com.rivernine.cryptoGenerator.schedule.analysisForBidMarket.dto.AnalysisForBidMarketDto;
 import com.rivernine.cryptoGenerator.schedule.analysisForBidMarket.service.AnalysisForBidMarketService;
 
 import org.springframework.batch.core.ExitStatus;
@@ -80,7 +80,7 @@ public class AnalysisForBidMarketJobConfiguration {
                 if(balance != -1.0){
                   myBalanceExceptFee = Double.toString(balance);
                 }
-                BidMarketResponseDto bidMarketResponseDto = analysisForBidMarketService.bid(market, myBalanceExceptFee);
+                AnalysisForBidMarketDto bidMarketResponseDto = analysisForBidMarketService.bid(market, myBalanceExceptFee);
 
                 if(bidMarketResponseDto.getSuccess()){
                   log.info("Success request bid, UUID: " + bidMarketResponseDto.getUuid());

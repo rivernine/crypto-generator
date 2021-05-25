@@ -18,13 +18,13 @@ public class OrdersChanceJobConfiguration {
   private final OrdersChanceService ordersChanceService;
   private final StatusProperties statusProperties;
 
-  public void getOrdersChanceForBidJob(String market) {
-    OrdersChanceDtoForBid ordersChanceDtoForBid = ordersChanceService.getOrdersChanceForBid(market);
-    if(Double.parseDouble(ordersChanceDtoForBid.getBalance()) >= 5000){
-      log.info("Set status (0 -> 1)");
-      statusProperties.setOrdersChanceDtoForBid(ordersChanceDtoForBid);
-      statusProperties.setCurrentStatus(1);
-    }
+  public OrdersChanceDtoForBid getOrdersChanceForBidJob(String market) {
+    return ordersChanceService.getOrdersChanceForBid(market);
+    // if(Double.parseDouble(ordersChanceDtoForBid.getBalance()) >= 5000){
+    //   log.info("Set status (0 -> 1)");
+    //   statusProperties.setOrdersChanceDtoForBid(ordersChanceDtoForBid);
+    //   statusProperties.setCurrentStatus(1);
+    // }
   } 
 
   public void getOrdersChanceForAskJob(String market, String uuid) {

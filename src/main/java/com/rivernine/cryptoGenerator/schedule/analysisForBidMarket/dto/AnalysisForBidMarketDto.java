@@ -6,13 +6,13 @@ import lombok.ToString;
 
 @ToString
 @Getter
-public class BidMarketResponseDto {
+public class AnalysisForBidMarketDto {
   private String uuid;
   private String market;
   private Boolean success;
 
   @Builder
-  public BidMarketResponseDto(String uuid, String market, Boolean success) {
+  public AnalysisForBidMarketDto(String uuid, String market, Boolean success) {
     this.uuid = uuid;
     this.market = market;
     this.success = success;
