@@ -1,8 +1,11 @@
 package com.rivernine.cryptoGenerator.schedule;
 
+import java.util.List;
+
 import com.rivernine.cryptoGenerator.config.ScaleTradeStatusProperties;
 import com.rivernine.cryptoGenerator.schedule.analysisForScaleTrading.AnalysisForScaleTradingJobConfiguration;
 import com.rivernine.cryptoGenerator.schedule.getCandle.GetCandleJobConfiguration;
+import com.rivernine.cryptoGenerator.schedule.getCandle.dto.CandleDto;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -33,7 +36,12 @@ public class ScaleTradeJobScheduler {
   @Scheduled(fixedDelay = 1000)
   public void runGetRecentCandlesJob() {
     log.info("[currentStatus: "+scaleTradeStatusProperties.getCurrentStatus()+"] [getRecentCandlesJob] ");
-    analysisForScaleTradingJobConfiguration.getRecentCandlesJob("1", 2);
+    List<CandleDto> candles = analysisForScaleTradingJobConfiguration.getRecentCandlesJob("1", 2);
+    if(analysisForScaleTradingJobConfiguration.analysisCandlesJob(candles)) {
+      log.info("Bid");
+    } else {
+      log.info("Stay");
+    }
   }
 
   // @Scheduled(fixedDelay = 1000)

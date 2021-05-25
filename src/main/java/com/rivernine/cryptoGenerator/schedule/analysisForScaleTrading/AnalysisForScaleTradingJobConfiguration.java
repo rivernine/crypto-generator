@@ -1,6 +1,9 @@
 package com.rivernine.cryptoGenerator.schedule.analysisForScaleTrading;
 
+import java.util.List;
+
 import com.rivernine.cryptoGenerator.schedule.analysisForScaleTrading.service.AnalysisForScaleTradingService;
+import com.rivernine.cryptoGenerator.schedule.getCandle.dto.CandleDto;
 
 import org.springframework.stereotype.Component;
 
@@ -12,8 +15,12 @@ public class AnalysisForScaleTradingJobConfiguration {
   
   private final AnalysisForScaleTradingService analysisForScaleTradingService;
 
-  public void getRecentCandlesJob(String minutes, int count){
-    analysisForScaleTradingService.getRecentCandles(minutes, count);
+  public List<CandleDto> getRecentCandlesJob(String minutes, int count){
+    return analysisForScaleTradingService.getRecentCandles(minutes, count);
+  }
+
+  public Boolean analysisCandlesJob(List<CandleDto> candles) {
+    return analysisForScaleTradingService.analysisCandles(candles);
   }
 
 }
