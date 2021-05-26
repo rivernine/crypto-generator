@@ -61,7 +61,7 @@ public class CryptoApi {
     return cryptoApiService.getOrder(uuid);
   }
 
-  public BidMarketResponseDto bid(String market, String price, String volume) throws NoSuchAlgorithmException, UnsupportedEncodingException{
-    return cryptoApiService.bid(market, price, volume);
+  public BidMarketResponseDto bid(String market, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+    return cryptoApiService.bid(market, price);
   }
 }

@@ -66,7 +66,7 @@ public class CryptoApiService {
     return upbitApi.getOrder(uuid);
   }
 
-  public BidMarketResponseDto bid(String market, String price, String volume) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+  public BidMarketResponseDto bid(String market, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException{
     BidMarketResponseDto bidMarketResponseDto = BidMarketResponseDto.builder()
                                     .success(false)
                                     .build();
@@ -74,12 +74,13 @@ public class CryptoApiService {
       statusProperties.setBidRunning(true);
       statusProperties.setBidPending(true);
 
-      List<String> pricePerBidLevel = scaleTradeStatusProperties.getPricePerLevel();
+      List<String> pricePerBidLevel = scaleTradeStatusProperties.getBalancePerLevel();
       int level = scaleTradeStatusProperties.getLevel();
-      JsonObject response = postBidOrdersSetPrice(market, price, pricePerBidLevel.get(level));
+      JsonObject response = postBidOrders(market, pricePerBidLevel.get(level));
       if(!response.has("error")) {
         bidMarketResponseDto.setUuid(response.get("uuid").getAsString());
         bidMarketResponseDto.setMarket(response.get("market").getAsString());
+        bidMarketResponseDto.setPaidFee(response.get("paid_fee").getAsString());
         bidMarketResponseDto.setSuccess(true);
         scaleTradeStatusProperties.addBidInfoPerLevel(bidMarketResponseDto);
         statusProperties.setBidPending(false);

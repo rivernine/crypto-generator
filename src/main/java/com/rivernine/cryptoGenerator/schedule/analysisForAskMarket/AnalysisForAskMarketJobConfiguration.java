@@ -71,7 +71,11 @@ public class AnalysisForAskMarketJobConfiguration {
               if( !statusProperties.getAskRunning() || statusProperties.getAskPending() ) {
                 statusProperties.setAskRunning(true);
                 statusProperties.setAskPending(true);
-                String myTotalBalance = statusProperties.getOrdersChanceDtoForAsk().getTradeVolume();
+
+                // tmp
+                // String myTotalBalance = statusProperties.getOrdersChanceDtoForAsk().getTradeVolume();
+                String myTotalBalance = "1.0";
+
                 AskMarketResponseDto askMarketResponseDto = analysisForAskMarketService.ask(market, myTotalBalance);
                 if(askMarketResponseDto.getSuccess()){
                   log.info("Success request ask, UUID: " + askMarketResponseDto.getUuid());

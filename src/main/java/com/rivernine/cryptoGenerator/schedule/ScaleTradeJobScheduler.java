@@ -3,6 +3,7 @@ package com.rivernine.cryptoGenerator.schedule;
 import java.util.List;
 
 import com.rivernine.cryptoGenerator.common.CryptoApi;
+import com.rivernine.cryptoGenerator.common.dto.BidMarketResponseDto;
 import com.rivernine.cryptoGenerator.config.ScaleTradeStatusProperties;
 import com.rivernine.cryptoGenerator.config.StatusProperties;
 import com.rivernine.cryptoGenerator.schedule.analysisForScaleTrading.AnalysisForScaleTradingJobConfiguration;
@@ -56,6 +57,7 @@ public class ScaleTradeJobScheduler {
           List<CandleDto> candles = analysisForScaleTradingJobConfiguration.getRecentCandlesJob("1", 2);
           if(analysisForScaleTradingJobConfiguration.analysisCandlesJob(candles)) {
             log.info("Bid");
+            // go to 1
           } else {
             log.info("Stay");
           }
@@ -68,13 +70,19 @@ public class ScaleTradeJobScheduler {
           String balance = scaleTradeStatusProperties.getBalancePerLevel().get(currentLevel);
 
           if(Double.parseDouble(myTotalBalance) > Double.parseDouble(balance)) {
-            bidForScaleTradingJobConfiguration.bidJob(market, price, volume);
-
+            BidMarketResponseDto bidMarketResponseDto = bidForScaleTradingJobConfiguration.bidJob(market, balance);
+            if(bidMarketResponseDto.getSuccess()) {
+              scaleTradeStatusProperties.addBidInfoPerLevel(bidMarketResponseDto);
+              // go to 11
+            } else {
+              log.info("Error during bidding");
+            }
+          } else {
+            log.info("Not enough balance");
           }
-
           break;
         case 11:
-          log.info("[listen to complete]");
+          log.info("[Get order chance]");
           break;
         case 2:
           log.info("[ask] ");

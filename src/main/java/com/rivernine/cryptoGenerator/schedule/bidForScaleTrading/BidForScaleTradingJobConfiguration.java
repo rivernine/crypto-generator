@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 
 import com.rivernine.cryptoGenerator.common.CryptoApi;
+import com.rivernine.cryptoGenerator.common.dto.BidMarketResponseDto;
 
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,7 @@ public class BidForScaleTradingJobConfiguration {
   
   private final CryptoApi cryptoApi;
 
-  public void bidJob(String market, String price, String volume) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-    cryptoApi.bid(market, price, volume);
+  public BidMarketResponseDto bidJob(String market, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    return cryptoApi.bid(market, price);
   }
 }

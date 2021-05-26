@@ -1,7 +1,6 @@
 package com.rivernine.cryptoGenerator.config;
 
-import com.rivernine.cryptoGenerator.schedule.ordersChance.dto.OrdersChanceDtoForAsk;
-import com.rivernine.cryptoGenerator.schedule.ordersChance.dto.OrdersChanceDtoForBid;
+import com.rivernine.cryptoGenerator.schedule.ordersChance.dto.OrdersChanceDto;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -26,8 +25,8 @@ public class StatusProperties {
   public Boolean askPending = false;
   public String uuid;
 
-  public OrdersChanceDtoForBid ordersChanceDtoForBid;
-  public OrdersChanceDtoForAsk ordersChanceDtoForAsk;
+  public OrdersChanceDto ordersChanceDtoForBid;
+  public OrdersChanceDto ordersChanceDtoForAsk;
 
   public void init(){
     this.currentStatus = -1;

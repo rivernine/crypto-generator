@@ -74,7 +74,7 @@ public class JobScheduler {
           // 매수주문완료 상태
           // 체결 여부를 파악
           log.info("[currentStatus: 10] [getOrdersChanceForAskJob] ");
-          ordersChanceJobConfiguration.getOrdersChanceForAskJob(market, statusProperties.getUuid());
+          ordersChanceJobConfiguration.getOrdersChanceForAskJob(market);
           break;
         case 11:
           // 매수체결 상태
