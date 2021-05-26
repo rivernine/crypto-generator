@@ -27,8 +27,9 @@ import lombok.extern.slf4j.Slf4j;
 public class ScaleTradeStatusProperties {
 
   public int level;
-  public List<String> pricePerLevel;
+  public List<String> balancePerLevel;
   public List<BidMarketResponseDto> bidInfoPerLevel;
+  public List<String> bidUuidPerLevel;
   public Map<LocalDateTime, CandleDto> candleDtoMap;
 
   public void addCandlesDtoMap(LocalDateTime key, CandleDto candleDto) {
@@ -53,9 +54,10 @@ public class ScaleTradeStatusProperties {
 
   public void init() {
     this.level = 0;
-    this.pricePerLevel = new ArrayList<>(
+    this.balancePerLevel = new ArrayList<>(
       Arrays.asList("6000.0", "20000.0", "100000.0", "500000.0", "2000000.0"));
     this.candleDtoMap = new HashMap<>();
     this.bidInfoPerLevel = new ArrayList<>();
+    this.bidUuidPerLevel = new ArrayList<>();
   }
 }
