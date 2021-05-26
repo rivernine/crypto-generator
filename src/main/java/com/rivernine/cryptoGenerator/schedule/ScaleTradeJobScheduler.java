@@ -3,15 +3,15 @@ package com.rivernine.cryptoGenerator.schedule;
 import java.util.List;
 
 import com.rivernine.cryptoGenerator.common.CryptoApi;
-import com.rivernine.cryptoGenerator.common.dto.BidMarketResponseDto;
+import com.rivernine.cryptoGenerator.common.dto.ExchangeResponseDto;
 import com.rivernine.cryptoGenerator.config.ScaleTradeStatusProperties;
 import com.rivernine.cryptoGenerator.config.StatusProperties;
 import com.rivernine.cryptoGenerator.schedule.analysisForScaleTrading.AnalysisForScaleTradingJobConfiguration;
-import com.rivernine.cryptoGenerator.schedule.bidForScaleTrading.BidForScaleTradingJobConfiguration;
+import com.rivernine.cryptoGenerator.schedule.exchange.ExchangeJobConfiguration;
 import com.rivernine.cryptoGenerator.schedule.getCandle.GetCandleJobConfiguration;
 import com.rivernine.cryptoGenerator.schedule.getCandle.dto.CandleDto;
 import com.rivernine.cryptoGenerator.schedule.ordersChance.OrdersChanceJobConfiguration;
-import com.rivernine.cryptoGenerator.schedule.ordersChance.dto.OrdersChanceDtoForBid;
+import com.rivernine.cryptoGenerator.schedule.ordersChance.dto.OrdersChanceDto;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -34,7 +34,7 @@ public class ScaleTradeJobScheduler {
   private final GetCandleJobConfiguration getCandleJobConfiguration;
   private final AnalysisForScaleTradingJobConfiguration analysisForScaleTradingJobConfiguration;
   private final OrdersChanceJobConfiguration ordersChanceJobConfiguration;
-  private final BidForScaleTradingJobConfiguration bidForScaleTradingJobConfiguration;
+  private final ExchangeJobConfiguration exchangeJobConfiguration;
 
   private final CryptoApi cryptoApi;
 
@@ -64,15 +64,16 @@ public class ScaleTradeJobScheduler {
           break;
         case 1:
           log.info("[bid] ");
-          OrdersChanceDtoForBid orderChanceDtoForBid = ordersChanceJobConfiguration.getOrdersChanceForBidJob(market);
+          OrdersChanceDto orderChanceDtoForBid = ordersChanceJobConfiguration.getOrdersChanceForBidJob(market);
           int currentLevel = scaleTradeStatusProperties.getLevel();
           String myTotalBalance = orderChanceDtoForBid.getBalance();
           String balance = scaleTradeStatusProperties.getBalancePerLevel().get(currentLevel);
 
           if(Double.parseDouble(myTotalBalance) > Double.parseDouble(balance)) {
-            BidMarketResponseDto bidMarketResponseDto = bidForScaleTradingJobConfiguration.bidJob(market, balance);
-            if(bidMarketResponseDto.getSuccess()) {
-              scaleTradeStatusProperties.addBidInfoPerLevel(bidMarketResponseDto);
+            ExchangeResponseDto exchangeResponseDto = exchangeJobConfiguration.bidJob(market, balance);
+            if(exchangeResponseDto.getSuccess()) {
+              scaleTradeStatusProperties.addBidInfoPerLevel(exchangeResponseDto);
+              scaleTradeStatusProperties.addFee(exchangeResponseDto.getPaidFee());
               // go to 11
             } else {
               log.info("Error during bidding");
@@ -83,6 +84,7 @@ public class ScaleTradeJobScheduler {
           break;
         case 11:
           log.info("[Get order chance]");
+          OrdersChanceDto orderChanceDtoForAsk = ordersChanceJobConfiguration.getOrdersChanceForAskJob(market);
           break;
         case 2:
           log.info("[ask] ");

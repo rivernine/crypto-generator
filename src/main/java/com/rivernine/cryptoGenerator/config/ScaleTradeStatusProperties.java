@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.rivernine.cryptoGenerator.common.dto.BidMarketResponseDto;
+import com.rivernine.cryptoGenerator.common.dto.ExchangeResponseDto;
 import com.rivernine.cryptoGenerator.schedule.getCandle.dto.CandleDto;
 
 import org.springframework.stereotype.Component;
@@ -27,9 +27,22 @@ import lombok.extern.slf4j.Slf4j;
 public class ScaleTradeStatusProperties {
 
   public int level;
+  public String totalFee;
   public List<String> balancePerLevel;
-  public List<BidMarketResponseDto> bidInfoPerLevel;
+  public List<ExchangeResponseDto> bidInfoPerLevel;
   public Map<LocalDateTime, CandleDto> candleDtoMap;
+
+  public void increaseLevel() {
+    this.level++;
+  }
+
+  public void addFee(String fee) {
+    this.totalFee = Double.toString(Double.parseDouble(this.totalFee) + Double.parseDouble(fee));
+  }
+
+  public void addBidInfoPerLevel(ExchangeResponseDto exchangeResponseDto) {
+    this.bidInfoPerLevel.add(exchangeResponseDto);
+  }
 
   public void addCandlesDtoMap(LocalDateTime key, CandleDto candleDto) {
     if(!this.candleDtoMap.containsKey(key)) {
@@ -43,16 +56,9 @@ public class ScaleTradeStatusProperties {
     }
   }
 
-  public void addBidInfoPerLevel(BidMarketResponseDto bidMarketResponseDto) {
-    this.bidInfoPerLevel.add(bidMarketResponseDto);
-  }
-
-  public void increaseLevel() {
-    this.level++;
-  }
-
   public void init() {
     this.level = 0;
+    this.totalFee = "0.0";
     this.balancePerLevel = new ArrayList<>(
       Arrays.asList("6000.0", "20000.0", "100000.0", "500000.0", "2000000.0"));
     this.candleDtoMap = new HashMap<>();

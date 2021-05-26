@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.google.gson.JsonObject;
 import com.rivernine.cryptoGenerator.common.UpbitApi;
-import com.rivernine.cryptoGenerator.common.dto.BidMarketResponseDto;
+import com.rivernine.cryptoGenerator.common.dto.ExchangeResponseDto;
 import com.rivernine.cryptoGenerator.config.ScaleTradeStatusProperties;
 import com.rivernine.cryptoGenerator.config.StatusProperties;
 
@@ -66,10 +66,10 @@ public class CryptoApiService {
     return upbitApi.getOrder(uuid);
   }
 
-  public BidMarketResponseDto bid(String market, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException{
-    BidMarketResponseDto bidMarketResponseDto = BidMarketResponseDto.builder()
-                                    .success(false)
-                                    .build();
+  public ExchangeResponseDto bid(String market, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+    ExchangeResponseDto exchangeResponseDto = ExchangeResponseDto.builder()
+                                                .success(false)
+                                                .build();
     if( !statusProperties.getBidRunning() || statusProperties.getBidPending() ) {
       statusProperties.setBidRunning(true);
       statusProperties.setBidPending(true);
@@ -78,16 +78,41 @@ public class CryptoApiService {
       int level = scaleTradeStatusProperties.getLevel();
       JsonObject response = postBidOrders(market, pricePerBidLevel.get(level));
       if(!response.has("error")) {
-        bidMarketResponseDto.setUuid(response.get("uuid").getAsString());
-        bidMarketResponseDto.setMarket(response.get("market").getAsString());
-        bidMarketResponseDto.setPaidFee(response.get("paid_fee").getAsString());
-        bidMarketResponseDto.setSuccess(true);
-        scaleTradeStatusProperties.addBidInfoPerLevel(bidMarketResponseDto);
+        exchangeResponseDto.setUuid(response.get("uuid").getAsString());
+        exchangeResponseDto.setMarket(response.get("market").getAsString());
+        exchangeResponseDto.setPaidFee(response.get("paid_fee").getAsString());
+        exchangeResponseDto.setSuccess(true);
+        scaleTradeStatusProperties.addBidInfoPerLevel(exchangeResponseDto);
         statusProperties.setBidPending(false);
       }
       statusProperties.setBidRunning(false);
     }
 
-    return bidMarketResponseDto;
+    return exchangeResponseDto;
+  }
+
+  public ExchangeResponseDto ask(String market, String price, String volume) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+    ExchangeResponseDto exchangeResponseDto = ExchangeResponseDto.builder()
+                                                .success(false)
+                                                .build();
+    if( !statusProperties.getAskRunning() || statusProperties.getAskPending() ) {
+      statusProperties.setAskRunning(true);
+      statusProperties.setAskPending(true);
+
+      List<String> pricePerBidLevel = scaleTradeStatusProperties.getBalancePerLevel();
+      int level = scaleTradeStatusProperties.getLevel();
+      JsonObject response = postBidOrders(market, pricePerBidLevel.get(level));
+      if(!response.has("error")) {
+        exchangeResponseDto.setUuid(response.get("uuid").getAsString());
+        exchangeResponseDto.setMarket(response.get("market").getAsString());
+        exchangeResponseDto.setPaidFee(response.get("paid_fee").getAsString());
+        exchangeResponseDto.setSuccess(true);
+        scaleTradeStatusProperties.addBidInfoPerLevel(exchangeResponseDto);
+        statusProperties.setAskPending(false);
+      }
+      statusProperties.setAskRunning(false);
+    }
+
+    return exchangeResponseDto;
   }
 }
