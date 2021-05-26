@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.rivernine.cryptoGenerator.schedule.analysisForScaleTrading.service.AnalysisForScaleTradingService;
 import com.rivernine.cryptoGenerator.schedule.getCandle.dto.CandleDto;
+import com.rivernine.cryptoGenerator.schedule.ordersChance.dto.OrdersChanceDto;
 
 import org.springframework.stereotype.Component;
 
@@ -23,4 +24,7 @@ public class AnalysisForScaleTradingJobConfiguration {
     return analysisForScaleTradingService.analysisCandles(candles);
   }
 
+  public String getAskPriceJob(OrdersChanceDto ordersChanceDtoForAsk) {
+    return analysisForScaleTradingService.getAskPrice(ordersChanceDtoForAsk);
+  }
 }

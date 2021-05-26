@@ -9,6 +9,7 @@ import java.util.Map;
 import com.rivernine.cryptoGenerator.common.CryptoApi;
 import com.rivernine.cryptoGenerator.config.ScaleTradeStatusProperties;
 import com.rivernine.cryptoGenerator.schedule.getCandle.dto.CandleDto;
+import com.rivernine.cryptoGenerator.schedule.ordersChance.dto.OrdersChanceDto;
 
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 public class AnalysisForScaleTradingService {
   
   private final ScaleTradeStatusProperties scaleTradeStatusProperties;
-  private final CryptoApi cryptoApi;
   
   public List<CandleDto> getRecentCandles(String minutes, int count) {
     List<CandleDto> result = new ArrayList<>();
@@ -51,6 +51,15 @@ public class AnalysisForScaleTradingService {
       }
     }
     
+    return result;
+  }
+
+  public String getAskPrice(OrdersChanceDto ordersChanceDtoForAsk) {
+    String result = "test";
+
+    scaleTradeStatusProperties.getUsedBalance();
+    scaleTradeStatusProperties.getUsedFee();
+
     return result;
   }
 }

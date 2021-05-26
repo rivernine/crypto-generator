@@ -73,6 +73,7 @@ public class ScaleTradeJobScheduler {
             ExchangeResponseDto exchangeResponseDto = exchangeJobConfiguration.bidJob(market, balance);
             if(exchangeResponseDto.getSuccess()) {
               scaleTradeStatusProperties.addBidInfoPerLevel(exchangeResponseDto);
+              scaleTradeStatusProperties.addBalance(balance);
               scaleTradeStatusProperties.addFee(exchangeResponseDto.getPaidFee());
               // go to 11
             } else {
@@ -85,6 +86,7 @@ public class ScaleTradeJobScheduler {
         case 11:
           log.info("[Get order chance]");
           OrdersChanceDto orderChanceDtoForAsk = ordersChanceJobConfiguration.getOrdersChanceForAskJob(market);
+          String askPrice = analysisForScaleTradingJobConfiguration.getAskPriceJob(ordersChanceDtoForAsk);
           break;
         case 2:
           log.info("[ask] ");

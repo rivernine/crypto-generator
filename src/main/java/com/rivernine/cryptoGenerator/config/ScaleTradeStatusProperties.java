@@ -27,7 +27,8 @@ import lombok.extern.slf4j.Slf4j;
 public class ScaleTradeStatusProperties {
 
   public int level;
-  public String totalFee;
+  public String usedBalance;
+  public String usedFee;
   public List<String> balancePerLevel;
   public List<ExchangeResponseDto> bidInfoPerLevel;
   public Map<LocalDateTime, CandleDto> candleDtoMap;
@@ -36,8 +37,12 @@ public class ScaleTradeStatusProperties {
     this.level++;
   }
 
+  public void addBalance(String balance) {
+    this.usedBalance = Double.toString(Double.parseDouble(this.usedBalance) + Double.parseDouble(balance));
+  }
+
   public void addFee(String fee) {
-    this.totalFee = Double.toString(Double.parseDouble(this.totalFee) + Double.parseDouble(fee));
+    this.usedFee = Double.toString(Double.parseDouble(this.usedFee) + Double.parseDouble(fee));
   }
 
   public void addBidInfoPerLevel(ExchangeResponseDto exchangeResponseDto) {
@@ -58,7 +63,8 @@ public class ScaleTradeStatusProperties {
 
   public void init() {
     this.level = 0;
-    this.totalFee = "0.0";
+    this.usedBalance = "0.0";
+    this.usedFee = "0.0";
     this.balancePerLevel = new ArrayList<>(
       Arrays.asList("6000.0", "20000.0", "100000.0", "500000.0", "2000000.0"));
     this.candleDtoMap = new HashMap<>();
