@@ -65,6 +65,6 @@ public class AnalysisForScaleTradingService {
     String targetPrice = Double.toString(Double.parseDouble(totalUsedBalance) / Double.parseDouble(coinBalance));
 
 
-    return result;
+    return targetPrice;
   }
 }

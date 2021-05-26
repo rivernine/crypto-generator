@@ -1,6 +1,7 @@
 package com.rivernine.cryptoGenerator.schedule;
 
 import java.util.List;
+import java.util.concurrent.Exchanger;
 
 import com.rivernine.cryptoGenerator.common.CryptoApi;
 import com.rivernine.cryptoGenerator.common.dto.ExchangeResponseDto;
@@ -70,11 +71,11 @@ public class ScaleTradeJobScheduler {
           String balance = scaleTradeStatusProperties.getBalancePerLevel().get(currentLevel);
 
           if(Double.parseDouble(myTotalBalance) > Double.parseDouble(balance)) {
-            ExchangeResponseDto exchangeResponseDto = exchangeJobConfiguration.bidJob(market, balance);
-            if(exchangeResponseDto.getSuccess()) {
-              scaleTradeStatusProperties.addBidInfoPerLevel(exchangeResponseDto);
+            ExchangeResponseDto exchangeBidResponseDto = exchangeJobConfiguration.bidJob(market, balance);
+            if(exchangeBidResponseDto.getSuccess()) {
+              scaleTradeStatusProperties.addBidInfoPerLevel(exchangeBidResponseDto);
               scaleTradeStatusProperties.addBalance(balance);
-              scaleTradeStatusProperties.addFee(exchangeResponseDto.getPaidFee());
+              scaleTradeStatusProperties.addFee(exchangeBidResponseDto.getPaidFee());
               // go to 11
             } else {
               log.info("Error during bidding");
@@ -86,7 +87,8 @@ public class ScaleTradeJobScheduler {
         case 11:
           log.info("[Get order chance]");
           OrdersChanceDto orderChanceDtoForAsk = ordersChanceJobConfiguration.getOrdersChanceForAskJob(market);
-          String askPrice = analysisForScaleTradingJobConfiguration.getAskPriceJob(ordersChanceDtoForAsk);
+          String askPrice = analysisForScaleTradingJobConfiguration.getAskPriceJob(orderChanceDtoForAsk);
+          ExchangeResponseDto exchangeResponseAskDto = exchangeJobConfiguration.askJob(market, askPrice, orderChanceDtoForAsk.getBalance());
           break;
         case 2:
           log.info("[ask] ");
