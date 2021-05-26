@@ -57,8 +57,13 @@ public class AnalysisForScaleTradingService {
   public String getAskPrice(OrdersChanceDto ordersChanceDtoForAsk) {
     String result = "test";
 
-    scaleTradeStatusProperties.getUsedBalance();
-    scaleTradeStatusProperties.getUsedFee();
+    String usedBalance = scaleTradeStatusProperties.getUsedBalance();
+    String usedFee = scaleTradeStatusProperties.getUsedFee();
+    String coinBalance = ordersChanceDtoForAsk.getBalance();
+    String totalUsedBalance = Double.toString(Double.parseDouble(usedBalance) + Double.parseDouble(usedFee));
+
+    String targetPrice = Double.toString(Double.parseDouble(totalUsedBalance) / Double.parseDouble(coinBalance));
+
 
     return result;
   }
