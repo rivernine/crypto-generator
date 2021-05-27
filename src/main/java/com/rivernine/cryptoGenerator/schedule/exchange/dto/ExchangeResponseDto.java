@@ -1,4 +1,4 @@
-package com.rivernine.cryptoGenerator.common.dto;
+package com.rivernine.cryptoGenerator.schedule.exchange.dto;
 
 import lombok.Builder;
 import lombok.Getter;

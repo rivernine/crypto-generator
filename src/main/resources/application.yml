@@ -11,6 +11,7 @@ upbit:
   # markets: ${markets:krw-btc}
   market: ${market:KRW-BTC}
   balance: ${balance:-1.0}
+  targetMargin: ${targetMargin:0.002}
 
 schedule:
   chunkSize: 100  

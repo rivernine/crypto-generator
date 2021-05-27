@@ -28,12 +28,13 @@ public class AnalysisForScaleTradingService {
     LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
 
     Map<LocalDateTime, CandleDto> candleDtoMap = scaleTradeStatusProperties.getCandleDtoMap();
+    LocalDateTime past = now.minusMinutes(Long.parseLong(minutes));
     for( int i = 0; i < count; i++ ) {
-      if(candleDtoMap.containsKey(now)) {
-        log.info("getRecentCandles " + candleDtoMap.get(now).toString());
-        result.add(candleDtoMap.get(now));
+      if(candleDtoMap.containsKey(past)) {
+        log.info("getRecentCandles " + candleDtoMap.get(past).toString());
+        result.add(candleDtoMap.get(past));
       }
-      now = now.minusMinutes(Long.parseLong(minutes));
+      past = past.minusMinutes(Long.parseLong(minutes));
     }
 
     return result;
@@ -60,10 +61,52 @@ public class AnalysisForScaleTradingService {
     String totalUsedBalance = Double.toString(Double.parseDouble(usedBalance) + Double.parseDouble(usedFee));
     String coinBalance = ordersChanceDtoForAsk.getBalance();
 
-    Double targetMargin = 0.003;
+    Double targetMargin = 0.002;
     Double targetBalance = Double.parseDouble(totalUsedBalance) * (1 + targetMargin);
     String targetPrice = Double.toString(targetBalance / Double.parseDouble(coinBalance));
+    String targetPriceAbleOrder = targetPrice = changeAbleOrderPrice(targetPrice);
 
-    return targetPrice;
+    log.info("totalUsedBalance : coinBalance : targetPrice : targetPriceAbleOrder");
+    log.info(totalUsedBalance + " : " + coinBalance + " : " + targetPrice + " : " + targetPriceAbleOrder);
+
+    return targetPriceAbleOrder;
+  }
+
+  public String changeAbleOrderPrice(String price) {
+    Double result;
+    Double priceD = Double.parseDouble(price);
+    Double orderUnit; 
+    if(priceD.compareTo(0.0) != -1 && priceD.compareTo(10.0) == -1) {
+      orderUnit = 0.01;
+    } else if(priceD.compareTo(10.0) != -1 && priceD.compareTo(100.0) == -1) {
+      orderUnit = 0.1;
+    } else if(priceD.compareTo(100.0) != -1 && priceD.compareTo(1000.0) == -1) {
+      orderUnit = 1.0;
+    } else if(priceD.compareTo(1000.0) != -1 && priceD.compareTo(10000.0) == -1) {
+      orderUnit = 5.0;
+    } else if(priceD.compareTo(10000.0) != -1 && priceD.compareTo(100000.0) == -1) {
+      orderUnit = 10.0;
+    } else if(priceD.compareTo(100000.0) != -1 && priceD.compareTo(500000.0) == -1) {
+      orderUnit = 50.0;
+    } else if(priceD.compareTo(500000.0) != -1 && priceD.compareTo(1000000.0) == -1) {
+      orderUnit = 100.0;
+    } else if(priceD.compareTo(1000000.0) != -1 && priceD.compareTo(2000000.0) == -1) {
+      orderUnit = 500.0;
+    } else {
+      orderUnit = 1000.0;
+    }
+
+    Double mod = priceD % orderUnit;
+    if(mod.compareTo(0.0) == 0) {
+      result = priceD;
+    } else {
+      Double tmp = priceD / orderUnit;
+      result = tmp.intValue() * orderUnit + orderUnit;
+    }
+
+    log.info("priceD : orderUnit : result");
+    log.info(priceD.toString() + " : " + orderUnit.toString() + " : " + result.toString());
+
+    return Double.toString(result);
   }
 }

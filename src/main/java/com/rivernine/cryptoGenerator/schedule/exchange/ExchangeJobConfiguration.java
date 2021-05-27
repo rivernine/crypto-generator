@@ -4,7 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 
 import com.rivernine.cryptoGenerator.common.CryptoApi;
-import com.rivernine.cryptoGenerator.common.dto.ExchangeResponseDto;
+import com.rivernine.cryptoGenerator.schedule.exchange.dto.ExchangeResponseDto;
 
 import org.springframework.stereotype.Component;
 
@@ -20,7 +20,7 @@ public class ExchangeJobConfiguration {
     return cryptoApi.bid(market, price);
   }
 
-  public ExchangeResponseDto askJob(String market, String price, String volume) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-    return cryptoApi.ask(market, price, volume);
+  public ExchangeResponseDto askJob(String market, String volume, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    return cryptoApi.ask(market, volume, price);
   }
 }

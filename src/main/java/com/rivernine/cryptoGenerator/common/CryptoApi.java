@@ -4,8 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 
 import com.google.gson.JsonObject;
-import com.rivernine.cryptoGenerator.common.dto.ExchangeResponseDto;
 import com.rivernine.cryptoGenerator.common.service.CryptoApiService;
+import com.rivernine.cryptoGenerator.schedule.exchange.dto.ExchangeResponseDto;
 
 import org.springframework.stereotype.Component;
 
@@ -65,7 +65,7 @@ public class CryptoApi {
     return cryptoApiService.bid(market, price);
   }
 
-  public ExchangeResponseDto ask(String market, String price, String volume) throws NoSuchAlgorithmException, UnsupportedEncodingException{
-    return cryptoApiService.ask(market, price, volume);
+  public ExchangeResponseDto ask(String market, String volume, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+    return cryptoApiService.ask(market, volume, price);
   }
 }

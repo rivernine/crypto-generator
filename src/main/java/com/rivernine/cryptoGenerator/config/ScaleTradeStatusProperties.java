@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.rivernine.cryptoGenerator.common.dto.ExchangeResponseDto;
+import com.rivernine.cryptoGenerator.schedule.exchange.dto.ExchangeResponseDto;
 import com.rivernine.cryptoGenerator.schedule.getCandle.dto.CandleDto;
 
 import org.springframework.stereotype.Component;
@@ -29,12 +29,12 @@ public class ScaleTradeStatusProperties {
 
   public int level = 0;
   public String usedBalance = "0.0";
-  public String usedFee = "0.0";
-  public List<String> balancePerLevel = new ArrayList<>(
-    Arrays.asList("6000.0", "20000.0", "100000.0", "500000.0", "2000000.0"));
+  public String usedFee = "0.0";  
   public List<ExchangeResponseDto> bidInfoPerLevel = new ArrayList<>();
   public List<ExchangeResponseDto> askInfoPerLevel = new ArrayList<>();
   public Map<LocalDateTime, CandleDto> candleDtoMap = new HashMap<>();
+  public List<String> balancePerLevel = new ArrayList<>(
+    Arrays.asList("6000.0", "20000.0", "100000.0", "500000.0", "2000000.0"));
 
   public void increaseLevel() {
     this.level++;
@@ -75,8 +75,6 @@ public class ScaleTradeStatusProperties {
     this.level = 0;
     this.usedBalance = "0.0";
     this.usedFee = "0.0";
-    this.balancePerLevel = new ArrayList<>(
-      Arrays.asList("6000.0", "20000.0", "100000.0", "500000.0", "2000000.0"));
     this.candleDtoMap = new HashMap<>();
     this.bidInfoPerLevel = new ArrayList<>();
     this.askInfoPerLevel = new ArrayList<>();
