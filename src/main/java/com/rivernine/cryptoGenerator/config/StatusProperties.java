@@ -17,7 +17,7 @@ import lombok.ToString;
 @Setter
 public class StatusProperties {
 
-  @Value("${testParameter.currentStatus}")
+  // @Value("${testParameter.currentStatus}")
   public int currentStatus;
   public Boolean bidRunning = false;
   public Boolean bidPending = false;
