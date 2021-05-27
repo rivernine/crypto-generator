@@ -12,6 +12,7 @@ upbit:
   market: ${market:KRW-BTC}
   balance: ${balance:-1.0}
   targetMargin: ${targetMargin:0.002}
+  candle: ${candle:5}
 
 schedule:
   chunkSize: 100  

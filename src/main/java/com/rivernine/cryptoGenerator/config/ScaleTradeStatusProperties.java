@@ -66,6 +66,7 @@ public class ScaleTradeStatusProperties {
     List<LocalDateTime> keys = new ArrayList<>(this.candleDtoMap.keySet());
     DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
     keys.sort((s1, s2) -> s1.format(formatter).compareTo(s2.format(formatter)));
+    
     for(LocalDateTime key: keys) {
       log.info(this.candleDtoMap.get(key).toString());
     }

@@ -1,12 +1,12 @@
 package com.rivernine.cryptoGenerator.schedule.analysisForScaleTrading.service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.rivernine.cryptoGenerator.common.CryptoApi;
 import com.rivernine.cryptoGenerator.config.ScaleTradeStatusProperties;
 import com.rivernine.cryptoGenerator.schedule.getCandle.dto.CandleDto;
 import com.rivernine.cryptoGenerator.schedule.ordersChance.dto.OrdersChanceDto;
@@ -25,31 +25,29 @@ public class AnalysisForScaleTradingService {
   
   public List<CandleDto> getRecentCandles(String minutes, int count) {
     List<CandleDto> result = new ArrayList<>();
-    LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
 
     Map<LocalDateTime, CandleDto> candleDtoMap = scaleTradeStatusProperties.getCandleDtoMap();
-    LocalDateTime past = now.minusMinutes(Long.parseLong(minutes));
-    for( int i = 0; i < count; i++ ) {
-      if(candleDtoMap.containsKey(past)) {
-        log.info("getRecentCandles " + candleDtoMap.get(past).toString());
-        result.add(candleDtoMap.get(past));
+    List<LocalDateTime> keys = new ArrayList<>(candleDtoMap.keySet());
+    DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+    keys.sort((s1, s2) -> s1.format(formatter).compareTo(s2.format(formatter)));
+  
+    if(keys.size() >= count){
+      for( int i = keys.size() - 1; i >= keys.size() - count; i-- ){
+        log.info("getRecentCandles " + candleDtoMap.get(keys.get(i)).toString());
+        result.add(candleDtoMap.get(keys.get(i)));
       }
-      past = past.minusMinutes(Long.parseLong(minutes));
+    } else {
+      log.info("candles size is " + Integer.toString(candleDtoMap.size()));
     }
-
+    
     return result;
   }
 
   public Boolean analysisCandles(List<CandleDto> candles) {
     Boolean result = true;
-    if(candles.size() < 2) {
-      log.info("candles size is " + Integer.toString(candles.size()));
-      result = false;
-    } else {
-      for(CandleDto candle: candles) {
-        if(candle.getFlag() != -1)
-          result = false;
-      }
+    for(CandleDto candle: candles) {
+      if(candle.getFlag() != -1)
+        result = false;
     }
     
     return result;

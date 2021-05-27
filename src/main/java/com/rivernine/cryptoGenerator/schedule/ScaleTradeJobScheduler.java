@@ -27,6 +27,8 @@ public class ScaleTradeJobScheduler {
 
   @Value("${upbit.market}")	
   private String market;  
+  @Value("${upbit.candle}")
+  private String candle;
 
   private final StatusProperties statusProperties;
   private final ScaleTradeStatusProperties scaleTradeStatusProperties;
@@ -36,12 +38,10 @@ public class ScaleTradeJobScheduler {
   private final OrdersChanceJobConfiguration ordersChanceJobConfiguration;
   private final ExchangeJobConfiguration exchangeJobConfiguration;
 
-  private final CryptoApi cryptoApi;
-
   @Scheduled(fixedDelay = 1000)
   public void runGetCandlesJob() {
-    log.info("[currentStatus: "+statusProperties.getCurrentStatus()+"] [getCandlesJob market/minutes/count] ");
-    getCandleJobConfiguration.getCandlesJob(market, "1", "3");
+    log.info("[currentStatus: "+statusProperties.getCurrentStatus()+"] [getCandlesJob] ");
+    getCandleJobConfiguration.getCandlesJob(market, candle, "3");
     // getCandleJobConfiguration.printCandlesJob();
   }
 
@@ -57,7 +57,7 @@ public class ScaleTradeJobScheduler {
           break;
         case 0:        
           log.info("[currentStatus: "+statusProperties.getCurrentStatus()+"] [analysisCandles] ");
-          List<CandleDto> candles = analysisForScaleTradingJobConfiguration.getRecentCandlesJob("1", 2);
+          List<CandleDto> candles = analysisForScaleTradingJobConfiguration.getRecentCandlesJob(candle, 2);
           if(analysisForScaleTradingJobConfiguration.analysisCandlesJob(candles)) {
             // go to 10
             statusProperties.setCurrentStatus(10);
