@@ -23,7 +23,7 @@ public class AnalysisForScaleTradingService {
   
   private final ScaleTradeStatusProperties scaleTradeStatusProperties;
   
-  public List<CandleDto> getRecentCandles(String minutes, int count) {
+  public List<CandleDto> getRecentCandles(int count) {
     List<CandleDto> result = new ArrayList<>();
 
     Map<LocalDateTime, CandleDto> candleDtoMap = scaleTradeStatusProperties.getCandleDtoMap();

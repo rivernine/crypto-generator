@@ -16,8 +16,12 @@ public class AnalysisForScaleTradingJobConfiguration {
   
   private final AnalysisForScaleTradingService analysisForScaleTradingService;
 
-  public List<CandleDto> getRecentCandlesJob(String minutes, int count){
-    return analysisForScaleTradingService.getRecentCandles(minutes, count);
+  public List<CandleDto> getRecentCandlesJob(int count) {
+    return analysisForScaleTradingService.getRecentCandles(count);
+  }
+
+  public CandleDto getLastCandleJob() {
+    return analysisForScaleTradingService.getRecentCandles(1).get(0);
   }
 
   public Boolean analysisCandlesJob(List<CandleDto> candles) {

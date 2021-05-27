@@ -27,8 +27,8 @@ public class ScaleTradeJobScheduler {
 
   @Value("${upbit.market}")	
   private String market;  
-  @Value("${upbit.candle}")
-  private String candle;
+  @Value("${upbit.candleMinutes}")
+  private String candleMinutes;
 
   private final StatusProperties statusProperties;
   private final ScaleTradeStatusProperties scaleTradeStatusProperties;
@@ -41,7 +41,7 @@ public class ScaleTradeJobScheduler {
   @Scheduled(fixedDelay = 1000)
   public void runGetCandlesJob() {
     log.info("[currentStatus: "+statusProperties.getCurrentStatus()+"] [getCandlesJob] ");
-    getCandleJobConfiguration.getCandlesJob(market, candle, "3");
+    getCandleJobConfiguration.getCandlesJob(market, candleMinutes, "3");
     // getCandleJobConfiguration.printCandlesJob();
   }
 
@@ -57,7 +57,7 @@ public class ScaleTradeJobScheduler {
           break;
         case 0:        
           log.info("[currentStatus: "+statusProperties.getCurrentStatus()+"] [analysisCandles] ");
-          List<CandleDto> candles = analysisForScaleTradingJobConfiguration.getRecentCandlesJob(candle, 2);
+          List<CandleDto> candles = analysisForScaleTradingJobConfiguration.getRecentCandlesJob(2);
           if(analysisForScaleTradingJobConfiguration.analysisCandlesJob(candles)) {
             // go to 10
             statusProperties.setCurrentStatus(10);
@@ -106,12 +106,21 @@ public class ScaleTradeJobScheduler {
             log.info("Not enough coin balance");
           }
           break;
-        // case 2:
-        //   log.info("[ask] ");
-        //   break;
-        // case 3:
-        //   log.info("[analysisCandles to bid/ask]");
-        //   break;
+        case 30:
+          log.info("[currentStatus: "+statusProperties.getCurrentStatus()+"] [wait step] ");
+          CandleDto candle = analysisForScaleTradingJobConfiguration.getLastCandleJob();
+          if(candle.getFlag() == -1) {
+            // 매도주문취소 후 물타기
+            // go to 31
+          } else {
+            log.info("Keep waiting");
+          }
+          break;
+        case 31:
+          log.info("[currentStatus: "+statusProperties.getCurrentStatus()+"] [cancel ask order] ");
+          scaleTradeStatusProperties.increaseLevel();
+          // go to 10
+          break;
         case 999:
           log.info("Done!");
           break; 
