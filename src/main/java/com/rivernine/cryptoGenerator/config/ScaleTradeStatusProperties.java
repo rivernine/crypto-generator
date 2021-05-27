@@ -1,6 +1,7 @@
 package com.rivernine.cryptoGenerator.config;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -62,7 +63,10 @@ public class ScaleTradeStatusProperties {
   }
   
   public void printCandlesDtoMap() {
-    for(LocalDateTime key: this.candleDtoMap.keySet()) {
+    List<LocalDateTime> keys = new ArrayList<>(this.candleDtoMap.keySet());
+    DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+    keys.sort((s1, s2) -> s1.format(formatter).compareTo(s2.format(formatter)));
+    for(LocalDateTime key: keys) {
       log.info(this.candleDtoMap.get(key).toString());
     }
   }

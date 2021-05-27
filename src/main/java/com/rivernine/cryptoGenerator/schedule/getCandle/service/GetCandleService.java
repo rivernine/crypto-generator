@@ -10,7 +10,9 @@ import com.rivernine.cryptoGenerator.schedule.getCandle.dto.CandleDto;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class GetCandleService {
@@ -20,7 +22,8 @@ public class GetCandleService {
 
   public void getCandles(String market, String minutes, String count) {
     JsonObject[] candles = cryptoApi.getCandles(market, minutes, count);
-    for(JsonObject candle: candles){
+    for( int i = 1; i < candles.length; i++ ){
+      JsonObject candle = candles[i];
       String candleDateTimeKst = candle.get("candle_date_time_kst").getAsString();
       Double openingPrice = candle.get("opening_price").getAsDouble();
       Double tradePrice = candle.get("trade_price").getAsDouble();
