@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 
 import com.rivernine.cryptoGenerator.config.StatusProperties;
 import com.rivernine.cryptoGenerator.schedule.collectMarket.CollectMarketJobConfiguration;
-import com.rivernine.cryptoGenerator.schedule.ordersChance.OrdersChanceJobConfiguration;
+import com.rivernine.cryptoGenerator.schedule.orders.OrdersJobConfiguration;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -13,7 +13,6 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,7 @@ public class JobScheduler {
 
   private final JobLauncher jobLauncher;
   private final CollectMarketJobConfiguration collectMarketJobConfiguration;
-  private final OrdersChanceJobConfiguration ordersChanceJobConfiguration;
+  private final OrdersJobConfiguration ordersJobConfiguration;
 
   @Qualifier("analysisForBidMarket")
   @Autowired
@@ -60,7 +59,7 @@ public class JobScheduler {
           // 프로그램 시작상태
           // db에서 현재 저장된 상태를 읽어옴
           log.info("[currentStatus: 0] [getOrdersChanceForBidJob] ");
-          ordersChanceJobConfiguration.getOrdersChanceForBidJob(market);
+          ordersJobConfiguration.getOrdersChanceForBidJob(market);
           break;
         case 1:
           // 매수 전 상태
@@ -74,7 +73,7 @@ public class JobScheduler {
           // 매수주문완료 상태
           // 체결 여부를 파악
           log.info("[currentStatus: 10] [getOrdersChanceForAskJob] ");
-          ordersChanceJobConfiguration.getOrdersChanceForAskJob(market);
+          ordersJobConfiguration.getOrdersChanceForAskJob(market);
           break;
         case 11:
           // 매수체결 상태

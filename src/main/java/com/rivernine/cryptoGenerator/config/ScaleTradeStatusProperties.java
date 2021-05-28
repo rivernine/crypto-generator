@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.rivernine.cryptoGenerator.schedule.exchange.dto.ExchangeResponseDto;
 import com.rivernine.cryptoGenerator.schedule.getCandle.dto.CandleDto;
+import com.rivernine.cryptoGenerator.schedule.orders.dto.OrdersResponseDto;
 
 import org.springframework.stereotype.Component;
 
@@ -31,11 +31,12 @@ public class ScaleTradeStatusProperties {
   public String usedBalance = "0.0";
   public String usedFee = "0.0";  
   public String bidTime = "0000-00-00T00:00:00";
-  public List<ExchangeResponseDto> bidInfoPerLevel = new ArrayList<>();
-  public List<ExchangeResponseDto> askInfoPerLevel = new ArrayList<>();
+  public List<OrdersResponseDto> bidInfoPerLevel = new ArrayList<>();
+  public List<OrdersResponseDto> askInfoPerLevel = new ArrayList<>();
   public Map<LocalDateTime, CandleDto> candleDtoMap = new HashMap<>();
   public List<String> balancePerLevel = new ArrayList<>(
-    Arrays.asList("6000.0", "20000.0", "100000.0", "500000.0", "2000000.0"));
+    Arrays.asList("6000.0", "6000.0", "100000.0", "500000.0", "2000000.0"));
+    // Arrays.asList("6000.0", "20000.0", "100000.0", "500000.0", "2000000.0"));
 
   public void increaseLevel() {
     this.level++;
@@ -49,12 +50,12 @@ public class ScaleTradeStatusProperties {
     this.usedFee = Double.toString(Double.parseDouble(this.usedFee) + Double.parseDouble(fee));
   }
 
-  public void addBidInfoPerLevel(ExchangeResponseDto exchangeResponseDto) {
-    this.bidInfoPerLevel.add(exchangeResponseDto);
+  public void addBidInfoPerLevel(OrdersResponseDto ordersResponseDto) {
+    this.bidInfoPerLevel.add(ordersResponseDto);
   }
 
-  public void addAskInfoPerLevel(ExchangeResponseDto exchangeResponseDto) {
-    this.askInfoPerLevel.add(exchangeResponseDto);
+  public void addAskInfoPerLevel(OrdersResponseDto ordersResponseDto) {
+    this.askInfoPerLevel.add(ordersResponseDto);
   }
 
   public void addCandlesDtoMap(LocalDateTime key, CandleDto candleDto) {

@@ -8,7 +8,7 @@ import com.google.gson.JsonObject;
 import com.rivernine.cryptoGenerator.common.UpbitApi;
 import com.rivernine.cryptoGenerator.config.ScaleTradeStatusProperties;
 import com.rivernine.cryptoGenerator.config.StatusProperties;
-import com.rivernine.cryptoGenerator.schedule.exchange.dto.ExchangeResponseDto;
+import com.rivernine.cryptoGenerator.schedule.orders.dto.OrdersResponseDto;
 
 import org.springframework.stereotype.Service;
 
@@ -66,14 +66,26 @@ public class CryptoApiService {
     return upbitApi.getOrder(uuid);
   }
 
-  public JsonObject deleteOrder(String uuid) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-    return upbitApi.deleteOrder(uuid);
+  public OrdersResponseDto deleteOrder(String uuid) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    OrdersResponseDto ordersResponseDto = OrdersResponseDto.builder()
+                                            .success(false)
+                                            .build();
+
+    JsonObject response = upbitApi.deleteOrder(uuid);
+    if(!response.has("error")) {
+      ordersResponseDto.setUuid(response.get("uuid").getAsString());
+      ordersResponseDto.setMarket(response.get("market").getAsString());
+      ordersResponseDto.setPaidFee(response.get("reserved_fee").getAsString());
+      ordersResponseDto.setSuccess(true);
+    }
+
+    return ordersResponseDto;
   }
 
-  public ExchangeResponseDto bid(String market, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException{
-    ExchangeResponseDto exchangeResponseDto = ExchangeResponseDto.builder()
-                                                .success(false)
-                                                .build();
+  public OrdersResponseDto bid(String market, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+    OrdersResponseDto ordersResponseDto = OrdersResponseDto.builder()
+                                            .success(false)
+                                            .build();
     if( !statusProperties.getBidRunning() || statusProperties.getBidPending() ) {
       statusProperties.setBidRunning(true);
       statusProperties.setBidPending(true);
@@ -82,23 +94,23 @@ public class CryptoApiService {
       int level = scaleTradeStatusProperties.getLevel();
       JsonObject response = postBidOrders(market, pricePerBidLevel.get(level));
       if(!response.has("error")) {
-        exchangeResponseDto.setUuid(response.get("uuid").getAsString());
-        exchangeResponseDto.setMarket(response.get("market").getAsString());
-        exchangeResponseDto.setPaidFee(response.get("reserved_fee").getAsString());
-        exchangeResponseDto.setSuccess(true);
-        scaleTradeStatusProperties.addBidInfoPerLevel(exchangeResponseDto);
+        ordersResponseDto.setUuid(response.get("uuid").getAsString());
+        ordersResponseDto.setMarket(response.get("market").getAsString());
+        ordersResponseDto.setPaidFee(response.get("reserved_fee").getAsString());
+        ordersResponseDto.setSuccess(true);
+        scaleTradeStatusProperties.addBidInfoPerLevel(ordersResponseDto);
         statusProperties.setBidPending(false);
       }
       statusProperties.setBidRunning(false);
     }
 
-    return exchangeResponseDto;
+    return ordersResponseDto;
   }
 
-  public ExchangeResponseDto ask(String market, String volume, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException{
-    ExchangeResponseDto exchangeResponseDto = ExchangeResponseDto.builder()
-                                                .success(false)
-                                                .build();
+  public OrdersResponseDto ask(String market, String volume, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+    OrdersResponseDto ordersResponseDto = OrdersResponseDto.builder()
+                                            .success(false)
+                                            .build();
     if( !statusProperties.getAskRunning() || statusProperties.getAskPending() ) {
       statusProperties.setAskRunning(true);
       statusProperties.setAskPending(true);
@@ -106,16 +118,16 @@ public class CryptoApiService {
       JsonObject response = postAskOrdersSetPrice(market, volume, price);
       // JsonObject response = postBidOrders(market, pricePerBidLevel.get(level));
       if(!response.has("error")) {
-        exchangeResponseDto.setUuid(response.get("uuid").getAsString());
-        exchangeResponseDto.setMarket(response.get("market").getAsString());
-        exchangeResponseDto.setPaidFee(response.get("reserved_fee").getAsString());
-        exchangeResponseDto.setSuccess(true);
-        scaleTradeStatusProperties.addAskInfoPerLevel(exchangeResponseDto);
+        ordersResponseDto.setUuid(response.get("uuid").getAsString());
+        ordersResponseDto.setMarket(response.get("market").getAsString());
+        ordersResponseDto.setPaidFee(response.get("reserved_fee").getAsString());
+        ordersResponseDto.setSuccess(true);
+        scaleTradeStatusProperties.addAskInfoPerLevel(ordersResponseDto);
         statusProperties.setAskPending(false);
       }
       statusProperties.setAskRunning(false);
     }
 
-    return exchangeResponseDto;
+    return ordersResponseDto;
   }
 }

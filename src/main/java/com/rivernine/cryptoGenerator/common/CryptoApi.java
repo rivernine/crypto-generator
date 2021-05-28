@@ -5,7 +5,7 @@ import java.security.NoSuchAlgorithmException;
 
 import com.google.gson.JsonObject;
 import com.rivernine.cryptoGenerator.common.service.CryptoApiService;
-import com.rivernine.cryptoGenerator.schedule.exchange.dto.ExchangeResponseDto;
+import com.rivernine.cryptoGenerator.schedule.orders.dto.OrdersResponseDto;
 
 import org.springframework.stereotype.Component;
 
@@ -61,15 +61,15 @@ public class CryptoApi {
     return cryptoApiService.getOrder(uuid);
   }
 
-  public JsonObject deleteOrder(String uuid) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+  public OrdersResponseDto deleteOrder(String uuid) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     return cryptoApiService.deleteOrder(uuid);
   }
 
-  public ExchangeResponseDto bid(String market, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+  public OrdersResponseDto bid(String market, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException{
     return cryptoApiService.bid(market, price);
   }
 
-  public ExchangeResponseDto ask(String market, String volume, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+  public OrdersResponseDto ask(String market, String volume, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException{
     return cryptoApiService.ask(market, volume, price);
   }
 }

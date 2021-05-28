@@ -1,17 +1,15 @@
 package com.rivernine.cryptoGenerator.schedule;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import com.rivernine.cryptoGenerator.config.ScaleTradeStatusProperties;
 import com.rivernine.cryptoGenerator.config.StatusProperties;
 import com.rivernine.cryptoGenerator.schedule.analysisForScaleTrading.AnalysisForScaleTradingJobConfiguration;
-import com.rivernine.cryptoGenerator.schedule.exchange.ExchangeJobConfiguration;
-import com.rivernine.cryptoGenerator.schedule.exchange.dto.ExchangeResponseDto;
 import com.rivernine.cryptoGenerator.schedule.getCandle.GetCandleJobConfiguration;
 import com.rivernine.cryptoGenerator.schedule.getCandle.dto.CandleDto;
-import com.rivernine.cryptoGenerator.schedule.ordersChance.OrdersChanceJobConfiguration;
-import com.rivernine.cryptoGenerator.schedule.ordersChance.dto.OrdersChanceDto;
+import com.rivernine.cryptoGenerator.schedule.orders.OrdersJobConfiguration;
+import com.rivernine.cryptoGenerator.schedule.orders.dto.OrdersChanceDto;
+import com.rivernine.cryptoGenerator.schedule.orders.dto.OrdersResponseDto;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -35,12 +33,11 @@ public class ScaleTradeJobScheduler {
 
   private final GetCandleJobConfiguration getCandleJobConfiguration;
   private final AnalysisForScaleTradingJobConfiguration analysisForScaleTradingJobConfiguration;
-  private final OrdersChanceJobConfiguration ordersChanceJobConfiguration;
-  private final ExchangeJobConfiguration exchangeJobConfiguration;
+  private final OrdersJobConfiguration ordersJobConfiguration;
 
   @Scheduled(fixedDelay = 1000)
   public void runGetCandlesJob() {
-    log.info("[currentStatus: "+statusProperties.getCurrentStatus()+"] [getCandlesJob] ");
+    // log.info("[currentStatus: "+statusProperties.getCurrentStatus()+"] [getCandlesJob] ");
     getCandleJobConfiguration.getCandlesJob(market, candleMinutes, "3");
     // getCandleJobConfiguration.printCandlesJob();
   }
@@ -67,16 +64,16 @@ public class ScaleTradeJobScheduler {
           break;
         case 10:
           log.info("[currentStatus: "+statusProperties.getCurrentStatus()+"] [bid step] ");
-          OrdersChanceDto orderChanceDtoForBid = ordersChanceJobConfiguration.getOrdersChanceForBidJob(market);
+          OrdersChanceDto orderChanceDtoForBid = ordersJobConfiguration.getOrdersChanceForBidJob(market);
           String myTotalBalance = orderChanceDtoForBid.getBalance();
           String bidBalance = scaleTradeStatusProperties.getBalancePerLevel().get(scaleTradeStatusProperties.getLevel());
 
           if(Double.parseDouble(myTotalBalance) > Double.parseDouble(bidBalance)) {
-            ExchangeResponseDto exchangeBidResponseDto = exchangeJobConfiguration.bidJob(market, bidBalance);
-            if(exchangeBidResponseDto.getSuccess()) {
-              scaleTradeStatusProperties.addBidInfoPerLevel(exchangeBidResponseDto);
+            OrdersResponseDto ordersBidResponseDto = ordersJobConfiguration.bidJob(market, bidBalance);
+            if(ordersBidResponseDto.getSuccess()) {
+              scaleTradeStatusProperties.addBidInfoPerLevel(ordersBidResponseDto);
               scaleTradeStatusProperties.addBalance(bidBalance);
-              scaleTradeStatusProperties.addFee(exchangeBidResponseDto.getPaidFee());
+              scaleTradeStatusProperties.addFee(ordersBidResponseDto.getPaidFee());
               scaleTradeStatusProperties.setBidTime(analysisForScaleTradingJobConfiguration.getLastCandleJob().getCandleDateTime());
               // go to 20
               statusProperties.setCurrentStatus(20);
@@ -84,21 +81,22 @@ public class ScaleTradeJobScheduler {
               log.info("Error during bidding");
             }
           } else {
-            log.info("Not enough balance");
+            log.info("Not enough money. Exit program");
+            statusProperties.setCurrentStatus(999);
           }
           break;
         case 20:
           log.info("[currentStatus: "+statusProperties.getCurrentStatus()+"] [ask step] ");
-          OrdersChanceDto orderChanceDtoForAsk = ordersChanceJobConfiguration.getOrdersChanceForAskJob(market);
+          OrdersChanceDto orderChanceDtoForAsk = ordersJobConfiguration.getOrdersChanceForAskJob(market);
           if(Double.parseDouble(orderChanceDtoForAsk.getBalance()) * Double.parseDouble(orderChanceDtoForAsk.getAvgBuyPrice()) > 5000.0){
             String askPrice = analysisForScaleTradingJobConfiguration.getAskPriceJob(orderChanceDtoForAsk);
             log.info("market:volume:price");
             log.info(market + ":" + orderChanceDtoForAsk.getBalance() + ":" + askPrice);
-            ExchangeResponseDto exchangeAskResponseDto = exchangeJobConfiguration.askJob(market, orderChanceDtoForAsk.getBalance(), askPrice);
-            if(exchangeAskResponseDto.getSuccess()) {
-              scaleTradeStatusProperties.addAskInfoPerLevel(exchangeAskResponseDto);
-              // go to 999
-              statusProperties.setCurrentStatus(999);
+            OrdersResponseDto ordersAskResponseDto = ordersJobConfiguration.askJob(market, orderChanceDtoForAsk.getBalance(), askPrice);
+            if(ordersAskResponseDto.getSuccess()) {
+              scaleTradeStatusProperties.addAskInfoPerLevel(ordersAskResponseDto);
+              // go to 30
+              statusProperties.setCurrentStatus(30);
             } else {
               log.info("Error during asking");
             }
@@ -112,15 +110,23 @@ public class ScaleTradeJobScheduler {
           String bidTime = scaleTradeStatusProperties.getBidTime();
           if( !bidTime.equals(candle.getCandleDateTime()) && candle.getFlag() == -1 ) {
             // go to 31
+            statusProperties.setCurrentStatus(31);
           } else {
             log.info("Keep waiting");
           }
           break;
         case 31:
           log.info("[currentStatus: "+statusProperties.getCurrentStatus()+"] [cancel ask order] ");
-          int currentLevel = scaleTradeStatusProperties.getLevel();
-          scaleTradeStatusProperties.increaseLevel();
-          // go to 10
+          int level = scaleTradeStatusProperties.getLevel();
+          String uuid = scaleTradeStatusProperties.getAskInfoPerLevel().get(level).getUuid();
+          OrdersResponseDto cancelOrderResponse = ordersJobConfiguration.deleteOrderJob(uuid);
+          if(cancelOrderResponse.getSuccess()){
+            scaleTradeStatusProperties.increaseLevel();  
+            // go to 10
+            statusProperties.setCurrentStatus(10);
+          } else {
+            log.info("Error during cancelOrder");
+          }
           break;
         case 999:
           log.info("Done!");

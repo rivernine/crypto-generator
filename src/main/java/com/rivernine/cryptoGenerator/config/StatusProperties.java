@@ -1,6 +1,6 @@
 package com.rivernine.cryptoGenerator.config;
 
-import com.rivernine.cryptoGenerator.schedule.ordersChance.dto.OrdersChanceDto;
+import com.rivernine.cryptoGenerator.schedule.orders.dto.OrdersChanceDto;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

@@ -2,14 +2,13 @@ package com.rivernine.cryptoGenerator.schedule.analysisForScaleTrading.service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import com.rivernine.cryptoGenerator.config.ScaleTradeStatusProperties;
 import com.rivernine.cryptoGenerator.schedule.getCandle.dto.CandleDto;
-import com.rivernine.cryptoGenerator.schedule.ordersChance.dto.OrdersChanceDto;
+import com.rivernine.cryptoGenerator.schedule.orders.dto.OrdersChanceDto;
 
 import org.springframework.stereotype.Service;
 

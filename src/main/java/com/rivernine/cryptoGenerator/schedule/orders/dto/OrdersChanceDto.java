@@ -1,4 +1,4 @@
-package com.rivernine.cryptoGenerator.schedule.ordersChance.dto;
+package com.rivernine.cryptoGenerator.schedule.orders.dto;
 
 import lombok.Builder;
 import lombok.Getter;
