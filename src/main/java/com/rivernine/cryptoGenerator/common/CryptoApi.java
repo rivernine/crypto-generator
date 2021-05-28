@@ -57,7 +57,7 @@ public class CryptoApi {
     return cryptoApiService.getOrdersChanceForAsk(market);
   }
 
-  public JsonObject getOrder(String uuid) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+  public OrdersResponseDto getOrder(String uuid) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     return cryptoApiService.getOrder(uuid);
   }
 

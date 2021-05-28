@@ -29,7 +29,7 @@ public class StatusProperties {
   public OrdersChanceDto ordersChanceDtoForAsk;
 
   public void init(){
-    this.currentStatus = -1;
+    this.currentStatus = 0;
     this.bidRunning = false;
     this.bidPending = false;
     this.askRunning = false;

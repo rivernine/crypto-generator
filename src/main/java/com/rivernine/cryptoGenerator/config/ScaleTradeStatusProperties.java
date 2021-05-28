@@ -31,6 +31,7 @@ public class ScaleTradeStatusProperties {
   public String usedBalance = "0.0";
   public String usedFee = "0.0";  
   public String bidTime = "0000-00-00T00:00:00";
+  public String lastConclusionTime = "0000-00-00T00:00:00";
   public List<OrdersResponseDto> bidInfoPerLevel = new ArrayList<>();
   public List<OrdersResponseDto> askInfoPerLevel = new ArrayList<>();
   public Map<LocalDateTime, CandleDto> candleDtoMap = new HashMap<>();
@@ -78,7 +79,8 @@ public class ScaleTradeStatusProperties {
     this.level = 0;
     this.usedBalance = "0.0";
     this.usedFee = "0.0";
-    this.bidTime = "0000-00-00T00:00:00";
+    this.bidTime = "0000-00-00T00:00:00";    
+    this.lastConclusionTime = "0000-00-00T00:00:00";
     this.candleDtoMap = new HashMap<>();
     this.bidInfoPerLevel = new ArrayList<>();
     this.askInfoPerLevel = new ArrayList<>();

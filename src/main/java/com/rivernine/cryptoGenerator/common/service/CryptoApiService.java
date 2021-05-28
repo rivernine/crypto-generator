@@ -62,8 +62,21 @@ public class CryptoApiService {
     return upbitApi.getOrdersChance(market).get("ask_account").getAsJsonObject();
   }
 
-  public JsonObject getOrder(String uuid) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-    return upbitApi.getOrder(uuid);
+  public OrdersResponseDto getOrder(String uuid) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    OrdersResponseDto ordersResponseDto = OrdersResponseDto.builder()
+                                            .success(false)
+                                            .build();
+
+    JsonObject response = upbitApi.getOrder(uuid);
+    if(!response.has("error")) {
+      ordersResponseDto.setUuid(response.get("uuid").getAsString());
+      ordersResponseDto.setMarket(response.get("market").getAsString());
+      ordersResponseDto.setPaidFee(response.get("reserved_fee").getAsString());
+      ordersResponseDto.setState(response.get("state").getAsString());
+      ordersResponseDto.setSuccess(true);
+    }
+
+    return ordersResponseDto;
   }
 
   public OrdersResponseDto deleteOrder(String uuid) throws NoSuchAlgorithmException, UnsupportedEncodingException {
@@ -76,6 +89,7 @@ public class CryptoApiService {
       ordersResponseDto.setUuid(response.get("uuid").getAsString());
       ordersResponseDto.setMarket(response.get("market").getAsString());
       ordersResponseDto.setPaidFee(response.get("reserved_fee").getAsString());
+      ordersResponseDto.setState(response.get("state").getAsString());
       ordersResponseDto.setSuccess(true);
     }
 
@@ -97,6 +111,7 @@ public class CryptoApiService {
         ordersResponseDto.setUuid(response.get("uuid").getAsString());
         ordersResponseDto.setMarket(response.get("market").getAsString());
         ordersResponseDto.setPaidFee(response.get("reserved_fee").getAsString());
+        ordersResponseDto.setState(response.get("state").getAsString());
         ordersResponseDto.setSuccess(true);
         scaleTradeStatusProperties.addBidInfoPerLevel(ordersResponseDto);
         statusProperties.setBidPending(false);
@@ -121,6 +136,7 @@ public class CryptoApiService {
         ordersResponseDto.setUuid(response.get("uuid").getAsString());
         ordersResponseDto.setMarket(response.get("market").getAsString());
         ordersResponseDto.setPaidFee(response.get("reserved_fee").getAsString());
+        ordersResponseDto.setState(response.get("state").getAsString());
         ordersResponseDto.setSuccess(true);
         scaleTradeStatusProperties.addAskInfoPerLevel(ordersResponseDto);
         statusProperties.setAskPending(false);

@@ -62,6 +62,10 @@ public class OrdersService {
             .build();
   }
 
+  public OrdersResponseDto getOrder(String uuid) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    return cryptoApi.getOrder(uuid);
+  }
+
   public OrdersResponseDto bid(String market, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     return cryptoApi.bid(market, price);
   }
@@ -74,43 +78,4 @@ public class OrdersService {
     return cryptoApi.deleteOrder(uuid);
   }
 
-  // public OrdersChanceDtoForAsk getOrdersChanceForAsk(String market, String uuid) {
-  //   log.info("Start getOrdersChanceForAsk");
-  //   try {
-  //     JsonObject response = cryptoApi.getOrder(uuid);
-  //     JsonArray trades = response.get("trades").getAsJsonArray();
-  //     if(trades.size() > 0) {
-  //       Double count = 0.0;
-  //       Double price = 0.0;
-  //       Double volume = 0.0;
-  //       Double funds = 0.0;
-
-  //       for(int i = 0; i < trades.size(); i++){
-  //         JsonObject obj = trades.get(i).getAsJsonObject();
-  //         log.info(gson.toJson(obj));
-  //         log.info(obj.get("market").getAsString());
-  //         log.info(obj.get("side").getAsString());
-  //         if(obj.get("market").getAsString().equals(market) && obj.get("side").getAsString().equals("bid")){
-  //           count += 1.0;
-  //           price += obj.get("price").getAsDouble();
-  //           volume += obj.get("volume").getAsDouble();
-  //           funds += obj.get("funds").getAsDouble();
-  //         }
-  //       }
-
-  //       return OrdersChanceDtoForAsk.builder()
-  //               .market(market)
-  //               .uuid(response.get("uuid").getAsString())
-  //               .paidFee(response.get("paid_fee").getAsString())
-  //               .tradePrice(Double.toString(price/count))
-  //               .tradeVolume(Double.toString(volume))
-  //               .tradeFunds(Double.toString(funds))
-  //               .build();
-  //     } 
-  //   } catch (Exception e) {
-  //     log.info("Exception 발생: " + e.getMessage());
-  //   }
-  //   return OrdersChanceDtoForAsk.builder()
-  //           .build();
-  // }
 }

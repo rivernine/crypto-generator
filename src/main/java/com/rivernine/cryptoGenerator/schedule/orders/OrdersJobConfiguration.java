@@ -27,6 +27,10 @@ public class OrdersJobConfiguration {
     return ordersService.getOrdersChanceForAsk(market);
   } 
 
+  public OrdersResponseDto getOrderJob(String uuid) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    return ordersService.getOrder(uuid);
+  }
+
   public OrdersResponseDto bidJob(String market, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     return ordersService.bid(market, price);
   }
