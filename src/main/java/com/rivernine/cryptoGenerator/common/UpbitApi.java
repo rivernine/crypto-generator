@@ -7,7 +7,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -19,6 +18,7 @@ import com.google.gson.JsonObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -203,6 +203,53 @@ public class UpbitApi {
         e.printStackTrace();
     }
     
+    return result;
+  }
+
+  public JsonObject deleteOrder(String uuid) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    JsonObject result = null;
+
+    HashMap<String, String> params = new HashMap<>();
+    params.put("uuid", uuid);
+
+    ArrayList<String> queryElements = new ArrayList<>();
+    for(Map.Entry<String, String> entity : params.entrySet()) {
+        queryElements.add(entity.getKey() + "=" + entity.getValue());
+    }
+
+    String queryString = String.join("&", queryElements.toArray(new String[0]));
+
+    MessageDigest md = MessageDigest.getInstance("SHA-512");
+    md.update(queryString.getBytes("UTF-8"));
+
+    String queryHash = String.format("%0128x", new BigInteger(1, md.digest()));
+
+    Algorithm algorithm = Algorithm.HMAC256(secretKey);
+    String jwtToken = JWT.create()
+            .withClaim("access_key", accessKey)
+            .withClaim("nonce", UUID.randomUUID().toString())
+            .withClaim("query_hash", queryHash)
+            .withClaim("query_hash_alg", "SHA512")
+            .sign(algorithm);
+
+    String authenticationToken = "Bearer " + jwtToken;
+
+    try {
+        HttpClient client = HttpClientBuilder.create().build();
+        HttpDelete request = new HttpDelete(serverUrl + "/v1/order?" + queryString);
+        request.setHeader("Content-Type", "application/json");
+        request.addHeader("Authorization", authenticationToken);
+
+        HttpResponse response = client.execute(request);
+        HttpEntity entity = response.getEntity();
+
+        String jsonString = EntityUtils.toString(entity, "UTF-8");
+        System.out.println(jsonString);
+        result = gson.fromJson(jsonString, JsonObject.class);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
     return result;
   }
 

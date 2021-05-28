@@ -66,6 +66,10 @@ public class CryptoApiService {
     return upbitApi.getOrder(uuid);
   }
 
+  public JsonObject deleteOrder(String uuid) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    return upbitApi.deleteOrder(uuid);
+  }
+
   public ExchangeResponseDto bid(String market, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException{
     ExchangeResponseDto exchangeResponseDto = ExchangeResponseDto.builder()
                                                 .success(false)

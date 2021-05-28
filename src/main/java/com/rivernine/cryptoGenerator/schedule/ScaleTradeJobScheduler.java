@@ -68,9 +68,8 @@ public class ScaleTradeJobScheduler {
         case 10:
           log.info("[currentStatus: "+statusProperties.getCurrentStatus()+"] [bid step] ");
           OrdersChanceDto orderChanceDtoForBid = ordersChanceJobConfiguration.getOrdersChanceForBidJob(market);
-          int currentLevel = scaleTradeStatusProperties.getLevel();
           String myTotalBalance = orderChanceDtoForBid.getBalance();
-          String bidBalance = scaleTradeStatusProperties.getBalancePerLevel().get(currentLevel);
+          String bidBalance = scaleTradeStatusProperties.getBalancePerLevel().get(scaleTradeStatusProperties.getLevel());
 
           if(Double.parseDouble(myTotalBalance) > Double.parseDouble(bidBalance)) {
             ExchangeResponseDto exchangeBidResponseDto = exchangeJobConfiguration.bidJob(market, bidBalance);
@@ -119,6 +118,7 @@ public class ScaleTradeJobScheduler {
           break;
         case 31:
           log.info("[currentStatus: "+statusProperties.getCurrentStatus()+"] [cancel ask order] ");
+          int currentLevel = scaleTradeStatusProperties.getLevel();
           scaleTradeStatusProperties.increaseLevel();
           // go to 10
           break;
