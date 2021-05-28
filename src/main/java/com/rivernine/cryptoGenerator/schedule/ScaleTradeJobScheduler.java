@@ -1,8 +1,8 @@
 package com.rivernine.cryptoGenerator.schedule;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-import com.rivernine.cryptoGenerator.common.CryptoApi;
 import com.rivernine.cryptoGenerator.config.ScaleTradeStatusProperties;
 import com.rivernine.cryptoGenerator.config.StatusProperties;
 import com.rivernine.cryptoGenerator.schedule.analysisForScaleTrading.AnalysisForScaleTradingJobConfiguration;
@@ -78,6 +78,7 @@ public class ScaleTradeJobScheduler {
               scaleTradeStatusProperties.addBidInfoPerLevel(exchangeBidResponseDto);
               scaleTradeStatusProperties.addBalance(bidBalance);
               scaleTradeStatusProperties.addFee(exchangeBidResponseDto.getPaidFee());
+              scaleTradeStatusProperties.setBidTime(analysisForScaleTradingJobConfiguration.getLastCandleJob().getCandleDateTime());
               // go to 20
               statusProperties.setCurrentStatus(20);
             } else {
@@ -109,8 +110,8 @@ public class ScaleTradeJobScheduler {
         case 30:
           log.info("[currentStatus: "+statusProperties.getCurrentStatus()+"] [wait step] ");
           CandleDto candle = analysisForScaleTradingJobConfiguration.getLastCandleJob();
-          if(candle.getFlag() == -1) {
-            // 매도주문취소 후 물타기
+          String bidTime = scaleTradeStatusProperties.getBidTime();
+          if( !bidTime.equals(candle.getCandleDateTime()) && candle.getFlag() == -1 ) {
             // go to 31
           } else {
             log.info("Keep waiting");
