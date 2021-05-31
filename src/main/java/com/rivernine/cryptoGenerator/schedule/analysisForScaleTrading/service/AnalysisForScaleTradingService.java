@@ -38,7 +38,6 @@ public class AnalysisForScaleTradingService {
       for(LocalDateTime key: keys) {
         if(addCount == count)
           break;
-        // log.info("getRecentCandles " + candleDtoMap.get(key).toString());
         result.add(candleDtoMap.get(key));
         addCount++;
       }
@@ -49,16 +48,23 @@ public class AnalysisForScaleTradingService {
     return result;
   }
 
-  public Boolean analysisCandles(List<CandleDto> candles) {
+  public Boolean analysisCandles(List<CandleDto> candles, int count) {
     Boolean result = true;
-
-    if(candles.)
-
-    for(CandleDto candle: candles) {
-      if(candle.getFlag() != -1)
-        result = false;
-    }
     
+    log.info("< Current candles >");
+    for(CandleDto candle: candles) {
+      log.info(candle.toString());
+    }
+
+    if(candles.size() != count) {
+      log.info("candles size is " + Integer.toString(candles.size()));
+      result = false;
+    } else {
+      for(CandleDto candle: candles) {
+        if(candle.getFlag() != -1)
+          result = false;
+      }      
+    }
     return result;
   }
 

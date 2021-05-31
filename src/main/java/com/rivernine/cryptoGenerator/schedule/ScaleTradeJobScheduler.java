@@ -82,11 +82,10 @@ public class ScaleTradeJobScheduler {
         case 0: 
           // [ analysisCandles step ]
           candles = analysisForScaleTradingJobConfiguration.getRecentCandlesJob(2);
-          if(analysisForScaleTradingJobConfiguration.analysisCandlesJob(candles)) {
+          if(analysisForScaleTradingJobConfiguration.analysisCandlesJob(candles, 2)) {
             statusProperties.setCurrentStatus(10);
+            log.info("It's time to bid!!");
             log.info("[changeStatus: 0 -> 10] [currentStatus: "+statusProperties.getCurrentStatus()+"] [bid step] ");
-          } else {
-            log.info("Stay");
           }
           break;
         case 10:
@@ -134,16 +133,21 @@ public class ScaleTradeJobScheduler {
           break;
         case 30:
           // [ wait step ]
+          orderChanceDtoForAsk = ordersJobConfiguration.getOrdersChanceForAskJob(market);
           curCandle = analysisForScaleTradingJobConfiguration.getLastCandleJob();
           level = scaleTradeStatusProperties.getLevel();
           uuid = scaleTradeStatusProperties.getAskInfoPerLevel().get(level).getUuid();
           lastBidTime = scaleTradeStatusProperties.getBidTime();
-          if( !lastBidTime.equals(curCandle.getCandleDateTime()) && curCandle.getFlag() == -1 ) {
+          
+          if( !lastBidTime.equals(curCandle.getCandleDateTime()) && 
+              curCandle.getFlag() == -1 &&
+              curCandle.getTradePrice().compareTo(Double.parseDouble(orderChanceDtoForAsk.getAvgBuyPrice())) == -1 ) {
             statusProperties.setCurrentStatus(31);
             log.info("[changeStatus: 30 -> 31] [currentStatus: "+statusProperties.getCurrentStatus()+"] [cancel ask order step] ");
           } else {
             orderResponseDto = ordersJobConfiguration.getOrderJob(uuid);
             if(orderResponseDto.getState().equals("wait")) {
+              log.info(curCandle.toString());
               log.info("Keep waiting");
             } else if(orderResponseDto.getState().equals("done")) {
               log.info("Ask conclusion!!");

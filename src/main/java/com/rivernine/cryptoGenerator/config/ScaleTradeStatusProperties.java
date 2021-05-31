@@ -32,11 +32,11 @@ public class ScaleTradeStatusProperties {
   public String usedFee = "0.0";  
   public String bidTime = "0000-00-00T00:00:00";
   public String lastConclusionTime = "0000-00-00T00:00:00";
-  public List<OrdersResponseDto> bidInfoPerLevel = new ArrayList<>();
-  public List<OrdersResponseDto> askInfoPerLevel = new ArrayList<>();
+  public Map<Integer, OrdersResponseDto> bidInfoPerLevel = new HashMap<>();
+  public Map<Integer, OrdersResponseDto> askInfoPerLevel = new HashMap<>();
   public Map<LocalDateTime, CandleDto> candleDtoMap = new HashMap<>();
   public List<String> balancePerLevel = new ArrayList<>(
-    Arrays.asList("6000.0", "6000.0", "100000.0", "500000.0", "2000000.0"));
+    Arrays.asList("6000.0", "10000.0", "100000.0", "500000.0", "2000000.0"));
     // Arrays.asList("6000.0", "20000.0", "100000.0", "500000.0", "2000000.0"));
 
   public void increaseLevel() {
@@ -55,20 +55,14 @@ public class ScaleTradeStatusProperties {
 
   public void addBidInfoPerLevel(OrdersResponseDto ordersResponseDto) {
     log.info("addBidInfoPerLevel");
-    log.info(ordersResponseDto.toString());
-    this.bidInfoPerLevel.add(ordersResponseDto);
-    for(OrdersResponseDto ordersResponse: this.bidInfoPerLevel) {
-      log.info(ordersResponse.toString());
-    }
+    this.bidInfoPerLevel.put(this.level, ordersResponseDto);
+    log.info(this.bidInfoPerLevel.get(level).toString());
   }
 
   public void addAskInfoPerLevel(OrdersResponseDto ordersResponseDto) {
     log.info("addAskInfoPerLevel");
-    log.info(ordersResponseDto.toString());
-    this.askInfoPerLevel.add(ordersResponseDto);
-    for(OrdersResponseDto ordersResponse: this.askInfoPerLevel) {
-      log.info(ordersResponse.toString());
-    }
+    this.askInfoPerLevel.put(this.level, ordersResponseDto);
+    log.info(this.askInfoPerLevel.get(level).toString());
   }
 
   public void addCandlesDtoMap(LocalDateTime key, CandleDto candleDto) {
@@ -93,8 +87,8 @@ public class ScaleTradeStatusProperties {
     this.usedFee = "0.0";
     this.bidTime = "0000-00-00T00:00:00";    
     this.lastConclusionTime = "0000-00-00T00:00:00";
-    this.candleDtoMap = new HashMap<>();
-    this.bidInfoPerLevel = new ArrayList<>();
-    this.askInfoPerLevel = new ArrayList<>();
+    this.candleDtoMap = new HashMap<>();  
+    this.bidInfoPerLevel = new HashMap<>();
+    this.askInfoPerLevel = new HashMap<>();
   }
 }

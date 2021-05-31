@@ -24,8 +24,8 @@ public class AnalysisForScaleTradingJobConfiguration {
     return analysisForScaleTradingService.getRecentCandles(1).get(0);
   }
 
-  public Boolean analysisCandlesJob(List<CandleDto> candles) {
-    return analysisForScaleTradingService.analysisCandles(candles);
+  public Boolean analysisCandlesJob(List<CandleDto> candles, int count) {
+    return analysisForScaleTradingService.analysisCandles(candles, count);
   }
 
   public String getAskPriceJob(OrdersChanceDto ordersChanceDtoForAsk) {
