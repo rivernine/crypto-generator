@@ -24,7 +24,6 @@ public class StatusProperties {
   public Boolean askRunning = false;
   public Boolean askPending = false;
   public String uuid;
-  public Boolean lossCut = false;
 
   public OrdersChanceDto ordersChanceDtoForBid;
   public OrdersChanceDto ordersChanceDtoForAsk;
@@ -36,7 +35,6 @@ public class StatusProperties {
     this.askRunning = false;
     this.askPending = false;
     this.uuid = null;
-    this.lossCut = false;
 
     this.ordersChanceDtoForBid = null;
     this.ordersChanceDtoForAsk = null;

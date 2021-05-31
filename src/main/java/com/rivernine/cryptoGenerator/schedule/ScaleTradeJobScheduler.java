@@ -110,10 +110,8 @@ public class ScaleTradeJobScheduler {
             }
           } else {
             log.info("Not enough money. Loss cut");
-            statusProperties.setCurrentStatus(31);
-            statusProperties.setLossCut(true);
-            scaleTradeStatusProperties.decreaseLevel();
-            log.info("[changeStatus: 10 -> 31] [currentStatus: "+statusProperties.getCurrentStatus()+"] [cancel ask order step] ");
+            statusProperties.setCurrentStatus(999);
+            log.info("[changeStatus: 10 -> 999] [currentStatus: "+statusProperties.getCurrentStatus()+"] [loss cut step] ");
           }
           break;
         case 20:
@@ -167,14 +165,9 @@ public class ScaleTradeJobScheduler {
           log.info("level: " + level + ", uuid: " + uuid);
           log.info(cancelOrderResponse.toString());
           if(cancelOrderResponse.getSuccess()){
-            if(statusProperties.getLossCut()) {
-              statusProperties.setCurrentStatus(999);
-              log.info("[changeStatus: 31 -> 999] [currentStatus: "+statusProperties.getCurrentStatus()+"] [loss cut step] ");  
-            } else {
-              scaleTradeStatusProperties.increaseLevel();  
-              statusProperties.setCurrentStatus(10);
-              log.info("[changeStatus: 31 -> 10] [currentStatus: "+statusProperties.getCurrentStatus()+"] [bid step] ");
-            }
+            scaleTradeStatusProperties.increaseLevel();  
+            statusProperties.setCurrentStatus(10);
+            log.info("[changeStatus: 31 -> 10] [currentStatus: "+statusProperties.getCurrentStatus()+"] [bid step] ");
           } else {
             log.info("Error during cancelOrder");
           }
