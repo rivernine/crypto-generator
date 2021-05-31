@@ -45,6 +45,12 @@ public class ScaleTradeStatusProperties {
     log.info("after level: " + Integer.toString(level));
   }
 
+  public void decreaseLevel() {
+    log.info("before level: " + Integer.toString(level));
+    this.level++;
+    log.info("after level: " + Integer.toString(level));
+  }
+
   public void addBalance(String balance) {
     this.usedBalance = Double.toString(Double.parseDouble(this.usedBalance) + Double.parseDouble(balance));
   }

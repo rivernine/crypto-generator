@@ -72,4 +72,8 @@ public class CryptoApi {
   public OrdersResponseDto ask(String market, String volume, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException{
     return cryptoApiService.ask(market, volume, price);
   }
+
+  public OrdersResponseDto ask(String market, String volume) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+    return cryptoApiService.ask(market, volume);
+  }
 }

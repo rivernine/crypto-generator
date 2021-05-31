@@ -131,7 +131,6 @@ public class CryptoApiService {
       statusProperties.setAskPending(true);
 
       JsonObject response = postAskOrdersSetPrice(market, volume, price);
-      // JsonObject response = postBidOrders(market, pricePerBidLevel.get(level));
       if(!response.has("error")) {
         ordersResponseDto.setUuid(response.get("uuid").getAsString());
         ordersResponseDto.setMarket(response.get("market").getAsString());
@@ -139,6 +138,29 @@ public class CryptoApiService {
         ordersResponseDto.setState(response.get("state").getAsString());
         ordersResponseDto.setSuccess(true);
         scaleTradeStatusProperties.addAskInfoPerLevel(ordersResponseDto);
+        statusProperties.setAskPending(false);
+      }
+      statusProperties.setAskRunning(false);
+    }
+
+    return ordersResponseDto;
+  }
+
+  public OrdersResponseDto ask(String market, String volume) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+    OrdersResponseDto ordersResponseDto = OrdersResponseDto.builder()
+                                            .success(false)
+                                            .build();
+    if( !statusProperties.getAskRunning() || statusProperties.getAskPending() ) {
+      statusProperties.setAskRunning(true);
+      statusProperties.setAskPending(true);
+
+      JsonObject response = postAskOrders(market, volume);
+      if(!response.has("error")) {
+        ordersResponseDto.setUuid(response.get("uuid").getAsString());
+        ordersResponseDto.setMarket(response.get("market").getAsString());
+        ordersResponseDto.setPaidFee(response.get("reserved_fee").getAsString());
+        ordersResponseDto.setState(response.get("state").getAsString());
+        ordersResponseDto.setSuccess(true);
         statusProperties.setAskPending(false);
       }
       statusProperties.setAskRunning(false);

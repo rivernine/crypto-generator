@@ -110,8 +110,10 @@ public class ScaleTradeJobScheduler {
             }
           } else {
             log.info("Not enough money. Loss cut");
-            statusProperties.setCurrentStatus(999);
-            log.info("[changeStatus: 10 -> 999] [currentStatus: "+statusProperties.getCurrentStatus()+"] [loss cut step] ");
+            statusProperties.setCurrentStatus(31);
+            statusProperties.setLossCut(true);
+            scaleTradeStatusProperties.decreaseLevel();
+            log.info("[changeStatus: 10 -> 31] [currentStatus: "+statusProperties.getCurrentStatus()+"] [cancel ask order step] ");
           }
           break;
         case 20:
@@ -165,15 +167,32 @@ public class ScaleTradeJobScheduler {
           log.info("level: " + level + ", uuid: " + uuid);
           log.info(cancelOrderResponse.toString());
           if(cancelOrderResponse.getSuccess()){
-            scaleTradeStatusProperties.increaseLevel();  
-            statusProperties.setCurrentStatus(10);
-            log.info("[changeStatus: 31 -> 10] [currentStatus: "+statusProperties.getCurrentStatus()+"] [bid step] ");
+            if(statusProperties.getLossCut()) {
+              statusProperties.setCurrentStatus(999);
+              log.info("[changeStatus: 31 -> 999] [currentStatus: "+statusProperties.getCurrentStatus()+"] [loss cut step] ");  
+            } else {
+              scaleTradeStatusProperties.increaseLevel();  
+              statusProperties.setCurrentStatus(10);
+              log.info("[changeStatus: 31 -> 10] [currentStatus: "+statusProperties.getCurrentStatus()+"] [bid step] ");
+            }
           } else {
             log.info("Error during cancelOrder");
           }
           break;
         case 999:   
           // [ loss cut step ]
+          orderChanceDtoForAsk = ordersJobConfiguration.getOrdersChanceForAskJob(market);
+          if(Double.parseDouble(orderChanceDtoForAsk.getBalance()) * Double.parseDouble(orderChanceDtoForAsk.getAvgBuyPrice()) > 5000.0){
+            ordersAskResponseDto = ordersJobConfiguration.askJob(market, orderChanceDtoForAsk.getBalance());
+            if(ordersAskResponseDto.getSuccess()) {
+              statusProperties.setCurrentStatus(-1);
+              log.info("[changeStatus: 999 -> -1] [currentStatus: "+statusProperties.getCurrentStatus()+"] [init step] ");
+            } else {
+              log.info("Error during asking");
+            }
+          } else {
+            log.info("Not enough coin balance");
+          }
           break; 
       }
     } catch (Exception e) {

@@ -74,6 +74,10 @@ public class OrdersService {
     return cryptoApi.ask(market, volume, price);
   }
 
+  public OrdersResponseDto ask(String market, String volume) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    return cryptoApi.ask(market, volume);
+  }
+
   public OrdersResponseDto deleteOrder(String uuid) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     return cryptoApi.deleteOrder(uuid);
   }

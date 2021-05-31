@@ -39,6 +39,10 @@ public class OrdersJobConfiguration {
     return ordersService.ask(market, volume, price);
   }
 
+  public OrdersResponseDto askJob(String market, String volume) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    return ordersService.ask(market, volume);
+  }
+
   public OrdersResponseDto deleteOrderJob(String uuid) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     return ordersService.deleteOrder(uuid);
   }
