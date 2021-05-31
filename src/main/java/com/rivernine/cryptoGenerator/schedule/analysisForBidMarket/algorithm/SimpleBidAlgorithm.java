@@ -6,12 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SimpleBidAlgorithm {
   
-  @Value("${testParameter.skipBidAlgorithm}")
-  private Boolean skipBidAlgorithm;
-
   public Boolean algorithm() {
-    if(skipBidAlgorithm)
-      return true;
-    return false;
+    return true;
   }
 }

@@ -11,9 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class SimpleAskAlgorithm {
   
-  @Value("${testParameter.skipAskAlgorithm}")
-  private Boolean skipAskAlgorithm;
-
   public Boolean algorithm(Double currentPrice, StatusProperties statusProperties) {    
     return true;
     // OrdersChanceDto ordersChanceDtoForAsk = statusProperties.getOrdersChanceDtoForAsk();
