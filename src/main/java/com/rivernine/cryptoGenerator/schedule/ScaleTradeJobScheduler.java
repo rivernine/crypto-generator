@@ -103,8 +103,8 @@ public class ScaleTradeJobScheduler {
               scaleTradeStatusProperties.addBalance(bidBalance);
               scaleTradeStatusProperties.addFee(ordersBidResponseDto.getPaidFee());
               scaleTradeStatusProperties.setBidTime(curCandle.getCandleDateTime());
-              statusProperties.setCurrentStatus(20);
-              log.info("[changeStatus: 10 -> 20] [currentStatus: "+statusProperties.getCurrentStatus()+"] [ask step] ");
+              statusProperties.setCurrentStatus(11);
+              log.info("[changeStatus: 10 -> 11] [currentStatus: "+statusProperties.getCurrentStatus()+"] [wait for locked step] ");
             } else {
               log.info("Error during bidding");
             }
@@ -112,6 +112,16 @@ public class ScaleTradeJobScheduler {
             log.info("Not enough money. Loss cut");
             statusProperties.setCurrentStatus(999);
             log.info("[changeStatus: 10 -> 999] [currentStatus: "+statusProperties.getCurrentStatus()+"] [loss cut step] ");
+          }
+          break;
+        case 11:
+          // [ wait for locked step ]
+          orderChanceDtoForBid = ordersJobConfiguration.getOrdersChanceForBidJob(market);
+          if(orderChanceDtoForBid.getLocked().equals("0.0")) {
+            statusProperties.setCurrentStatus(20);
+            log.info("[changeStatus: 11 -> 20] [currentStatus: "+statusProperties.getCurrentStatus()+"] [ask step] ");
+          } else {
+            log.info("Locked my balance: " + orderChanceDtoForBid.getLocked());
           }
           break;
         case 20:

@@ -36,8 +36,8 @@ public class ScaleTradeStatusProperties {
   public Map<Integer, OrdersResponseDto> askInfoPerLevel = new HashMap<>();
   public Map<LocalDateTime, CandleDto> candleDtoMap = new HashMap<>();
   public List<String> balancePerLevel = new ArrayList<>(
-    Arrays.asList("6000.0", "10000.0", "100000.0", "500000.0", "2000000.0"));
-    // Arrays.asList("6000.0", "20000.0", "100000.0", "500000.0", "2000000.0"));
+    // Arrays.asList("6000.0", "10000.0", "100000.0", "500000.0", "2000000.0"));
+    Arrays.asList("6000.0", "20000.0", "100000.0", "500000.0", "2000000.0"));
 
   public void increaseLevel() {
     log.info("before level: " + Integer.toString(level));
