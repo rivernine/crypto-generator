@@ -28,12 +28,16 @@ public class AnalysisForScaleTradingService {
     Map<LocalDateTime, CandleDto> candleDtoMap = scaleTradeStatusProperties.getCandleDtoMap();
     List<LocalDateTime> keys = new ArrayList<>(candleDtoMap.keySet());
     DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-    keys.sort((s1, s2) -> s1.format(formatter).compareTo(s2.format(formatter)));
+    keys.sort((s1, s2) -> s2.format(formatter).compareTo(s1.format(formatter)));
   
     if(keys.size() >= count){
-      for( int i = keys.size() - 1; i >= keys.size() - count; i-- ){
-        log.info("getRecentCandles " + candleDtoMap.get(keys.get(i)).toString());
-        result.add(candleDtoMap.get(keys.get(i)));
+      int addCount = 0;
+      for(LocalDateTime key: keys) {
+        if(addCount == 2)
+          break;
+        log.info("getRecentCandles " + candleDtoMap.get(key).toString());
+        result.add(candleDtoMap.get(key));
+        addCount++;
       }
     } else {
       log.info("candles size is " + Integer.toString(candleDtoMap.size()));
