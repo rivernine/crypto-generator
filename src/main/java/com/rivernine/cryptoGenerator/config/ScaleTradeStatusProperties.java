@@ -40,7 +40,9 @@ public class ScaleTradeStatusProperties {
     // Arrays.asList("6000.0", "20000.0", "100000.0", "500000.0", "2000000.0"));
 
   public void increaseLevel() {
+    log.info("before level: " + Integer.toString(level));
     this.level++;
+    log.info("after level: " + Integer.toString(level));
   }
 
   public void addBalance(String balance) {
@@ -52,11 +54,21 @@ public class ScaleTradeStatusProperties {
   }
 
   public void addBidInfoPerLevel(OrdersResponseDto ordersResponseDto) {
+    log.info("addBidInfoPerLevel");
+    log.info(ordersResponseDto.toString());
     this.bidInfoPerLevel.add(ordersResponseDto);
+    for(OrdersResponseDto ordersResponse: this.bidInfoPerLevel) {
+      log.info(ordersResponse.toString());
+    }
   }
 
   public void addAskInfoPerLevel(OrdersResponseDto ordersResponseDto) {
+    log.info("addAskInfoPerLevel");
+    log.info(ordersResponseDto.toString());
     this.askInfoPerLevel.add(ordersResponseDto);
+    for(OrdersResponseDto ordersResponse: this.askInfoPerLevel) {
+      log.info(ordersResponse.toString());
+    }
   }
 
   public void addCandlesDtoMap(LocalDateTime key, CandleDto candleDto) {

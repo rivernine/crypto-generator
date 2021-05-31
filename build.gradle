@@ -19,6 +19,8 @@ dependencies {
 		'org.springframework.boot:spring-boot-starter-batch',			// Batch		
 		'org.mariadb.jdbc:mariadb-java-client:2.7.2',							// MariaDB
 		'org.projectlombok:lombok',																// Lombok
+		'ch.qos.logback:logback-classic:1.2.3',										// Logback
+		'ch.qos.logback:logback-core:1.2.3',											// Logback
 		'com.google.code.gson:gson',															// Gson
 		'com.h2database:h2',																			// Inmemory DB
 		'com.auth0:java-jwt:3.16.0',															// JWT for upbit

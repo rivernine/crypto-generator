@@ -10,6 +10,7 @@ import com.rivernine.cryptoGenerator.config.ScaleTradeStatusProperties;
 import com.rivernine.cryptoGenerator.schedule.getCandle.dto.CandleDto;
 import com.rivernine.cryptoGenerator.schedule.orders.dto.OrdersChanceDto;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -20,8 +21,10 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class AnalysisForScaleTradingService {
   
+  @Value("${upbit.targetMargin}")	
+  private Double targetMargin;  
   private final ScaleTradeStatusProperties scaleTradeStatusProperties;
-  
+
   public List<CandleDto> getRecentCandles(int count) {
     List<CandleDto> result = new ArrayList<>();
 
@@ -33,9 +36,9 @@ public class AnalysisForScaleTradingService {
     if(keys.size() >= count){
       int addCount = 0;
       for(LocalDateTime key: keys) {
-        if(addCount == 2)
+        if(addCount == count)
           break;
-        log.info("getRecentCandles " + candleDtoMap.get(key).toString());
+        // log.info("getRecentCandles " + candleDtoMap.get(key).toString());
         result.add(candleDtoMap.get(key));
         addCount++;
       }
@@ -48,6 +51,9 @@ public class AnalysisForScaleTradingService {
 
   public Boolean analysisCandles(List<CandleDto> candles) {
     Boolean result = true;
+
+    if(candles.)
+
     for(CandleDto candle: candles) {
       if(candle.getFlag() != -1)
         result = false;
@@ -62,7 +68,6 @@ public class AnalysisForScaleTradingService {
     String totalUsedBalance = Double.toString(Double.parseDouble(usedBalance) + Double.parseDouble(usedFee));
     String coinBalance = ordersChanceDtoForAsk.getBalance();
 
-    Double targetMargin = 0.002;
     Double targetBalance = Double.parseDouble(totalUsedBalance) * (1 + targetMargin);
     String targetPrice = Double.toString(targetBalance / Double.parseDouble(coinBalance));
     String targetPriceAbleOrder = targetPrice = changeAbleOrderPrice(targetPrice);

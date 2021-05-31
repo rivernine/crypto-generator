@@ -18,6 +18,7 @@ schedule:
   collectDelay: ${collectDelay:10000} # 시세수집 주기(ms)
 testParameter:
   currentStatus: ${currentStatus:0}
+
 ---
 
 spring:
