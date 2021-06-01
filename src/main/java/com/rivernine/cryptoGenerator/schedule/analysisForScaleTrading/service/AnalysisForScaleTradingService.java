@@ -96,6 +96,8 @@ public class AnalysisForScaleTradingService {
       Double tmp = avgBuyPrice / orderUnit;
       lossCutPrice = tmp.intValue() * orderUnit - orderUnit;
     }
+    log.info("curPrice : avgBuyPrice : lossCutPrice");
+    log.info(curPrice.toString() + " : " + avgBuyPrice.toString() + " : " + lossCutPrice.toString());
     if(curPrice.compareTo(lossCutPrice) == -1) {
       result = true;
     } else {
