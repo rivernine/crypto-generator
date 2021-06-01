@@ -69,14 +69,15 @@ public class AnalysisForScaleTradingService {
   }
 
   public String getAskPrice(OrdersChanceDto ordersChanceDtoForAsk) {
+    Double feeRate = 0.0005;
     String usedBalance = scaleTradeStatusProperties.getUsedBalance();
     String usedFee = scaleTradeStatusProperties.getUsedFee();
     String totalUsedBalance = Double.toString(Double.parseDouble(usedBalance) + Double.parseDouble(usedFee));
     String coinBalance = ordersChanceDtoForAsk.getBalance();
 
-    Double targetBalance = Double.parseDouble(totalUsedBalance) * (1 + targetMargin);
+    Double targetBalance = Double.parseDouble(totalUsedBalance) * (1 + targetMargin + feeRate);
     String targetPrice = Double.toString(targetBalance / Double.parseDouble(coinBalance));
-    String targetPriceAbleOrder = targetPrice = changeAbleOrderPrice(targetPrice);
+    String targetPriceAbleOrder = changeAbleOrderPrice(targetPrice);
 
     log.info("totalUsedBalance : coinBalance : targetPrice : targetPriceAbleOrder");
     log.info(totalUsedBalance + " : " + coinBalance + " : " + targetPrice + " : " + targetPriceAbleOrder);
