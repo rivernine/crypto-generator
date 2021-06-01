@@ -151,7 +151,9 @@ public class ScaleTradeJobScheduler {
           
           if( !lastBidTime.equals(curCandle.getCandleDateTime()) && 
               curCandle.getFlag() == -1 &&
-              curCandle.getTradePrice().compareTo(Double.parseDouble(orderChanceDtoForAsk.getAvgBuyPrice())) == -1 ) {
+              analysisForScaleTradingJobConfiguration.compareCurPriceAvgBuyPrice(curCandle.getTradePrice(), Double.parseDouble(orderChanceDtoForAsk.getAvgBuyPrice()))
+              // curCandle.getTradePrice().compareTo(Double.parseDouble(orderChanceDtoForAsk.getAvgBuyPrice())) == -1 
+              ) {
             statusProperties.setCurrentStatus(31);
             log.info("[changeStatus: 30 -> 31] [currentStatus: "+statusProperties.getCurrentStatus()+"] [cancel ask order step] ");
           } else {

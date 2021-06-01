@@ -84,30 +84,30 @@ public class AnalysisForScaleTradingService {
     return targetPriceAbleOrder;
   }
 
+  public Boolean compareCurPriceAvgBuyPrice(Double curPrice, Double avgBuyPrice) {
+    Boolean result;
+    Double orderUnit = getOrderUnit(avgBuyPrice);
+    Double mod = avgBuyPrice % orderUnit;
+    Double lossCutPrice;
+    if(mod.compareTo(0.0) == 0) {
+      lossCutPrice = avgBuyPrice - orderUnit;
+    } else {
+      Double tmp = avgBuyPrice / orderUnit;
+      lossCutPrice = tmp.intValue() * orderUnit - orderUnit;
+    }
+    if(curPrice.compareTo(lossCutPrice) == -1) {
+      result = true;
+    } else {
+      result = false;
+    }
+
+    return result;
+  }
+
   public String changeAbleOrderPrice(String price) {
     Double result;
     Double priceD = Double.parseDouble(price);
-    Double orderUnit; 
-    if(priceD.compareTo(0.0) != -1 && priceD.compareTo(10.0) == -1) {
-      orderUnit = 0.01;
-    } else if(priceD.compareTo(10.0) != -1 && priceD.compareTo(100.0) == -1) {
-      orderUnit = 0.1;
-    } else if(priceD.compareTo(100.0) != -1 && priceD.compareTo(1000.0) == -1) {
-      orderUnit = 1.0;
-    } else if(priceD.compareTo(1000.0) != -1 && priceD.compareTo(10000.0) == -1) {
-      orderUnit = 5.0;
-    } else if(priceD.compareTo(10000.0) != -1 && priceD.compareTo(100000.0) == -1) {
-      orderUnit = 10.0;
-    } else if(priceD.compareTo(100000.0) != -1 && priceD.compareTo(500000.0) == -1) {
-      orderUnit = 50.0;
-    } else if(priceD.compareTo(500000.0) != -1 && priceD.compareTo(1000000.0) == -1) {
-      orderUnit = 100.0;
-    } else if(priceD.compareTo(1000000.0) != -1 && priceD.compareTo(2000000.0) == -1) {
-      orderUnit = 500.0;
-    } else {
-      orderUnit = 1000.0;
-    }
-
+    Double orderUnit = getOrderUnit(priceD);
     Double mod = priceD % orderUnit;
     if(mod.compareTo(0.0) == 0) {
       result = priceD;
@@ -120,5 +120,30 @@ public class AnalysisForScaleTradingService {
     log.info(priceD.toString() + " : " + orderUnit.toString() + " : " + result.toString());
 
     return Double.toString(result);
+  }
+
+  public Double getOrderUnit(Double price) {
+    Double orderUnit; 
+    if(price.compareTo(0.0) != -1 && price.compareTo(10.0) == -1) {
+      orderUnit = 0.01;
+    } else if(price.compareTo(10.0) != -1 && price.compareTo(100.0) == -1) {
+      orderUnit = 0.1;
+    } else if(price.compareTo(100.0) != -1 && price.compareTo(1000.0) == -1) {
+      orderUnit = 1.0;
+    } else if(price.compareTo(1000.0) != -1 && price.compareTo(10000.0) == -1) {
+      orderUnit = 5.0;
+    } else if(price.compareTo(10000.0) != -1 && price.compareTo(100000.0) == -1) {
+      orderUnit = 10.0;
+    } else if(price.compareTo(100000.0) != -1 && price.compareTo(500000.0) == -1) {
+      orderUnit = 50.0;
+    } else if(price.compareTo(500000.0) != -1 && price.compareTo(1000000.0) == -1) {
+      orderUnit = 100.0;
+    } else if(price.compareTo(1000000.0) != -1 && price.compareTo(2000000.0) == -1) {
+      orderUnit = 500.0;
+    } else {
+      orderUnit = 1000.0;
+    }
+
+    return orderUnit;
   }
 }
