@@ -33,26 +33,7 @@ public class CryptoApiService {
   public Double getPrice(String market) {
     return upbitApi.getMarket(market).get("trade_price").getAsDouble();
   }
-  
-  // 시장가 매수
-  public JsonObject postBidOrders(String market, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-    return upbitApi.postOrders(market, "bid", "-1", price, "price");
-  }
 
-  // 지정가 매수
-  public JsonObject postBidOrdersSetPrice(String market, String volume, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-    return upbitApi.postOrders(market, "bid", volume, price, "limit");
-  }
-
-  // 시장가 매도
-  public JsonObject postAskOrders(String market, String volume) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-    return upbitApi.postOrders(market, "ask", volume, "-1", "market");
-  }
-
-  // 지정가 매도
-  public JsonObject postAskOrdersSetPrice(String market, String volume, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-    return upbitApi.postOrders(market, "ask", volume, price, "limit");
-  }
 
   public JsonObject getOrdersChanceForBid(String market) throws NoSuchAlgorithmException, UnsupportedEncodingException{
     return upbitApi.getOrdersChance(market).get("bid_account").getAsJsonObject();
@@ -96,7 +77,8 @@ public class CryptoApiService {
     return ordersResponseDto;
   }
 
-  public OrdersResponseDto bid(String market, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+  // 지정가 매수
+  public OrdersResponseDto bid(String market, String volume, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException{
     OrdersResponseDto ordersResponseDto = OrdersResponseDto.builder()
                                             .success(false)
                                             .build();
@@ -104,9 +86,7 @@ public class CryptoApiService {
       statusProperties.setBidRunning(true);
       statusProperties.setBidPending(true);
 
-      List<String> pricePerBidLevel = scaleTradeStatusProperties.getBalancePerLevel();
-      int level = scaleTradeStatusProperties.getLevel();
-      JsonObject response = postBidOrders(market, pricePerBidLevel.get(level));
+      JsonObject response = upbitApi.postOrders(market, "bid", volume, price, "limit");
       if(!response.has("error")) {
         ordersResponseDto.setUuid(response.get("uuid").getAsString());
         ordersResponseDto.setMarket(response.get("market").getAsString());
@@ -122,6 +102,7 @@ public class CryptoApiService {
     return ordersResponseDto;
   }
 
+  // 지정가 매도
   public OrdersResponseDto ask(String market, String volume, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException{
     OrdersResponseDto ordersResponseDto = OrdersResponseDto.builder()
                                             .success(false)
@@ -130,7 +111,7 @@ public class CryptoApiService {
       statusProperties.setAskRunning(true);
       statusProperties.setAskPending(true);
 
-      JsonObject response = postAskOrdersSetPrice(market, volume, price);
+      JsonObject response = upbitApi.postOrders(market, "ask", volume, price, "limit");
       if(!response.has("error")) {
         ordersResponseDto.setUuid(response.get("uuid").getAsString());
         ordersResponseDto.setMarket(response.get("market").getAsString());
@@ -146,6 +127,32 @@ public class CryptoApiService {
     return ordersResponseDto;
   }
 
+  // 시장가 매수
+  public OrdersResponseDto bid(String market, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+    OrdersResponseDto ordersResponseDto = OrdersResponseDto.builder()
+                                            .success(false)
+                                            .build();
+    if( !statusProperties.getBidRunning() || statusProperties.getBidPending() ) {
+      statusProperties.setBidRunning(true);
+      statusProperties.setBidPending(true);
+
+      JsonObject response = upbitApi.postOrders(market, "bid", "-1", price, "price");
+      if(!response.has("error")) {
+        ordersResponseDto.setUuid(response.get("uuid").getAsString());
+        ordersResponseDto.setMarket(response.get("market").getAsString());
+        // ordersResponseDto.setPaidFee(response.get("reserved_fee").getAsString());
+        ordersResponseDto.setState(response.get("state").getAsString());
+        ordersResponseDto.setSuccess(true);
+        scaleTradeStatusProperties.addBidInfoPerLevel(ordersResponseDto);
+        statusProperties.setBidPending(false);
+      }
+      statusProperties.setBidRunning(false);
+    }
+
+    return ordersResponseDto;
+  }
+
+  // 시장가 매도
   public OrdersResponseDto ask(String market, String volume) throws NoSuchAlgorithmException, UnsupportedEncodingException{
     OrdersResponseDto ordersResponseDto = OrdersResponseDto.builder()
                                             .success(false)
@@ -154,11 +161,11 @@ public class CryptoApiService {
       statusProperties.setAskRunning(true);
       statusProperties.setAskPending(true);
 
-      JsonObject response = postAskOrders(market, volume);
+      JsonObject response = upbitApi.postOrders(market, "ask", volume, "-1", "market");
       if(!response.has("error")) {
         ordersResponseDto.setUuid(response.get("uuid").getAsString());
         ordersResponseDto.setMarket(response.get("market").getAsString());
-        ordersResponseDto.setPaidFee(response.get("reserved_fee").getAsString());
+        // ordersResponseDto.setPaidFee(response.get("reserved_fee").getAsString());
         ordersResponseDto.setState(response.get("state").getAsString());
         ordersResponseDto.setSuccess(true);
         statusProperties.setAskPending(false);

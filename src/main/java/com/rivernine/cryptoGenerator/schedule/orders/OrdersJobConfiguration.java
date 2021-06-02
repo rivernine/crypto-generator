@@ -31,12 +31,16 @@ public class OrdersJobConfiguration {
     return ordersService.getOrder(uuid);
   }
 
-  public OrdersResponseDto bidJob(String market, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-    return ordersService.bid(market, price);
+  public OrdersResponseDto bidJob(String market, String volume, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    return ordersService.bid(market, volume, price);
   }
 
   public OrdersResponseDto askJob(String market, String volume, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     return ordersService.ask(market, volume, price);
+  }
+
+  public OrdersResponseDto bidJob(String market, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    return ordersService.bid(market, price);
   }
 
   public OrdersResponseDto askJob(String market, String volume) throws NoSuchAlgorithmException, UnsupportedEncodingException {

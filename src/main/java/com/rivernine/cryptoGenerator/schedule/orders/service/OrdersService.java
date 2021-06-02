@@ -66,12 +66,16 @@ public class OrdersService {
     return cryptoApi.getOrder(uuid);
   }
 
-  public OrdersResponseDto bid(String market, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-    return cryptoApi.bid(market, price);
+  public OrdersResponseDto bid(String market, String volume, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    return cryptoApi.bid(market, volume, price);
   }
 
   public OrdersResponseDto ask(String market, String volume, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     return cryptoApi.ask(market, volume, price);
+  }
+
+  public OrdersResponseDto bid(String market, String price) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    return cryptoApi.bid(market, price);
   }
 
   public OrdersResponseDto ask(String market, String volume) throws NoSuchAlgorithmException, UnsupportedEncodingException {

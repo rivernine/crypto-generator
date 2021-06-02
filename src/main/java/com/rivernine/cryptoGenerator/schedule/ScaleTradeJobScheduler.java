@@ -45,7 +45,7 @@ public class ScaleTradeJobScheduler {
   @Scheduled(fixedDelay = 1000)
   public void runScaleTradingJob() {
     List<CandleDto> candles;
-    CandleDto curCandle;
+    CandleDto lastCandle;
     OrdersChanceDto orderChanceDtoForBid;
     OrdersChanceDto orderChanceDtoForAsk;
     OrdersResponseDto ordersBidResponseDto;
@@ -68,9 +68,9 @@ public class ScaleTradeJobScheduler {
       switch(statusProperties.getCurrentStatus()) {
         case -1:  
           // [ init step ]
-          curCandle = analysisForScaleTradingJobConfiguration.getLastCandleJob();
+          lastCandle = analysisForScaleTradingJobConfiguration.getLastCandleJob();
           lastConclusionTime = scaleTradeStatusProperties.getLastConclusionTime();
-          if( lastConclusionTime.equals(curCandle.getCandleDateTime())) {
+          if( lastConclusionTime.equals(lastCandle.getCandleDateTime())) {
             log.info("Rest for a few minutes");
           } else {
             statusProperties.init();
@@ -81,8 +81,8 @@ public class ScaleTradeJobScheduler {
           break;
         case 0: 
           // [ analysisCandles step ]
-          candles = analysisForScaleTradingJobConfiguration.getRecentCandlesJob(2);
-          if(analysisForScaleTradingJobConfiguration.analysisCandlesJob(candles, 2)) {
+          candles = analysisForScaleTradingJobConfiguration.getRecentCandlesJob(3);
+          if(analysisForScaleTradingJobConfiguration.analysisCandlesJob(candles, 3)) {
             statusProperties.setCurrentStatus(10);
             log.info("It's time to bid!!");
             log.info("[changeStatus: 0 -> 10] [currentStatus: "+statusProperties.getCurrentStatus()+"] [bid step] ");
@@ -90,21 +90,24 @@ public class ScaleTradeJobScheduler {
           break;
         case 10:
           // [ bid step ]
-          curCandle = analysisForScaleTradingJobConfiguration.getLastCandleJob();
+          lastCandle = analysisForScaleTradingJobConfiguration.getLastCandleJob();
           orderChanceDtoForBid = ordersJobConfiguration.getOrdersChanceForBidJob(market);
           myTotalBalance = orderChanceDtoForBid.getBalance();
           bidBalance = scaleTradeStatusProperties.getBalancePerLevel().get(scaleTradeStatusProperties.getLevel());
           myTotalBalanced = Double.parseDouble(myTotalBalance);
           bidBalanced = Double.parseDouble(bidBalance);
           if(myTotalBalanced.compareTo(bidBalanced) != -1) {
-            ordersBidResponseDto = ordersJobConfiguration.bidJob(market, bidBalance);
+            Double endingPrice = lastCandle.getTradePrice();
+            String bidVolume = String.format("%.8f", bidBalanced / endingPrice);
+            
+            ordersBidResponseDto = ordersJobConfiguration.bidJob(market, bidVolume, endingPrice.toString());
             if(ordersBidResponseDto.getSuccess()) {
               scaleTradeStatusProperties.addBidInfoPerLevel(ordersBidResponseDto);
-              scaleTradeStatusProperties.addBalance(bidBalance);
-              scaleTradeStatusProperties.addFee(ordersBidResponseDto.getPaidFee());
-              scaleTradeStatusProperties.setBidTime(curCandle.getCandleDateTime());
+              // scaleTradeStatusProperties.addBalance(bidBalance);
+              // scaleTradeStatusProperties.addFee(ordersBidResponseDto.getPaidFee());
+              // scaleTradeStatusProperties.setBidTime(lastCandle.getCandleDateTime());
               statusProperties.setCurrentStatus(11);
-              log.info("[changeStatus: 10 -> 11] [currentStatus: "+statusProperties.getCurrentStatus()+"] [wait for locked step] ");
+              log.info("[changeStatus: 10 -> 11] [currentStatus: "+statusProperties.getCurrentStatus()+"] [wait for bid step] ");
             } else {
               log.info("Error during bidding");
             }
@@ -115,7 +118,7 @@ public class ScaleTradeJobScheduler {
           }
           break;
         case 11:
-          // [ wait for locked step ]
+          // [ wait for bid step ]
           orderChanceDtoForBid = ordersJobConfiguration.getOrdersChanceForBidJob(market);
           if(orderChanceDtoForBid.getLocked().equals("0.0")) {
             statusProperties.setCurrentStatus(20);
@@ -144,26 +147,26 @@ public class ScaleTradeJobScheduler {
         case 30:
           // [ wait step ]
           orderChanceDtoForAsk = ordersJobConfiguration.getOrdersChanceForAskJob(market);
-          curCandle = analysisForScaleTradingJobConfiguration.getLastCandleJob();
+          lastCandle = analysisForScaleTradingJobConfiguration.getLastCandleJob();
           level = scaleTradeStatusProperties.getLevel();
           uuid = scaleTradeStatusProperties.getAskInfoPerLevel().get(level).getUuid();
           lastBidTime = scaleTradeStatusProperties.getBidTime();
           
-          if( !lastBidTime.equals(curCandle.getCandleDateTime()) && 
-              curCandle.getFlag() == -1 &&
-              analysisForScaleTradingJobConfiguration.compareCurPriceAvgBuyPrice(curCandle.getTradePrice(), Double.parseDouble(orderChanceDtoForAsk.getAvgBuyPrice()))
-              // curCandle.getTradePrice().compareTo(Double.parseDouble(orderChanceDtoForAsk.getAvgBuyPrice())) == -1 
+          if( !lastBidTime.equals(lastCandle.getCandleDateTime()) && 
+              lastCandle.getFlag() == -1 &&
+              analysisForScaleTradingJobConfiguration.compareCurPriceAvgBuyPrice(lastCandle.getTradePrice(), Double.parseDouble(orderChanceDtoForAsk.getAvgBuyPrice()))
+              // lastCandle.getTradePrice().compareTo(Double.parseDouble(orderChanceDtoForAsk.getAvgBuyPrice())) == -1 
               ) {
             statusProperties.setCurrentStatus(31);
             log.info("[changeStatus: 30 -> 31] [currentStatus: "+statusProperties.getCurrentStatus()+"] [cancel ask order step] ");
           } else {
             orderResponseDto = ordersJobConfiguration.getOrderJob(uuid);
             if(orderResponseDto.getState().equals("wait")) {
-              log.info(curCandle.toString());
+              log.info(lastCandle.toString());
               log.info("Keep waiting");
             } else if(orderResponseDto.getState().equals("done")) {
               log.info("Ask conclusion!!");
-              scaleTradeStatusProperties.setLastConclusionTime(curCandle.getCandleDateTime());
+              scaleTradeStatusProperties.setLastConclusionTime(lastCandle.getCandleDateTime());
               statusProperties.setCurrentStatus(-1);
               log.info("[changeStatus: 30 -> -1] [currentStatus: "+statusProperties.getCurrentStatus()+"] [init step] ");
             }

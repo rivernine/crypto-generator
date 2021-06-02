@@ -49,22 +49,29 @@ public class AnalysisForScaleTradingService {
   }
 
   public Boolean analysisCandles(List<CandleDto> candles, int count) {
-    Boolean result = true;
+    Boolean result = false;
     
-    log.info("< Current candles >");
-    for(CandleDto candle: candles) {
-      log.info(candle.toString());
-    }
-
-    if(candles.size() != count) {
+    if(candles.size() < count) {
       log.info("candles size is " + Integer.toString(candles.size()));
       result = false;
     } else {
+      int longBlueCandleCount = 0;
       for(CandleDto candle: candles) {
-        if(candle.getFlag() != -1)
+        if(candle.getFlag() == 1) {
           result = false;
-      }      
+          break;
+        }
+        Double orderUnit = getOrderUnit(candle.getTradePrice());
+        Double diff = candle.getOpeningPrice() - candle.getTradePrice();
+        if(diff.compareTo(orderUnit * 2.0) != -1) {
+          longBlueCandleCount += 1;
+        }
+      }
+      if(longBlueCandleCount >= 2) {
+        result = true;
+      }
     }
+
     return result;
   }
 
