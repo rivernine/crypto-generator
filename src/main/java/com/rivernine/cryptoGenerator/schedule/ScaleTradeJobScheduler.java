@@ -1,6 +1,7 @@
 package com.rivernine.cryptoGenerator.schedule;
 
 import java.util.List;
+import java.util.Map;
 
 import com.rivernine.cryptoGenerator.config.ScaleTradeStatusProperties;
 import com.rivernine.cryptoGenerator.config.StatusProperties;
@@ -62,8 +63,6 @@ public class ScaleTradeJobScheduler {
     Double myTotalBalanced;
     Double bidBalanced;
 
-    
-
     try {
       switch(statusProperties.getCurrentStatus()) {
         case -1:  
@@ -119,6 +118,12 @@ public class ScaleTradeJobScheduler {
           break;
         case 11:
           // [ wait for bid step ]
+          level = scaleTradeStatusProperties.getLevel();
+          uuid = scaleTradeStatusProperties.getBidInfoPerLevel().get(level).getUuid();
+          OrdersResponseDto newOrders = ordersJobConfiguration.getOrderJob(uuid);
+          scaleTradeStatusProperties.updateBidInfoPerLevel(newOrders, level);
+          
+
           orderChanceDtoForBid = ordersJobConfiguration.getOrdersChanceForBidJob(market);
           if(orderChanceDtoForBid.getLocked().equals("0.0")) {
             statusProperties.setCurrentStatus(20);

@@ -1,5 +1,7 @@
 package com.rivernine.cryptoGenerator.schedule.orders.dto;
 
+import java.util.Map;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,16 +13,18 @@ import lombok.ToString;
 public class OrdersResponseDto {
   private String uuid;
   private String market;
-  private String paidFee;
+  // private String paidFee;
   private String state;
+  private Map<String, TradeDto> trades;
   private Boolean success;
 
   @Builder
-  public OrdersResponseDto(String uuid, String market, String paidFee, String state, Boolean success) {
+  public OrdersResponseDto(String uuid, String market, String state, Map<String, TradeDto> trades, Boolean success) {
     this.uuid = uuid;
     this.market = market;
-    this.paidFee = paidFee;
+    // this.paidFee = paidFee;
     this.state = state;
+    this.trades = trades;
     this.success = success;
   }
 }

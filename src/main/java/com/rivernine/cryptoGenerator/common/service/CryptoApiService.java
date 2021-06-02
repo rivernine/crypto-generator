@@ -2,13 +2,17 @@ package com.rivernine.cryptoGenerator.common.service;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.rivernine.cryptoGenerator.common.UpbitApi;
 import com.rivernine.cryptoGenerator.config.ScaleTradeStatusProperties;
 import com.rivernine.cryptoGenerator.config.StatusProperties;
 import com.rivernine.cryptoGenerator.schedule.orders.dto.OrdersResponseDto;
+import com.rivernine.cryptoGenerator.schedule.orders.dto.TradeDto;
 
 import org.springframework.stereotype.Service;
 
@@ -50,10 +54,24 @@ public class CryptoApiService {
 
     JsonObject response = upbitApi.getOrder(uuid);
     if(!response.has("error")) {
+      // ordersResponseDto.setPaidFee(response.get("reserved_fee").getAsString());
       ordersResponseDto.setUuid(response.get("uuid").getAsString());
       ordersResponseDto.setMarket(response.get("market").getAsString());
-      ordersResponseDto.setPaidFee(response.get("reserved_fee").getAsString());
       ordersResponseDto.setState(response.get("state").getAsString());
+      Map<String, TradeDto> trades = new HashMap<>();
+      JsonArray jsonArray = response.get("trades").getAsJsonArray();
+      for(JsonElement element: jsonArray) {
+        JsonObject obj = (JsonObject) element;
+        TradeDto trade = TradeDto.builder()
+                          .uuid(obj.get("uuid").getAsString())
+                          .market(obj.get("market").getAsString())
+                          .price(obj.get("price").getAsString())
+                          .volume(obj.get("volume").getAsString())
+                          .funds(obj.get("funds").getAsString())
+                          .build();
+        trades.put(obj.get("uuid").getAsString(), trade);
+      }
+      ordersResponseDto.setTrades(trades);
       ordersResponseDto.setSuccess(true);
     }
 
@@ -69,7 +87,7 @@ public class CryptoApiService {
     if(!response.has("error")) {
       ordersResponseDto.setUuid(response.get("uuid").getAsString());
       ordersResponseDto.setMarket(response.get("market").getAsString());
-      ordersResponseDto.setPaidFee(response.get("reserved_fee").getAsString());
+      // ordersResponseDto.setPaidFee(response.get("reserved_fee").getAsString());
       ordersResponseDto.setState(response.get("state").getAsString());
       ordersResponseDto.setSuccess(true);
     }
@@ -90,7 +108,7 @@ public class CryptoApiService {
       if(!response.has("error")) {
         ordersResponseDto.setUuid(response.get("uuid").getAsString());
         ordersResponseDto.setMarket(response.get("market").getAsString());
-        ordersResponseDto.setPaidFee(response.get("reserved_fee").getAsString());
+        // ordersResponseDto.setPaidFee(response.get("reserved_fee").getAsString());
         ordersResponseDto.setState(response.get("state").getAsString());
         ordersResponseDto.setSuccess(true);
         scaleTradeStatusProperties.addBidInfoPerLevel(ordersResponseDto);
@@ -115,7 +133,7 @@ public class CryptoApiService {
       if(!response.has("error")) {
         ordersResponseDto.setUuid(response.get("uuid").getAsString());
         ordersResponseDto.setMarket(response.get("market").getAsString());
-        ordersResponseDto.setPaidFee(response.get("reserved_fee").getAsString());
+        // ordersResponseDto.setPaidFee(response.get("reserved_fee").getAsString());
         ordersResponseDto.setState(response.get("state").getAsString());
         ordersResponseDto.setSuccess(true);
         scaleTradeStatusProperties.addAskInfoPerLevel(ordersResponseDto);

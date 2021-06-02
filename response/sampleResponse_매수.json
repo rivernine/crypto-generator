@@ -1,5 +1,5 @@
 [
-  // Post order
+  // Post order response
   {
     "uuid": "091d9130-9e1c-4679-9aae-f3ea719134be",
     "side": "bid",
@@ -17,7 +17,7 @@
     "executed_volume": "0.0",
     "trades_count": 0
   },
-  // Get order 체결 전
+  // Get order 체결 전 response
   {
     "uuid": "961b8a4e-ed29-41d1-a5b4-3bf603a51ce7",
     "side": "ask",
@@ -36,7 +36,7 @@
     "trades_count": 0,
     "trades": []
   },
-  // Get order 체결 후
+  // Get order 체결 후 response
   {
     "uuid": "961b8a4e-ed29-41d1-a5b4-3bf603a51ce7",
     "side": "ask",

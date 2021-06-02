@@ -10,6 +10,7 @@ import java.util.Map;
 
 import com.rivernine.cryptoGenerator.schedule.getCandle.dto.CandleDto;
 import com.rivernine.cryptoGenerator.schedule.orders.dto.OrdersResponseDto;
+import com.rivernine.cryptoGenerator.schedule.orders.dto.TradeDto;
 
 import org.springframework.stereotype.Component;
 
@@ -35,6 +36,7 @@ public class ScaleTradeStatusProperties {
   public Map<Integer, OrdersResponseDto> bidInfoPerLevel = new HashMap<>();
   public Map<Integer, OrdersResponseDto> askInfoPerLevel = new HashMap<>();
   public Map<LocalDateTime, CandleDto> candleDtoMap = new HashMap<>();
+  public Map<String, Boolean> tradesStatus = new HashMap<>();
   public List<String> balancePerLevel = new ArrayList<>(
     Arrays.asList("160000.0", "320000.0", "480000.0", "740000.0", "900000.0", "1060000.0"));
 
@@ -54,6 +56,10 @@ public class ScaleTradeStatusProperties {
     this.bidInfoPerLevel.put(this.level, ordersResponseDto);
   }
 
+  public void updateBidInfoPerLevel(OrdersResponseDto ordersResponseDto, Integer level) {
+    this.bidInfoPerLevel.put(level, ordersResponseDto);
+  }
+
   public void addAskInfoPerLevel(OrdersResponseDto ordersResponseDto) {
     this.askInfoPerLevel.put(this.level, ordersResponseDto);
   }
@@ -64,6 +70,12 @@ public class ScaleTradeStatusProperties {
     }
   }
   
+  public void updateTradeStatus() {
+    OrdersResponseDto orders = this.bidInfoPerLevel.get(this.level);
+    orders.getTrades()
+
+  }
+
   public void printCandlesDtoMap() {
     List<LocalDateTime> keys = new ArrayList<>(this.candleDtoMap.keySet());
     DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
@@ -83,5 +95,6 @@ public class ScaleTradeStatusProperties {
     this.candleDtoMap = new HashMap<>();  
     this.bidInfoPerLevel = new HashMap<>();
     this.askInfoPerLevel = new HashMap<>();
+    this.trades = new HashMap<>();
   }
 }
