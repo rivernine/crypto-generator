@@ -114,6 +114,10 @@ public class AnalysisForScaleTradingService {
     return result;
   }
 
+  public Double getLossCutPrice(String avgBuyPrice) {
+    return Double.parseDouble(avgBuyPrice) * (1 - targetMargin);
+  }
+
   public String changeAbleOrderPrice(String price) {
     Double result;
     Double priceD = Double.parseDouble(price);

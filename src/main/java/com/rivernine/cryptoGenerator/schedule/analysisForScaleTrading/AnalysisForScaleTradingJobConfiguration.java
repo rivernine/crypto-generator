@@ -35,4 +35,8 @@ public class AnalysisForScaleTradingJobConfiguration {
   public String getAskPriceJob(OrdersChanceDto ordersChanceDtoForAsk) {
     return analysisForScaleTradingService.getAskPrice(ordersChanceDtoForAsk);
   }
+
+  public Double getLossCutPriceJob(String avgBuyPrice) {
+    return analysisForScaleTradingService.getLossCutPrice(avgBuyPrice);
+  }
 }

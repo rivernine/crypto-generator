@@ -38,9 +38,10 @@ public class ScaleTradeStatusProperties {
   public Map<LocalDateTime, CandleDto> candleDtoMap = new HashMap<>();
   public Map<String, TradeDto> tradesStatus = new HashMap<>();
   public List<String> balancePerLevel = new ArrayList<>(
-    Arrays.asList("160000.0", "320000.0", "480000.0", "740000.0", "900000.0", "1060000.0"));
+    Arrays.asList("160000.0", "320000.0", "480000.0", "740000.0", "900000.0"));
   public Boolean waitingBidOrder = false;
   public Boolean waitingAskOrder = false;
+  public Boolean startTrading = false;
 
   public void increaseLevel() {
     this.level++;
@@ -109,5 +110,6 @@ public class ScaleTradeStatusProperties {
     this.tradesStatus = new HashMap<>();
     this.waitingBidOrder = false;
     this.waitingAskOrder = false;
+    this.startTrading = false;
   }
 }

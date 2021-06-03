@@ -112,10 +112,6 @@ public class ScaleTradeJobScheduler {
             } else {
               log.info("Error during bidding");
             }
-          } else {
-            log.info("Not enough money. Loss cut");
-            log.info("[changeStatus: 10 -> 999] [currentStatus: "+statusProperties.getCurrentStatus()+"] [loss cut step] ");
-            statusProperties.setCurrentStatus(999);
           }
           break;      
         
@@ -140,20 +136,29 @@ public class ScaleTradeJobScheduler {
         
         case 30:
           // [ wait step ]
+          lastCandle = analysisForScaleTradingJobConfiguration.getLastCandleJob();
+          lastBidTime = scaleTradeStatusProperties.getBidTime();
+
           // about bid
           if(scaleTradeStatusProperties.getWaitingBidOrder()) {
+            if(!scaleTradeStatusProperties.getStartTrading() && !lastBidTime.equals(lastCandle.getCandleDateTime())) {
+              log.info("Must find another chance..");
+              log.info("[changeStatus: 30 -> -1] [currentStatus: "+statusProperties.getCurrentStatus()+"] [init step] ");
+              statusProperties.setCurrentStatus(-1);
+            }
             ordersBidResponseDto = scaleTradeStatusProperties.getBidInfoPerLevel().get(level);
             uuid = ordersBidResponseDto.getUuid();
             OrdersResponseDto newOrders = ordersJobConfiguration.getOrderJob(uuid);
             if(ordersBidResponseDto.getTrades().size() != newOrders.getTrades().size()) {
               log.info("Success bidding!!");              
+              scaleTradeStatusProperties.setStartTrading(true);
               scaleTradeStatusProperties.updateBidInfoPerLevel(newOrders, level);
               scaleTradeStatusProperties.updateNewTrade();
               if(scaleTradeStatusProperties.getWaitingAskOrder()) {
-                log.info("[changeStatus: 11 -> 41] [currentStatus: "+statusProperties.getCurrentStatus()+"] [cancel ask order for bid step] ");
+                log.info("[changeStatus: 30 -> 41] [currentStatus: "+statusProperties.getCurrentStatus()+"] [cancel ask order for bid step] ");
                 statusProperties.setCurrentStatus(41);
               } else {
-                log.info("[changeStatus: 11 -> 20] [currentStatus: "+statusProperties.getCurrentStatus()+"] [ask step] ");
+                log.info("[changeStatus: 30 -> 20] [currentStatus: "+statusProperties.getCurrentStatus()+"] [ask step] ");
                 statusProperties.setCurrentStatus(20);
               }
             } else {
@@ -167,14 +172,20 @@ public class ScaleTradeJobScheduler {
           // about ask
           if(scaleTradeStatusProperties.getWaitingAskOrder()) {
             orderChanceDtoForAsk = ordersJobConfiguration.getOrdersChanceForAskJob(market);
+            ordersBidResponseDto = scaleTradeStatusProperties.getBidInfoPerLevel().get(level);
             ordersAskResponseDto = scaleTradeStatusProperties.getAskInfoPerLevel().get(level);
-            lastCandle = analysisForScaleTradingJobConfiguration.getLastCandleJob();
             uuid = ordersAskResponseDto.getUuid();
-            lastBidTime = scaleTradeStatusProperties.getBidTime();
-            
-            if( !lastBidTime.equals(lastCandle.getCandleDateTime()) && 
-                lastCandle.getFlag() == -1 &&
-                analysisForScaleTradingJobConfiguration.compareCurPriceLastBidTradePrice(lastCandle.getTradePrice(), ordersBidResponseDto.getTradePrice())) {
+            Double lossCutPrice = analysisForScaleTradingJobConfiguration.getLossCutPriceJob(orderChanceDtoForAsk.getAvgBuyPrice());
+
+            if( level == 4 && 
+                !lastBidTime.equals(lastCandle.getCandleDateTime()) &&
+                lastCandle.getTradePrice().compareTo(lossCutPrice) == -1) {
+              log.info("Loss cut.");
+              log.info("[changeStatus: 30 -> 999] [currentStatus: "+statusProperties.getCurrentStatus()+"] [loss cut step] ");
+              statusProperties.setCurrentStatus(999);
+            } else if(!lastBidTime.equals(lastCandle.getCandleDateTime()) && 
+                      lastCandle.getFlag() == -1 &&
+                      analysisForScaleTradingJobConfiguration.compareCurPriceLastBidTradePrice(lastCandle.getTradePrice(), ordersBidResponseDto.getTradePrice())) {
               log.info("[changeStatus: 30 -> 42] [currentStatus: "+statusProperties.getCurrentStatus()+"] [cancel ask order step] ");
               statusProperties.setCurrentStatus(42);
             } else {
