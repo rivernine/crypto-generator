@@ -111,7 +111,7 @@ public class CryptoApiService {
         // ordersResponseDto.setPaidFee(response.get("reserved_fee").getAsString());
         ordersResponseDto.setState(response.get("state").getAsString());
         ordersResponseDto.setSuccess(true);
-        scaleTradeStatusProperties.addBidInfoPerLevel(ordersResponseDto);
+        // scaleTradeStatusProperties.addBidInfoPerLevel(ordersResponseDto);
         statusProperties.setBidPending(false);
       }
       statusProperties.setBidRunning(false);
@@ -136,7 +136,7 @@ public class CryptoApiService {
         // ordersResponseDto.setPaidFee(response.get("reserved_fee").getAsString());
         ordersResponseDto.setState(response.get("state").getAsString());
         ordersResponseDto.setSuccess(true);
-        scaleTradeStatusProperties.addAskInfoPerLevel(ordersResponseDto);
+        // scaleTradeStatusProperties.addAskInfoPerLevel(ordersResponseDto);
         statusProperties.setAskPending(false);
       }
       statusProperties.setAskRunning(false);

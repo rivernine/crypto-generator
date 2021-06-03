@@ -36,7 +36,7 @@ public class ScaleTradeStatusProperties {
   public Map<Integer, OrdersResponseDto> bidInfoPerLevel = new HashMap<>();
   public Map<Integer, OrdersResponseDto> askInfoPerLevel = new HashMap<>();
   public Map<LocalDateTime, CandleDto> candleDtoMap = new HashMap<>();
-  public Map<String, Boolean> tradesStatus = new HashMap<>();
+  public Map<String, TradeDto> tradesStatus = new HashMap<>();
   public List<String> balancePerLevel = new ArrayList<>(
     Arrays.asList("160000.0", "320000.0", "480000.0", "740000.0", "900000.0", "1060000.0"));
 
@@ -70,12 +70,17 @@ public class ScaleTradeStatusProperties {
     }
   }
   
-  public void addNewTrade() {
+  public void updateNewTrade() {
     OrdersResponseDto orders = this.bidInfoPerLevel.get(this.level);
     Map<String, TradeDto> trades = orders.getTrades();
     for(String key: trades.keySet()) {
       if(!this.tradesStatus.containsKey(key)) {
-        this.tradesStatus.put(trades.get(key).getUuid(), false);
+        TradeDto trade = trades.get(key);
+        String bidBalance = trade.getFunds();
+        String paidFee = Double.toString((Double.parseDouble(bidBalance) * 0.0005));
+        this.tradesStatus.put(trade.getUuid(), trade);
+        addBalance(bidBalance);
+        addFee(paidFee);
       }
     }
   }
@@ -99,6 +104,6 @@ public class ScaleTradeStatusProperties {
     this.candleDtoMap = new HashMap<>();  
     this.bidInfoPerLevel = new HashMap<>();
     this.askInfoPerLevel = new HashMap<>();
-    this.trades = new HashMap<>();
+    this.tradesStatus = new HashMap<>();
   }
 }

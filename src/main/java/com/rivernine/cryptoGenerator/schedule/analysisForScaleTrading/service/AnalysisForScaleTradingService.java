@@ -92,19 +92,19 @@ public class AnalysisForScaleTradingService {
     return targetPriceAbleOrder;
   }
 
-  public Boolean compareCurPriceAvgBuyPrice(Double curPrice, Double avgBuyPrice) {
+  public Boolean compareCurPriceLastBidTradePrice(Double curPrice, Double lastBidTradePrice) {
     Boolean result;
-    Double orderUnit = getOrderUnit(avgBuyPrice);
-    Double mod = avgBuyPrice % orderUnit;
+    Double orderUnit = getOrderUnit(lastBidTradePrice);
+    Double mod = lastBidTradePrice % orderUnit;
     Double lossCutPrice;
     if(mod.compareTo(0.0) == 0) {
-      lossCutPrice = avgBuyPrice - orderUnit;
+      lossCutPrice = lastBidTradePrice - orderUnit;
     } else {
-      Double tmp = avgBuyPrice / orderUnit;
+      Double tmp = lastBidTradePrice / orderUnit;
       lossCutPrice = tmp.intValue() * orderUnit - orderUnit;
     }
-    log.info("curPrice : avgBuyPrice : lossCutPrice");
-    log.info(curPrice.toString() + " : " + avgBuyPrice.toString() + " : " + lossCutPrice.toString());
+    log.info("curPrice : lastBidTradePrice : lossCutPrice");
+    log.info(curPrice.toString() + " : " + lastBidTradePrice.toString() + " : " + lossCutPrice.toString());
     if(curPrice.compareTo(lossCutPrice) == -1) {
       result = true;
     } else {

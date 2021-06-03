@@ -28,8 +28,8 @@ public class AnalysisForScaleTradingJobConfiguration {
     return analysisForScaleTradingService.analysisCandles(candles, count);
   }
 
-  public Boolean compareCurPriceAvgBuyPrice(Double curPrice, Double avgBuyPrice) {
-    return analysisForScaleTradingService.compareCurPriceAvgBuyPrice(curPrice, avgBuyPrice);
+  public Boolean compareCurPriceLastBidTradePrice(Double curPrice, Double lastBidTradePrice) {
+    return analysisForScaleTradingService.compareCurPriceLastBidTradePrice(curPrice, lastBidTradePrice);
   }
 
   public String getAskPriceJob(OrdersChanceDto ordersChanceDtoForAsk) {

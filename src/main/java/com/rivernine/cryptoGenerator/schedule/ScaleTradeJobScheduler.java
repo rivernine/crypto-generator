@@ -103,12 +103,11 @@ public class ScaleTradeJobScheduler {
             
             ordersBidResponseDto = ordersJobConfiguration.bidJob(market, bidVolume, endingPrice.toString());
             if(ordersBidResponseDto.getSuccess()) {
-              log.info("[changeStatus: 10 -> 11] [currentStatus: "+statusProperties.getCurrentStatus()+"] [wait for bid step] ");
+              log.info("[changeStatus: 10 -> 30] [currentStatus: "+statusProperties.getCurrentStatus()+"] [wait step] ");
+              ordersBidResponseDto.setTradePrice(endingPrice);
               scaleTradeStatusProperties.addBidInfoPerLevel(ordersBidResponseDto);
-              // scaleTradeStatusProperties.addBalance(bidBalance);
-              // scaleTradeStatusProperties.addFee(ordersBidResponseDto.getPaidFee());
-              // scaleTradeStatusProperties.setBidTime(lastCandle.getCandleDateTime());
-              statusProperties.setCurrentStatus(11);
+              scaleTradeStatusProperties.setBidTime(lastCandle.getCandleDateTime());
+              statusProperties.setCurrentStatus(30);
             } else {
               log.info("Error during bidding");
             }
@@ -117,31 +116,8 @@ public class ScaleTradeJobScheduler {
             log.info("[changeStatus: 10 -> 999] [currentStatus: "+statusProperties.getCurrentStatus()+"] [loss cut step] ");
             statusProperties.setCurrentStatus(999);
           }
-          break;
-        case 11:
-          // [ wait for bid step ]
-          ordersBidResponseDto = scaleTradeStatusProperties.getBidInfoPerLevel().get(level);
-          uuid = ordersBidResponseDto.getUuid();
-          OrdersResponseDto newOrders = ordersJobConfiguration.getOrderJob(uuid);
-          if(ordersBidResponseDto.getTrades().size() != newOrders.getTrades().size()) {
-            log.info("Success bidding!!");
-            log.info("[changeStatus: 11 -> 20] [currentStatus: "+statusProperties.getCurrentStatus()+"] [ask step] ");
-            statusProperties.setCurrentStatus(20);
-            scaleTradeStatusProperties.updateBidInfoPerLevel(newOrders, level);
-            scaleTradeStatusProperties.addNewTrade();
-          } else {
-            log.info("Wait for bid");
-          }
-          break;          
-
-          // orderChanceDtoForBid = ordersJobConfiguration.getOrdersChanceForBidJob(market);
-          // if(orderChanceDtoForBid.getLocked().equals("0.0")) {
-          //   statusProperties.setCurrentStatus(20);
-          //   log.info("[changeStatus: 11 -> 20] [currentStatus: "+statusProperties.getCurrentStatus()+"] [ask step] ");
-          // } else {
-          //   log.info("Locked my balance: " + orderChanceDtoForBid.getLocked());
-          // }
-          // break;
+          break;      
+        
         case 20:
           // [ ask step ]
           orderChanceDtoForAsk = ordersJobConfiguration.getOrdersChanceForAskJob(market);
@@ -159,35 +135,63 @@ public class ScaleTradeJobScheduler {
             log.info("Not enough coin balance");
           }
           break;
+        
         case 30:
           // [ wait step ]
+          // about bid
+          ordersBidResponseDto = scaleTradeStatusProperties.getBidInfoPerLevel().get(level);
+          uuid = ordersBidResponseDto.getUuid();
+          OrdersResponseDto newOrders = ordersJobConfiguration.getOrderJob(uuid);
+          if(ordersBidResponseDto.getTrades().size() != newOrders.getTrades().size()) {
+            log.info("Success bidding!!");
+            log.info("[changeStatus: 11 -> 20] [currentStatus: "+statusProperties.getCurrentStatus()+"] [ask step] ");
+            statusProperties.setCurrentStatus(20);
+            scaleTradeStatusProperties.updateBidInfoPerLevel(newOrders, level);
+            scaleTradeStatusProperties.updateNewTrade();
+          } else {
+            log.info("Wait for bid");
+          }
+
+          // about ask
           orderChanceDtoForAsk = ordersJobConfiguration.getOrdersChanceForAskJob(market);
+          ordersAskResponseDto = scaleTradeStatusProperties.getAskInfoPerLevel().get(level);
           lastCandle = analysisForScaleTradingJobConfiguration.getLastCandleJob();
-          uuid = scaleTradeStatusProperties.getAskInfoPerLevel().get(level).getUuid();
+          uuid = ordersAskResponseDto.getUuid();
           lastBidTime = scaleTradeStatusProperties.getBidTime();
           
           if( !lastBidTime.equals(lastCandle.getCandleDateTime()) && 
               lastCandle.getFlag() == -1 &&
-              analysisForScaleTradingJobConfiguration.compareCurPriceAvgBuyPrice(lastCandle.getTradePrice(), Double.parseDouble(orderChanceDtoForAsk.getAvgBuyPrice()))
-              // lastCandle.getTradePrice().compareTo(Double.parseDouble(orderChanceDtoForAsk.getAvgBuyPrice())) == -1 
-              ) {
-            statusProperties.setCurrentStatus(31);
+              analysisForScaleTradingJobConfiguration.compareCurPriceLastBidTradePrice(lastCandle.getTradePrice(), ordersBidResponseDto.getTradePrice())) {
             log.info("[changeStatus: 30 -> 31] [currentStatus: "+statusProperties.getCurrentStatus()+"] [cancel ask order step] ");
+            statusProperties.setCurrentStatus(31);
           } else {
             orderResponseDto = ordersJobConfiguration.getOrderJob(uuid);
             if(orderResponseDto.getState().equals("wait")) {
-              log.info(lastCandle.toString());
-              log.info("Keep waiting");
+              log.info("Wait for ask");
             } else if(orderResponseDto.getState().equals("done")) {
-              log.info("Ask conclusion!!");
+              log.info("Success asking!!");
+              log.info("[changeStatus: 30 -> -1] [currentStatus: "+statusProperties.getCurrentStatus()+"] [init step] ");
               scaleTradeStatusProperties.setLastConclusionTime(lastCandle.getCandleDateTime());
               statusProperties.setCurrentStatus(-1);
-              log.info("[changeStatus: 30 -> -1] [currentStatus: "+statusProperties.getCurrentStatus()+"] [init step] ");
             }
           }
-          break;
-        case 31:
-          // [ cancel ask order step ]
+          break;          
+        case 41:
+          // [ cancel ask order for bid step ]
+          uuid = scaleTradeStatusProperties.getAskInfoPerLevel().get(level).getUuid();
+          cancelOrderResponse = ordersJobConfiguration.deleteOrderJob(uuid);
+          log.info("level: " + level + ", uuid: " + uuid);
+          log.info(cancelOrderResponse.toString());
+          if(cancelOrderResponse.getSuccess()){
+            scaleTradeStatusProperties.increaseLevel();  
+            statusProperties.setCurrentStatus(10);
+            log.info("[changeStatus: 31 -> 10] [currentStatus: "+statusProperties.getCurrentStatus()+"] [bid step] ");
+          } else {
+            log.info("Error during cancelOrder");
+          }
+          break;  
+        case 42:
+          // [ cancel ask order for scale trade step ]
           uuid = scaleTradeStatusProperties.getAskInfoPerLevel().get(level).getUuid();
           cancelOrderResponse = ordersJobConfiguration.deleteOrderJob(uuid);
           log.info("level: " + level + ", uuid: " + uuid);
@@ -200,6 +204,42 @@ public class ScaleTradeJobScheduler {
             log.info("Error during cancelOrder");
           }
           break;
+          // orderChanceDtoForBid = ordersJobConfiguration.getOrdersChanceForBidJob(market);
+          // if(orderChanceDtoForBid.getLocked().equals("0.0")) {
+          //   statusProperties.setCurrentStatus(20);
+          //   log.info("[changeStatus: 11 -> 20] [currentStatus: "+statusProperties.getCurrentStatus()+"] [ask step] ");
+          // } else {
+          //   log.info("Locked my balance: " + orderChanceDtoForBid.getLocked());
+          // }
+          // break;
+        // case 130:
+        //   // [ wait step ]
+        //   orderChanceDtoForAsk = ordersJobConfiguration.getOrdersChanceForAskJob(market);
+        //   lastCandle = analysisForScaleTradingJobConfiguration.getLastCandleJob();
+        //   uuid = scaleTradeStatusProperties.getAskInfoPerLevel().get(level).getUuid();
+        //   lastBidTime = scaleTradeStatusProperties.getBidTime();
+          
+        //   if( !lastBidTime.equals(lastCandle.getCandleDateTime()) && 
+        //       lastCandle.getFlag() == -1 &&
+        //       analysisForScaleTradingJobConfiguration.compareCurPriceAvgBuyPrice(lastCandle.getTradePrice(), Double.parseDouble(orderChanceDtoForAsk.getAvgBuyPrice()))
+        //       // lastCandle.getTradePrice().compareTo(Double.parseDouble(orderChanceDtoForAsk.getAvgBuyPrice())) == -1 
+        //       ) {
+        //     statusProperties.setCurrentStatus(31);
+        //     log.info("[changeStatus: 30 -> 31] [currentStatus: "+statusProperties.getCurrentStatus()+"] [cancel ask order step] ");
+        //   } else {
+        //     orderResponseDto = ordersJobConfiguration.getOrderJob(uuid);
+        //     if(orderResponseDto.getState().equals("wait")) {
+        //       log.info(lastCandle.toString());
+        //       log.info("Keep waiting");
+        //     } else if(orderResponseDto.getState().equals("done")) {
+        //       log.info("Ask conclusion!!");
+        //       scaleTradeStatusProperties.setLastConclusionTime(lastCandle.getCandleDateTime());
+        //       statusProperties.setCurrentStatus(-1);
+        //       log.info("[changeStatus: 30 -> -1] [currentStatus: "+statusProperties.getCurrentStatus()+"] [init step] ");
+        //     }
+        //   }
+        //   break;
+        
         case 999:   
           // [ loss cut step ]
           orderChanceDtoForAsk = ordersJobConfiguration.getOrdersChanceForAskJob(market);
