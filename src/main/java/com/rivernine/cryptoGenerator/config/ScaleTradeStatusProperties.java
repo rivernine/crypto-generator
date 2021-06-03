@@ -70,10 +70,14 @@ public class ScaleTradeStatusProperties {
     }
   }
   
-  public void updateTradeStatus() {
+  public void addNewTrade() {
     OrdersResponseDto orders = this.bidInfoPerLevel.get(this.level);
-    orders.getTrades()
-
+    Map<String, TradeDto> trades = orders.getTrades();
+    for(String key: trades.keySet()) {
+      if(!this.tradesStatus.containsKey(key)) {
+        this.tradesStatus.put(trades.get(key).getUuid(), false);
+      }
+    }
   }
 
   public void printCandlesDtoMap() {
