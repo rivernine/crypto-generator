@@ -12,7 +12,7 @@ upbit:
   balance: ${balance:-1.0}
   targetMargin: ${targetMargin:0.002}
   candleMinutes: ${candleMinutes:5}
-
+  markets: ${markets:KRW-BTC,KRW-ETH}
 schedule:
   chunkSize: 100  
   collectDelay: ${collectDelay:10000} # 시세수집 주기(ms)

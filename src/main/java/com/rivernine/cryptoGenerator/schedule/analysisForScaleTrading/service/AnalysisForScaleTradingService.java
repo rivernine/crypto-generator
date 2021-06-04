@@ -27,7 +27,6 @@ public class AnalysisForScaleTradingService {
 
   public List<CandleDto> getRecentCandles(int count) {
     List<CandleDto> result = new ArrayList<>();
-
     Map<LocalDateTime, CandleDto> candleDtoMap = scaleTradeStatusProperties.getCandleDtoMap();
     List<LocalDateTime> keys = new ArrayList<>(candleDtoMap.keySet());
     DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
@@ -42,7 +41,29 @@ public class AnalysisForScaleTradingService {
         addCount++;
       }
     } else {
-      log.info("candles size is " + Integer.toString(candleDtoMap.size()));
+      log.info("getRecentCandles: candles size is " + Integer.toString(candleDtoMap.size()));
+    }
+    
+    return result;
+  }
+
+  public List<CandleDto> getRecentCandles(String market, int count) {
+    List<CandleDto> result = new ArrayList<>();
+    Map<LocalDateTime, CandleDto> candleDtoMap = scaleTradeStatusProperties.getCandleDtoMaps().get(market);
+    List<LocalDateTime> keys = new ArrayList<>(candleDtoMap.keySet());
+    DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+    keys.sort((s1, s2) -> s2.format(formatter).compareTo(s1.format(formatter)));
+  
+    if(keys.size() >= count){
+      int addCount = 0;
+      for(LocalDateTime key: keys) {
+        if(addCount == count)
+          break;
+        result.add(candleDtoMap.get(key));
+        addCount++;
+      }
+    } else {
+      log.info("getRecentCandles: candles size is " + Integer.toString(candleDtoMap.size()));
     }
     
     return result;
@@ -50,16 +71,20 @@ public class AnalysisForScaleTradingService {
 
   public Boolean analysisCandles(List<CandleDto> candles, int count) {
     Boolean result = false;
-    
     if(candles.size() < count) {
-      log.info("candles size is " + Integer.toString(candles.size()));
+      log.info("analysisCandles: candles size is " + Integer.toString(candles.size()));
       result = false;
     } else {
       int longBlueCandleCount = 0;
+
+      log.info("<Candles Info>");
+      for(CandleDto candle: candles) {
+        log.info(candle.toString());
+      }
+
       for(CandleDto candle: candles) {
         if(candle.getFlag() == 1) {
-          result = false;
-          break;
+          return false;
         }
         Double orderUnit = getOrderUnit(candle.getTradePrice());
         Double diff = candle.getOpeningPrice() - candle.getTradePrice();

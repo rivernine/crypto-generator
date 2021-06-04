@@ -43,6 +43,7 @@ public class GetCandleService {
                               .flag(flag)
                               .build();
 
+      scaleTradeStatusProperties.addCandlesDtoMaps(market, LocalDateTime.parse(candleDateTimeKst), candleDto);
       scaleTradeStatusProperties.addCandlesDtoMap(LocalDateTime.parse(candleDateTimeKst), candleDto);
     }
   }

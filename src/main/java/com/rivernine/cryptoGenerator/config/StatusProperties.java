@@ -17,8 +17,8 @@ import lombok.ToString;
 @Setter
 public class StatusProperties {
 
-  @Value("${testParameter.currentStatus}")
-  public int currentStatus;
+  public String market;
+  public int currentStatus = 0;
   public Boolean bidRunning = false;
   public Boolean bidPending = false;
   public Boolean askRunning = false;
@@ -35,9 +35,9 @@ public class StatusProperties {
     this.askRunning = false;
     this.askPending = false;
     this.uuid = null;
+    this.market = null;
 
     this.ordersChanceDtoForBid = null;
     this.ordersChanceDtoForAsk = null;
-
   }
 }
