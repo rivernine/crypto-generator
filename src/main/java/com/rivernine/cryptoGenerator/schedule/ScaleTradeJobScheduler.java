@@ -86,8 +86,8 @@ public class ScaleTradeJobScheduler {
         case 1:
           // [ select market step ]
           for(String mkt: markets) {
-            candles = analysisForScaleTradingJobConfiguration.getRecentCandlesJob(mkt, 3);
-            if(analysisForScaleTradingJobConfiguration.analysisCandlesJob(candles, 3)) {
+            candles = analysisForScaleTradingJobConfiguration.getRecentCandlesJob(mkt, 2);
+            if(analysisForScaleTradingJobConfiguration.analysisCandlesJob(candles, 2)) {
               log.info("It's time to bid!! My select : " + mkt);
               log.info("[changeStatus: 1 -> 10] [currentStatus: "+statusProperties.getCurrentStatus()+"] [bid step] ");
               statusProperties.setMarket(mkt);
@@ -160,10 +160,11 @@ public class ScaleTradeJobScheduler {
             ordersBidResponseDto = scaleTradeStatusProperties.getBidInfoPerLevel().get(level);
             uuid = ordersBidResponseDto.getUuid();
             OrdersResponseDto newOrders = ordersJobConfiguration.getOrderJob(uuid);
+            newOrders.setTradePrice(ordersBidResponseDto.getTradePrice());
 
-            log.info(ordersBidResponseDto.toString());
-            log.info(uuid);
-            log.info(newOrders.toString());
+            log.info("ordersBidResponseDto: " + ordersBidResponseDto.toString());
+            log.info("uuid: " + uuid);
+            log.info("newOrders: " + newOrders.toString());
 
             if(ordersBidResponseDto.getTrades().size() != newOrders.getTrades().size()) {
               log.info("Success bidding!!");              
@@ -181,6 +182,7 @@ public class ScaleTradeJobScheduler {
               log.info("Wait for bid");
             }
             if(ordersBidResponseDto.getState().equals("done")) {
+              log.info("Finished wait for bid. Set the watingBidOrder(false)");
               scaleTradeStatusProperties.setWaitingBidOrder(false);
             }
           }
@@ -193,9 +195,9 @@ public class ScaleTradeJobScheduler {
             uuid = ordersAskResponseDto.getUuid();
             Double lossCutPrice = analysisForScaleTradingJobConfiguration.getLossCutPriceJob(orderChanceDtoForAsk.getAvgBuyPrice());
 
-            log.info(orderChanceDtoForAsk.toString());
-            log.info(ordersBidResponseDto.toString());
-            log.info(ordersAskResponseDto.toString());
+            log.info("orderChanceDtoForAsk: " + orderChanceDtoForAsk.toString());
+            log.info("ordersBidResponseDto: " + ordersBidResponseDto.toString());
+            log.info("ordersAskResponseDto: " + ordersAskResponseDto.toString());
             log.info(uuid);
 
             if( level == 4 && 
@@ -211,7 +213,7 @@ public class ScaleTradeJobScheduler {
               statusProperties.setCurrentStatus(42);
             } else {
               orderResponseDto = ordersJobConfiguration.getOrderJob(uuid);
-              log.info(orderResponseDto.toString());
+              log.info("orderResponseDto: " + orderResponseDto.toString());
 
               if(orderResponseDto.getState().equals("wait")) {
                 log.info("Wait for ask");
