@@ -23,6 +23,8 @@ public class AnalysisForScaleTradingService {
   
   @Value("${upbit.targetMargin}")	
   private Double targetMargin;  
+  @Value("${upbit.scaleTradeRate}")	
+  private Double scaleTradeRate;
   private final ScaleTradeStatusProperties scaleTradeStatusProperties;
 
   // public List<CandleDto> getRecentCandles(int count) {
@@ -76,18 +78,15 @@ public class AnalysisForScaleTradingService {
       result = false;
     } else {
       int longBlueCandleCount = 0;
-
       for(CandleDto candle: candles) {
         log.info(candle.toString());
       }
-
       for(CandleDto candle: candles) {
         if(candle.getFlag() == 1) {
           return false;
         }
-        Double orderUnit = getOrderUnit(candle.getTradePrice());
-        Double diff = candle.getOpeningPrice() - candle.getTradePrice();
-        if(diff.compareTo(orderUnit * 2.0) != -1) {
+        Double thresholdPrice = candle.getOpeningPrice() * (1 - scaleTradeRate);
+        if(candle.getTradePrice().compareTo(thresholdPrice) != 1) {
           longBlueCandleCount += 1;
         }
       }
@@ -110,26 +109,20 @@ public class AnalysisForScaleTradingService {
     String targetPrice = Double.toString(targetBalance / Double.parseDouble(coinBalance));
     String targetPriceAbleOrder = changeAbleOrderPrice(targetPrice);
 
-    log.info("totalUsedBalance : coinBalance : targetPrice : targetPriceAbleOrder");
-    log.info(totalUsedBalance + " : " + coinBalance + " : " + targetPrice + " : " + targetPriceAbleOrder);
+    log.info("usedBalance : usedFee : totalUsedBalance");
+    log.info(usedBalance + " : " + usedFee + " : " + totalUsedBalance);
+    log.info("coinBalance : targetPrice : targetPriceAbleOrder");
+    log.info(coinBalance + " : " + targetPrice + " : " + targetPriceAbleOrder);
 
     return targetPriceAbleOrder;
   }
 
   public Boolean compareCurPriceLastBidTradePrice(Double curPrice, Double lastBidTradePrice) {
     Boolean result;
-    Double orderUnit = getOrderUnit(lastBidTradePrice);
-    Double mod = lastBidTradePrice % orderUnit;
-    Double lossCutPrice;
-    if(mod.compareTo(0.0) == 0) {
-      lossCutPrice = lastBidTradePrice - orderUnit;
-    } else {
-      Double tmp = lastBidTradePrice / orderUnit;
-      lossCutPrice = tmp.intValue() * orderUnit - orderUnit;
-    }
-    log.info("curPrice : lastBidTradePrice : lossCutPrice");
-    log.info(curPrice.toString() + " : " + lastBidTradePrice.toString() + " : " + lossCutPrice.toString());
-    if(curPrice.compareTo(lossCutPrice) == -1) {
+    Double thresholdPrice = lastBidTradePrice * (1 - scaleTradeRate);
+    log.info("curPrice : lastBidTradePrice : thresholdPrice");
+    log.info(curPrice.toString() + " : " + lastBidTradePrice.toString() + " : " + thresholdPrice.toString());
+    if(curPrice.compareTo(thresholdPrice) == -1) {
       result = true;
     } else {
       result = false;
@@ -139,7 +132,7 @@ public class AnalysisForScaleTradingService {
   }
 
   public Double getLossCutPrice(String avgBuyPrice) {
-    return Double.parseDouble(avgBuyPrice) * (1 - targetMargin);
+    return Double.parseDouble(avgBuyPrice) * (1 - (targetMargin * 5.0));
   }
 
   public String changeAbleOrderPrice(String price) {

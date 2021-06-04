@@ -8,11 +8,10 @@ spring:
 upbit:
   accessKey: ${accessKey:NONE}
   secretKey: ${secretKey:NONE}
-  market: ${market:KRW-BTC}
-  balance: ${balance:-1.0}
+  markets: ${markets:KRW-BTC,KRW-ETH}
   targetMargin: ${targetMargin:0.002}
   candleMinutes: ${candleMinutes:5}
-  markets: ${markets:KRW-BTC,KRW-ETH}
+  scaleTradeRate: ${scaleTradeRate:0.004}
 schedule:
   chunkSize: 100  
   collectDelay: ${collectDelay:10000} # 시세수집 주기(ms)
