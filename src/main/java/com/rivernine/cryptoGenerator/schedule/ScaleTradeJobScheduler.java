@@ -55,12 +55,8 @@ public class ScaleTradeJobScheduler {
     int level;
     String lastBidTime;
     String lastConclusionTime;
-    String myTotalBalance;
-    String bidBalance;
     String uuid;
     String askPrice;
-    Double myTotalBalanced;
-    Double bidBalanced;
 
     level = scaleTradeStatusProperties.getLevel();
 
@@ -92,11 +88,10 @@ public class ScaleTradeJobScheduler {
           // [ bid step ]
           lastCandle = analysisForScaleTradingJobConfiguration.getLastCandleJob();
           orderChanceDtoForBid = ordersJobConfiguration.getOrdersChanceForBidJob(market);
-          myTotalBalance = orderChanceDtoForBid.getBalance();
-          bidBalance = scaleTradeStatusProperties.getBalancePerLevel().get(scaleTradeStatusProperties.getLevel());
-          myTotalBalanced = Double.parseDouble(myTotalBalance);
-          bidBalanced = Double.parseDouble(bidBalance);
-          if(myTotalBalanced.compareTo(bidBalanced) != -1) {
+          String bidBalance = scaleTradeStatusProperties.getBalancePerLevel().get(scaleTradeStatusProperties.getLevel());
+          Double myTotalBalance = Double.parseDouble(orderChanceDtoForBid.getBalance());
+          Double bidBalanced = Double.parseDouble(bidBalance);
+          if(myTotalBalance.compareTo(bidBalanced) != -1) {
             Double endingPrice = lastCandle.getTradePrice();
             String bidVolume = String.format("%.8f", bidBalanced / endingPrice);
             
@@ -113,7 +108,6 @@ public class ScaleTradeJobScheduler {
             }
           }
           break;      
-        
         case 20:
           // [ ask step ]
           orderChanceDtoForAsk = ordersJobConfiguration.getOrdersChanceForAskJob(market);
@@ -132,7 +126,6 @@ public class ScaleTradeJobScheduler {
             log.info("Not enough coin balance");
           }
           break;
-        
         case 30:
           // [ wait step ]
           lastCandle = analysisForScaleTradingJobConfiguration.getLastCandleJob();
@@ -167,7 +160,6 @@ public class ScaleTradeJobScheduler {
               scaleTradeStatusProperties.setWaitingBidOrder(false);
             }
           }
-
           // about ask
           if(scaleTradeStatusProperties.getWaitingAskOrder()) {
             orderChanceDtoForAsk = ordersJobConfiguration.getOrdersChanceForAskJob(market);
@@ -199,7 +191,6 @@ public class ScaleTradeJobScheduler {
               }
             }
           }
-          
           break;          
         case 41:
           // [ cancel ask order for bid step ]
@@ -227,7 +218,45 @@ public class ScaleTradeJobScheduler {
             log.info("Error during cancelOrder");
           }
           break;
-          // orderChanceDtoForBid = ordersJobConfiguration.getOrdersChanceForBidJob(market);
+          
+        case 999:   
+          // [ loss cut step ]
+          lastCandle = analysisForScaleTradingJobConfiguration.getLastCandleJob();
+          log.info("Wait for red candle");
+          if(lastCandle.getFlag() == 1) {
+            uuid = scaleTradeStatusProperties.getAskInfoPerLevel().get(level).getUuid();
+            cancelOrderResponse = ordersJobConfiguration.deleteOrderJob(uuid);
+            if(cancelOrderResponse.getSuccess()){
+              log.info("Success cancel order!!");
+              scaleTradeStatusProperties.setWaitingAskOrder(false);
+              orderChanceDtoForAsk = ordersJobConfiguration.getOrdersChanceForAskJob(market);
+              if(Double.parseDouble(orderChanceDtoForAsk.getBalance()) * Double.parseDouble(orderChanceDtoForAsk.getAvgBuyPrice()) > 5000.0){
+                ordersAskResponseDto = ordersJobConfiguration.askJob(market, orderChanceDtoForAsk.getBalance());
+                if(ordersAskResponseDto.getSuccess()) {
+                  log.info("Success loss cut..");
+                  log.info("[changeStatus: 999 -> -1] [currentStatus: "+statusProperties.getCurrentStatus()+"] [init step] ");
+                  statusProperties.setCurrentStatus(-1);
+                } else {
+                  log.info("Error during asking");
+                }
+              } else {
+                log.info("Not enough coin balance");
+              }
+            } else {
+              log.info("Already success ask order!!");
+              log.info("[changeStatus: 999 -> -1] [currentStatus: "+statusProperties.getCurrentStatus()+"] [init step] ");
+              statusProperties.setCurrentStatus(-1);
+            }
+          }
+          break; 
+      }
+    } catch (Exception e) {
+      log.info(e.getMessage());
+    }
+  }
+}
+
+// orderChanceDtoForBid = ordersJobConfiguration.getOrdersChanceForBidJob(market);
           // if(orderChanceDtoForBid.getLocked().equals("0.0")) {
           //   statusProperties.setCurrentStatus(20);
           //   log.info("[changeStatus: 11 -> 20] [currentStatus: "+statusProperties.getCurrentStatus()+"] [ask step] ");
@@ -263,24 +292,3 @@ public class ScaleTradeJobScheduler {
         //   }
         //   break;
         
-        case 999:   
-          // [ loss cut step ]
-          orderChanceDtoForAsk = ordersJobConfiguration.getOrdersChanceForAskJob(market);
-          if(Double.parseDouble(orderChanceDtoForAsk.getBalance()) * Double.parseDouble(orderChanceDtoForAsk.getAvgBuyPrice()) > 5000.0){
-            ordersAskResponseDto = ordersJobConfiguration.askJob(market, orderChanceDtoForAsk.getBalance());
-            if(ordersAskResponseDto.getSuccess()) {
-              statusProperties.setCurrentStatus(-1);
-              log.info("[changeStatus: 999 -> -1] [currentStatus: "+statusProperties.getCurrentStatus()+"] [init step] ");
-            } else {
-              log.info("Error during asking");
-            }
-          } else {
-            log.info("Not enough coin balance");
-          }
-          break; 
-      }
-    } catch (Exception e) {
-      log.info(e.getMessage());
-    }
-  }
-}
