@@ -151,10 +151,8 @@ public class ScaleTradeJobScheduler {
             log.info("Wait step about bid");
             if(!scaleTradeStatusProperties.getStartTrading() && !lastBidTime.equals(lastCandle.getCandleDateTime())) {
               log.info("Must find another chance..");
-              log.info("[changeStatus: 30 -> -1] [currentStatus: "+statusProperties.getCurrentStatus()+"] [init step] ");
-              scaleTradeStatusProperties.setWaitingBidOrder(false);
-              statusProperties.setCurrentStatus(-1);
-              log.info("Rest for a few minutes");
+              log.info("[changeStatus: 30 -> 40] [currentStatus: "+statusProperties.getCurrentStatus()+"] [cancel bid step] ");
+              statusProperties.setCurrentStatus(40);
               break;
             }
             ordersBidResponseDto = scaleTradeStatusProperties.getBidInfoPerLevel().get(level);
@@ -226,13 +224,27 @@ public class ScaleTradeJobScheduler {
               }
             }
           }
-          break;          
+          break;      
+        case 40:
+          // [ cancel bid order ]
+          uuid = scaleTradeStatusProperties.getBidInfoPerLevel().get(level).getUuid();
+          cancelOrderResponse = ordersJobConfiguration.deleteOrderJob(uuid);
+          if(cancelOrderResponse.getSuccess()){
+            log.info("Success cancel bid order!!");
+            log.info("[changeStatus: 40 -> -1] [currentStatus: "+statusProperties.getCurrentStatus()+"] [init step] ");
+            scaleTradeStatusProperties.setWaitingBidOrder(false);
+            statusProperties.setCurrentStatus(-1);
+            log.info("Rest for a few minutes");
+          } else {
+            log.info("Error during cancelOrder");
+          }
+          break;      
         case 41:
           // [ cancel ask order for bid step ]
           uuid = scaleTradeStatusProperties.getAskInfoPerLevel().get(level).getUuid();
           cancelOrderResponse = ordersJobConfiguration.deleteOrderJob(uuid);
           if(cancelOrderResponse.getSuccess()){
-            log.info("Success cancel order!!");
+            log.info("Success cancel ask order for bid!!");
             log.info("[changeStatus: 41 -> 20] [currentStatus: "+statusProperties.getCurrentStatus()+"] [ask step] ");
             scaleTradeStatusProperties.setWaitingAskOrder(false);
             statusProperties.setCurrentStatus(20);
@@ -245,10 +257,11 @@ public class ScaleTradeJobScheduler {
           uuid = scaleTradeStatusProperties.getAskInfoPerLevel().get(level).getUuid();
           cancelOrderResponse = ordersJobConfiguration.deleteOrderJob(uuid);
           if(cancelOrderResponse.getSuccess()){
+            log.info("Success cancel ask order for scale trade!!");
+            log.info("[changeStatus: 42 -> 10] [currentStatus: "+statusProperties.getCurrentStatus()+"] [bid step] ");
             scaleTradeStatusProperties.increaseLevel();
             scaleTradeStatusProperties.setWaitingAskOrder(false);
             statusProperties.setCurrentStatus(10);
-            log.info("[changeStatus: 42 -> 10] [currentStatus: "+statusProperties.getCurrentStatus()+"] [bid step] ");
           } else {
             log.info("Error during cancelOrder");
           }
