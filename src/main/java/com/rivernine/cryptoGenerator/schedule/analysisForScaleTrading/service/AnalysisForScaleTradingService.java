@@ -27,28 +27,6 @@ public class AnalysisForScaleTradingService {
   private Double scaleTradeRate;
   private final ScaleTradeStatusProperties scaleTradeStatusProperties;
 
-  // public List<CandleDto> getRecentCandles(int count) {
-  //   List<CandleDto> result = new ArrayList<>();
-  //   Map<LocalDateTime, CandleDto> candleDtoMap = scaleTradeStatusProperties.getCandleDtoMap();
-  //   List<LocalDateTime> keys = new ArrayList<>(candleDtoMap.keySet());
-  //   DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-  //   keys.sort((s1, s2) -> s2.format(formatter).compareTo(s1.format(formatter)));
-  
-  //   if(keys.size() >= count){
-  //     int addCount = 0;
-  //     for(LocalDateTime key: keys) {
-  //       if(addCount == count)
-  //         break;
-  //       result.add(candleDtoMap.get(key));
-  //       addCount++;
-  //     }
-  //   } else {
-  //     log.info("getRecentCandles: candles size is " + Integer.toString(candleDtoMap.size()));
-  //   }
-    
-  //   return result;
-  // }
-
   public List<CandleDto> getRecentCandles(String market, int count) {
     List<CandleDto> result = new ArrayList<>();
     Map<LocalDateTime, CandleDto> candleDtoMap = scaleTradeStatusProperties.getCandleDtoMaps().get(market);
