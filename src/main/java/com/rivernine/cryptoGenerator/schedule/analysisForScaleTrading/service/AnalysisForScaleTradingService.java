@@ -25,27 +25,27 @@ public class AnalysisForScaleTradingService {
   private Double targetMargin;  
   private final ScaleTradeStatusProperties scaleTradeStatusProperties;
 
-  public List<CandleDto> getRecentCandles(int count) {
-    List<CandleDto> result = new ArrayList<>();
-    Map<LocalDateTime, CandleDto> candleDtoMap = scaleTradeStatusProperties.getCandleDtoMap();
-    List<LocalDateTime> keys = new ArrayList<>(candleDtoMap.keySet());
-    DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-    keys.sort((s1, s2) -> s2.format(formatter).compareTo(s1.format(formatter)));
+  // public List<CandleDto> getRecentCandles(int count) {
+  //   List<CandleDto> result = new ArrayList<>();
+  //   Map<LocalDateTime, CandleDto> candleDtoMap = scaleTradeStatusProperties.getCandleDtoMap();
+  //   List<LocalDateTime> keys = new ArrayList<>(candleDtoMap.keySet());
+  //   DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+  //   keys.sort((s1, s2) -> s2.format(formatter).compareTo(s1.format(formatter)));
   
-    if(keys.size() >= count){
-      int addCount = 0;
-      for(LocalDateTime key: keys) {
-        if(addCount == count)
-          break;
-        result.add(candleDtoMap.get(key));
-        addCount++;
-      }
-    } else {
-      log.info("getRecentCandles: candles size is " + Integer.toString(candleDtoMap.size()));
-    }
+  //   if(keys.size() >= count){
+  //     int addCount = 0;
+  //     for(LocalDateTime key: keys) {
+  //       if(addCount == count)
+  //         break;
+  //       result.add(candleDtoMap.get(key));
+  //       addCount++;
+  //     }
+  //   } else {
+  //     log.info("getRecentCandles: candles size is " + Integer.toString(candleDtoMap.size()));
+  //   }
     
-    return result;
-  }
+  //   return result;
+  // }
 
   public List<CandleDto> getRecentCandles(String market, int count) {
     List<CandleDto> result = new ArrayList<>();
@@ -77,7 +77,6 @@ public class AnalysisForScaleTradingService {
     } else {
       int longBlueCandleCount = 0;
 
-      log.info("<Candles Info>");
       for(CandleDto candle: candles) {
         log.info(candle.toString());
       }

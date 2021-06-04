@@ -16,7 +16,4 @@ public class GetCandleJobConfiguration {
     getCandleService.getCandles(market, minutes, count);
   }
 
-  public void printCandlesJob() {
-    getCandleService.printCandles();
-  }
 }
