@@ -1,7 +1,6 @@
 package com.rivernine.cryptoGenerator.schedule;
 
 import java.util.List;
-import java.util.Map;
 
 import com.rivernine.cryptoGenerator.config.ScaleTradeStatusProperties;
 import com.rivernine.cryptoGenerator.config.StatusProperties;

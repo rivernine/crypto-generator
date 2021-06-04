@@ -14,7 +14,6 @@ public class TradeDto {
   private String price;
   private String volume;
   private String funds;
-  private Boolean isDone = false;
 
   @Builder
   public TradeDto(String uuid, String market, String price, String volume, String funds) {

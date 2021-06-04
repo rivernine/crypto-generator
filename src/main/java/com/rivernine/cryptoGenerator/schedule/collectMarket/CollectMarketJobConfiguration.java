@@ -1,25 +1,25 @@
-package com.rivernine.cryptoGenerator.schedule.collectMarket;
+// package com.rivernine.cryptoGenerator.schedule.collectMarket;
 
-import java.util.List;
+// import java.util.List;
 
-import com.google.gson.JsonObject;
-import com.rivernine.cryptoGenerator.common.CryptoApi;
-import com.rivernine.cryptoGenerator.domain.crypto.Crypto;
-import com.rivernine.cryptoGenerator.schedule.collectMarket.dto.CollectMarketSaveDto;
-import com.rivernine.cryptoGenerator.schedule.collectMarket.service.CollectMarketService;
+// import com.google.gson.JsonObject;
+// import com.rivernine.cryptoGenerator.common.CryptoApi;
+// import com.rivernine.cryptoGenerator.domain.crypto.Crypto;
+// import com.rivernine.cryptoGenerator.schedule.collectMarket.dto.CollectMarketSaveDto;
+// import com.rivernine.cryptoGenerator.schedule.collectMarket.service.CollectMarketService;
 
-import org.springframework.stereotype.Component;
+// import org.springframework.stereotype.Component;
 
-import lombok.RequiredArgsConstructor;
+// import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
-@Component
-public class CollectMarketJobConfiguration {
+// @RequiredArgsConstructor
+// @Component
+// public class CollectMarketJobConfiguration {
 
-  private final CollectMarketService collectMarketService;
+//   private final CollectMarketService collectMarketService;
 
-  public void collectMarketJob(String market) {
-    CollectMarketSaveDto collectMarketSaveDto = collectMarketService.getMarket(market);
-    collectMarketService.save(collectMarketSaveDto);
-  } 
-}
+//   public void collectMarketJob(String market) {
+//     CollectMarketSaveDto collectMarketSaveDto = collectMarketService.getMarket(market);
+//     collectMarketService.save(collectMarketSaveDto);
+//   } 
+// }
