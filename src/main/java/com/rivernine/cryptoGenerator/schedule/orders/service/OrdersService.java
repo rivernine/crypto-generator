@@ -63,6 +63,11 @@ public class OrdersService {
   }
 
   public OrdersResponseDto getOrder(String uuid) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    OrdersResponseDto orderResponse = cryptoApi.getOrder(uuid);
+    while(true) {
+      if(orderResponse.getUuid() != null)
+        break;
+    }
     return cryptoApi.getOrder(uuid);
   }
 

@@ -51,7 +51,6 @@ public class CryptoApiService {
     OrdersResponseDto ordersResponseDto = OrdersResponseDto.builder()
                                             .success(false)
                                             .build();
-
     JsonObject response = upbitApi.getOrder(uuid);
     if(!response.has("error")) {
       // ordersResponseDto.setPaidFee(response.get("reserved_fee").getAsString());

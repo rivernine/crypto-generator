@@ -197,7 +197,7 @@ public class UpbitApi {
         HttpEntity entity = response.getEntity();
 
         String jsonString = EntityUtils.toString(entity, "UTF-8");
-        // System.out.println(jsonString);
+        System.out.println(jsonString);
         result = gson.fromJson(jsonString, JsonObject.class);
     } catch (IOException e) {
         e.printStackTrace();
