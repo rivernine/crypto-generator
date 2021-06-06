@@ -56,7 +56,6 @@ public class ScaleTradeJobScheduler {
     OrdersResponseDto cancelOrderResponse;
     int level;
     String lastBidTime;
-    String lastConclusionTime;
     String uuid;
     String askPrice;
     String market = statusProperties.getMarket();
@@ -68,7 +67,6 @@ public class ScaleTradeJobScheduler {
         case -1:  
           // [ init step ]
           lastCandle = analysisForScaleTradingJobConfiguration.getLastCandleJob(market);
-          lastConclusionTime = scaleTradeStatusProperties.getLastConclusionTime();
           // if( !lastConclusionTime.equals(lastCandle.getCandleDateTime())) {
           log.info("[changeStatus: -1 -> 1] [currentStatus: "+statusProperties.getCurrentStatus()+"] [select market step] ");
           statusProperties.init();
@@ -159,8 +157,9 @@ public class ScaleTradeJobScheduler {
               break;
             }
             else if(scaleTradeStatusProperties.getStartTrading() && !lastBidTime.equals(lastCandle.getCandleDateTime())) {
-              log.info("Cannot bid whild scale Trading");
+              log.info("Cannot bid whild scale Trading. Decrease Level!!");
               log.info("[changeStatus: 30 -> 40] [currentStatus: "+statusProperties.getCurrentStatus()+"] [cancel bid step] ");
+              scaleTradeStatusProperties.decreaseLevel();
               statusProperties.setCurrentStatus(40);
               break;
             }
@@ -271,7 +270,7 @@ public class ScaleTradeJobScheduler {
           uuid = scaleTradeStatusProperties.getAskInfoPerLevel().get(level).getUuid();
           cancelOrderResponse = ordersJobConfiguration.deleteOrderJob(uuid);
           if(cancelOrderResponse.getSuccess()){
-            log.info("Success cancel ask order for scale trade!!");
+            log.info("Success cancel ask order for scale trade!!. Increase Level!!");
             log.info("[changeStatus: 42 -> 10] [currentStatus: "+statusProperties.getCurrentStatus()+"] [bid step] ");
             scaleTradeStatusProperties.increaseLevel();
             scaleTradeStatusProperties.setWaitingAskOrder(false);

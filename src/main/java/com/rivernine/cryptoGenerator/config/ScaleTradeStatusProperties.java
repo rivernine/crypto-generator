@@ -47,6 +47,10 @@ public class ScaleTradeStatusProperties {
     this.level++;
   }
 
+  public void decreaseLevel() {
+    this.level--;
+  }
+
   public void addBalance(String balance) {
     this.usedBalance = Double.toString(Double.parseDouble(this.usedBalance) + Double.parseDouble(balance));
   }
