@@ -27,7 +27,9 @@ import lombok.ToString;
 public class ScaleTradeStatusProperties {
 
   @Value("${upbit.markets}")
-  private List<String> markets;
+  public List<String> markets;
+  @Value("${upbit.balancePerLevel}")
+  public List<String> balancePerLevel;
   public int level = 0;
   public String usedBalance = "0.0";
   public String usedFee = "0.0";  
@@ -37,8 +39,6 @@ public class ScaleTradeStatusProperties {
   public Map<Integer, OrdersResponseDto> askInfoPerLevel = new HashMap<>();
   public Map<String, Map<LocalDateTime, CandleDto>> candleDtoMaps = new HashMap<>();
   public Map<String, TradeDto> tradesStatus = new HashMap<>();
-  public List<String> balancePerLevel = new ArrayList<>(
-    Arrays.asList("10000.0", "20000.0", "30000.0", "40000.0", "50000.0"));
   public Boolean waitingBidOrder = false;
   public Boolean waitingAskOrder = false;
   public Boolean startTrading = false;

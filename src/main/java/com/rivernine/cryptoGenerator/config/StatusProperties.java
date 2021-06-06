@@ -24,9 +24,6 @@ public class StatusProperties {
   public Boolean askPending = false;
   public String uuid;
 
-  public OrdersChanceDto ordersChanceDtoForBid;
-  public OrdersChanceDto ordersChanceDtoForAsk;
-
   public void init(){
     this.currentStatus = 0;
     this.bidRunning = false;
@@ -35,8 +32,5 @@ public class StatusProperties {
     this.askPending = false;
     this.uuid = null;
     this.market = null;
-
-    this.ordersChanceDtoForBid = null;
-    this.ordersChanceDtoForAsk = null;
   }
 }

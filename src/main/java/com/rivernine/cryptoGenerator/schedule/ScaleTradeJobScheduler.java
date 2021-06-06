@@ -81,6 +81,7 @@ public class ScaleTradeJobScheduler {
           log.info("[currentStatus: "+statusProperties.getCurrentStatus()+"] [crypto-generator start step] ");
           statusProperties.init();
           scaleTradeStatusProperties.init();
+          log.info(scaleTradeStatusProperties.getBalancePerLevel().toString());
           statusProperties.setCurrentStatus(1);
           break;
         case 1:
