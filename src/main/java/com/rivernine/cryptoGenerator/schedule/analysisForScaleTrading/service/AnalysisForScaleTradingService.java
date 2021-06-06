@@ -64,7 +64,7 @@ public class AnalysisForScaleTradingService {
 
       for(CandleDto candle: candles) {
         Double thresholdPrice = candle.getOpeningPrice() * (1 - scaleTradeRate);
-        log.info(candle.toString() + " | threshold(scaleTradeRate) : thresholdPrice");
+        log.info(candle.toString() + " | threshold(scaleTradeRate) : " + thresholdPrice);
         
         if(candle.getFlag() == 1) {
           return false;
@@ -80,7 +80,7 @@ public class AnalysisForScaleTradingService {
         }
       }
       Double thresholdPrice = maxPrice * (1 - (targetMargin * 2));
-      log.info("threshold(targetMargin * 2) : thresholdPrice");
+      log.info("threshold(targetMargin * 2) : " + thresholdPrice);
       if(minPrice.compareTo(thresholdPrice) != 1) {
         return true;
       }
