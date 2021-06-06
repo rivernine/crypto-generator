@@ -66,3 +66,42 @@
     ]
   }
 ]
+
+
+{
+  "uuid": "02a62289-7b17-4b7a-8ea9-aa38c3e8b19d",
+  "side": "bid",
+  "ord_type": "limit",
+  "price": "84110.0",
+  "state": "done",
+  "market": "KRW-STRK",
+  "created_at": "2021-06-06T18:55:02+09:00",
+  "volume": "0.11889193",
+  "remaining_volume": "0.0",
+  "reserved_fee": "5.00000011615",
+  "remaining_fee": "0.0",
+  "paid_fee": "5.00000011615",
+  "locked": "0.0",
+  "executed_volume": "0.11889193",
+  "trades_count": 2,
+  "trades": [
+    {
+      "market": "KRW-STRK",
+      "uuid": "b7150619-06c8-40a3-b2e4-11ff09b03efa",
+      "price": "84110.0",
+      "volume": "0.04290152",
+      "funds": "3608.4468472",
+      "created_at": "2021-06-06T18:55:02+09:00",
+      "side": "bid"
+    },
+    {
+      "market": "KRW-STRK",
+      "uuid": "47cd99d5-4a55-4772-97a0-8d965be1e419",
+      "price": "84110.0",
+      "volume": "0.07599041",
+      "funds": "6391.5533851",
+      "created_at": "2021-06-06T18:55:03+09:00",
+      "side": "bid"
+    }
+  ]
+}
