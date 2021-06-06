@@ -56,20 +56,33 @@ public class AnalysisForScaleTradingService {
       result = false;
     } else {
       int longBlueCandleCount = 0;
+      // for(CandleDto candle: candles) {
+      //   log.info(candle.toString());
+      // }
+      Double minPrice = 100000000.00000000;
+      Double maxPrice = 0.0;
+
       for(CandleDto candle: candles) {
-        log.info(candle.toString());
-      }
-      for(CandleDto candle: candles) {
+        Double thresholdPrice = candle.getOpeningPrice() * (1 - scaleTradeRate);
+        log.info(candle.toString() + " | threshold(scaleTradeRate) : thresholdPrice");
+        
         if(candle.getFlag() == 1) {
           return false;
         }
-        Double thresholdPrice = candle.getOpeningPrice() * (1 - scaleTradeRate);
+        maxPrice = Double.max(maxPrice, candle.getOpeningPrice());
+        minPrice = Double.min(minPrice, candle.getTradePrice());
+        
         if(candle.getTradePrice().compareTo(thresholdPrice) != 1) {
           longBlueCandleCount += 1;
         }
+        if(longBlueCandleCount >= 2) {
+          return true;
+        }
       }
-      if(longBlueCandleCount >= 2) {
-        result = true;
+      Double thresholdPrice = maxPrice * (1 - (targetMargin * 2));
+      log.info("threshold(targetMargin * 2) : thresholdPrice");
+      if(minPrice.compareTo(thresholdPrice) != 1) {
+        return true;
       }
     }
 
