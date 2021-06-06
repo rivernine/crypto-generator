@@ -86,6 +86,7 @@ public class ScaleTradeJobScheduler {
         case 1:
           // [ select market step ]
           for(String mkt: markets) {
+            log.info("< " + mkt + " >");
             candles = analysisForScaleTradingJobConfiguration.getRecentCandlesJob(mkt, 3);
             if(analysisForScaleTradingJobConfiguration.analysisCandlesJob(candles, 3)) {
               log.info("It's time to bid!! My select : " + mkt);

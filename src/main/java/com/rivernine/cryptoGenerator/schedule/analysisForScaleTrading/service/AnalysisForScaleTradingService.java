@@ -55,6 +55,8 @@ public class AnalysisForScaleTradingService {
       log.info("analysisCandles: candles size is " + Integer.toString(candles.size()));
       result = false;
     } else {
+      if(candles.get(0).getFlag() != -1)
+        return false;
       int longBlueCandleCount = 0;
       // for(CandleDto candle: candles) {
       //   log.info(candle.toString());
@@ -67,11 +69,18 @@ public class AnalysisForScaleTradingService {
         log.info(candle.toString() + " | threshold(scaleTradeRate) : " + thresholdPrice);
         
         if(candle.getFlag() == 1) {
+          log.info("getFlag == 1. Return false");
           return false;
         }
         maxPrice = Double.max(maxPrice, candle.getOpeningPrice());
         minPrice = Double.min(minPrice, candle.getTradePrice());
         
+        Double thresholdPrice2 = maxPrice * (1 - (targetMargin * 2));
+        log.info("threshold(targetMargin * 2) : " + thresholdPrice2);
+        if(minPrice.compareTo(thresholdPrice2) != 1) {
+          return true;
+        } 
+
         if(candle.getTradePrice().compareTo(thresholdPrice) != 1) {
           longBlueCandleCount += 1;
         }
@@ -79,11 +88,7 @@ public class AnalysisForScaleTradingService {
           return true;
         }
       }
-      Double thresholdPrice = maxPrice * (1 - (targetMargin * 2));
-      log.info("threshold(targetMargin * 2) : " + thresholdPrice);
-      if(minPrice.compareTo(thresholdPrice) != 1) {
-        return true;
-      }
+      
     }
 
     return result;
