@@ -115,10 +115,19 @@ public class ScaleTradeJobScheduler {
               OrdersResponseDto getOrderResponseDto = ordersJobConfiguration.getOrderJob(ordersBidResponseDto.getUuid());
               getOrderResponseDto.setTradePrice(endingPrice);
               log.info(getOrderResponseDto.toString());
+
               scaleTradeStatusProperties.addBidInfoPerLevel(getOrderResponseDto);
               scaleTradeStatusProperties.setBidTime(lastCandle.getCandleDateTime());
-              scaleTradeStatusProperties.setWaitingBidOrder(true);
-              statusProperties.setCurrentStatus(30);
+              if(ordersBidResponseDto.getState().equals("done")) {
+                log.info("Already done. Set the watingBidOrder(false)");
+                log.info("[changeStatus: 10 -> 20] [currentStatus: "+statusProperties.getCurrentStatus()+"] [ask step] ");
+                scaleTradeStatusProperties.setWaitingBidOrder(false);
+                scaleTradeStatusProperties.updateNewTrade();
+                statusProperties.setCurrentStatus(20);
+              } else {
+                scaleTradeStatusProperties.setWaitingBidOrder(true);
+                statusProperties.setCurrentStatus(30);
+              }
             } else {
               log.info("Error during bidding");
             }

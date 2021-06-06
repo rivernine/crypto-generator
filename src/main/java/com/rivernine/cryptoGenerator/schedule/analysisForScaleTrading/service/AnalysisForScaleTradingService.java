@@ -55,8 +55,10 @@ public class AnalysisForScaleTradingService {
       log.info("analysisCandles: candles size is " + Integer.toString(candles.size()));
       result = false;
     } else {
-      if(candles.get(0).getFlag() != -1)
+      if(candles.get(0).getFlag() != -1) {
+        log.info("Last flag is not -1. return false");
         return false;
+      }
       int longBlueCandleCount = 0;
       // for(CandleDto candle: candles) {
       //   log.info(candle.toString());
