@@ -67,6 +67,7 @@ public class OrdersService {
     while(true) {
       if(orderResponse.getUuid() != null)
         break;
+      orderResponse = cryptoApi.getOrder(uuid);
     }
     return cryptoApi.getOrder(uuid);
   }
