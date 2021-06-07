@@ -147,6 +147,7 @@ public class ScaleTradeJobScheduler {
           lastCandle = analysisForScaleTradingJobConfiguration.getLastCandleJob(market);
           lastBidTime = scaleTradeStatusProperties.getBidTime();
 
+          log.info("lastCandle: " + lastCandle.toString());
           // about bid
           if(scaleTradeStatusProperties.getWaitingBidOrder()) {
             log.info("Wait step about bid");
