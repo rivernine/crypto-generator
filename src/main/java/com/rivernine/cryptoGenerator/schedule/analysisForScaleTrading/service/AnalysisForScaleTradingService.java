@@ -21,16 +21,14 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class AnalysisForScaleTradingService {
   
-  @Value("${upbit.scaleTradeRate}")	
-  private Double scaleTradeRate;
-  @Value("${upbit.marginRatePerLevel}")	
-  private List<Double> marginRatePerLevel;
-  @Value("${upbit.scaleTradeRatePerLevel}")	
-  private List<Double> scaleTradeRatePerLevel;
   @Value("${upbit.longBlueCandleRate}")
   private Double longBlueCandleRate;
   @Value("${upbit.lossCutRate}")
   private Double lossCutRate;
+  @Value("${upbit.marginRatePerLevel}")	
+  private List<Double> marginRatePerLevel;
+  @Value("${upbit.scaleTradeRatePerLevel}")	
+  private List<Double> scaleTradeRatePerLevel;
 
   private final ScaleTradeStatusProperties scaleTradeStatusProperties;
 

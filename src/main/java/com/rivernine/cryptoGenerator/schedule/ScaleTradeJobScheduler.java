@@ -23,8 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class ScaleTradeJobScheduler {
 
-  // @Value("${upbit.market}")	
-  // private String market;  
   @Value("${upbit.markets}")
   private List<String> markets;
   @Value("${upbit.candleMinutes}")
@@ -67,7 +65,6 @@ public class ScaleTradeJobScheduler {
         case -1:  
           // [ init step ]
           lastCandle = analysisForScaleTradingJobConfiguration.getLastCandleJob(market);
-          // if( !lastConclusionTime.equals(lastCandle.getCandleDateTime())) {
           log.info("[changeStatus: -1 -> 1] [select market step] ");
           statusProperties.init();
           scaleTradeStatusProperties.init();
@@ -283,36 +280,32 @@ public class ScaleTradeJobScheduler {
           
         case 999:   
           // [ loss cut step ]
-          lastCandle = analysisForScaleTradingJobConfiguration.getLastCandleJob(market);
-          log.info("Wait for red candle");
-          if(lastCandle.getFlag() == 1) {
-            uuid = scaleTradeStatusProperties.getAskInfoPerLevel().get(level).getUuid();
-            cancelOrderResponse = ordersJobConfiguration.deleteOrderJob(uuid);
-            if(cancelOrderResponse.getSuccess()){
-              log.info("Success cancel order!!");
-              scaleTradeStatusProperties.setWaitingAskOrder(false);
-              orderChanceDtoForAsk = ordersJobConfiguration.getOrdersChanceForAskJob(market);
-              log.info(orderChanceDtoForAsk.toString());
-              if(Double.parseDouble(orderChanceDtoForAsk.getBalance()) * Double.parseDouble(orderChanceDtoForAsk.getAvgBuyPrice()) > 5000.0){
-                ordersAskResponseDto = ordersJobConfiguration.askJob(market, orderChanceDtoForAsk.getBalance());
-                log.info(ordersAskResponseDto.toString());
-                if(ordersAskResponseDto.getSuccess()) {
-                  log.info("Success loss cut..");
-                  log.info("[changeStatus: 999 -> -1] [init step] ");
-                  statusProperties.setCurrentStatus(-1);
-                  // log.info("Rest for a few minutes");
-                } else {
-                  log.info("Error during asking");
-                }
+          uuid = scaleTradeStatusProperties.getAskInfoPerLevel().get(level).getUuid();
+          cancelOrderResponse = ordersJobConfiguration.deleteOrderJob(uuid);
+          if(cancelOrderResponse.getSuccess()){
+            log.info("Success cancel order!!");
+            scaleTradeStatusProperties.setWaitingAskOrder(false);
+            orderChanceDtoForAsk = ordersJobConfiguration.getOrdersChanceForAskJob(market);
+            log.info(orderChanceDtoForAsk.toString());
+            if(Double.parseDouble(orderChanceDtoForAsk.getBalance()) * Double.parseDouble(orderChanceDtoForAsk.getAvgBuyPrice()) > 5000.0){
+              ordersAskResponseDto = ordersJobConfiguration.askJob(market, orderChanceDtoForAsk.getBalance());
+              log.info(ordersAskResponseDto.toString());
+              if(ordersAskResponseDto.getSuccess()) {
+                log.info("Success loss cut..");
+                log.info("[changeStatus: 999 -> -1] [init step] ");
+                statusProperties.setCurrentStatus(-1);
+                // log.info("Rest for a few minutes");
               } else {
-                log.info("Not enough coin balance");
+                log.info("Error during asking");
               }
             } else {
-              log.info("Already success ask order!!");
-              log.info("[changeStatus: 999 -> -1] [init step] ");
-              statusProperties.setCurrentStatus(-1);
-              // log.info("Rest for a few minutes");
+              log.info("Not enough coin balance");
             }
+          } else {
+            log.info("Already success ask order!!");
+            log.info("[changeStatus: 999 -> -1] [init step] ");
+            statusProperties.setCurrentStatus(-1);
+            // log.info("Rest for a few minutes");
           }
           break; 
       }
