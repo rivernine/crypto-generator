@@ -21,10 +21,17 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class AnalysisForScaleTradingService {
   
-  @Value("${upbit.targetMargin}")	
-  private Double targetMargin;  
   @Value("${upbit.scaleTradeRate}")	
   private Double scaleTradeRate;
+  @Value("${upbit.marginRatePerLevel}")	
+  private List<Double> marginRatePerLevel;
+  @Value("${upbit.scaleTradeRatePerLevel}")	
+  private List<Double> scaleTradeRatePerLevel;
+  @Value("${upbit.longBlueCandleRate}")
+  private Double longBlueCandleRate;
+  @Value("${upbit.lossCutRate}")
+  private Double lossCutRate;
+
   private final ScaleTradeStatusProperties scaleTradeStatusProperties;
 
   public List<CandleDto> getRecentCandles(String market, int count) {
@@ -60,37 +67,29 @@ public class AnalysisForScaleTradingService {
         return false;
       }
       int longBlueCandleCount = 0;
-      // for(CandleDto candle: candles) {
-      //   log.info(candle.toString());
-      // }
       Double minPrice = 100000000.00000000;
       Double maxPrice = 0.0;
 
       for(CandleDto candle: candles) {
-        Double thresholdPrice = candle.getOpeningPrice() * (1 - scaleTradeRate);
-        log.info(candle.toString() + " | threshold(scaleTradeRate) : " + thresholdPrice);
-        
+        log.info(candle.toString());
         if(candle.getFlag() == 1) {
           log.info("getFlag == 1. Return false");
           return false;
         }
         maxPrice = Double.max(maxPrice, candle.getOpeningPrice());
         minPrice = Double.min(minPrice, candle.getTradePrice());
-        
-        Double thresholdPrice2 = maxPrice * (1 - (targetMargin * 2));
-        log.info("threshold(targetMargin * 2) : " + thresholdPrice2);
-        if(minPrice.compareTo(thresholdPrice2) != 1) {
-          return true;
-        } 
+        Double thresholdPrice = candle.getOpeningPrice() * (1 - longBlueCandleRate);
+        Double thresholdPrice2 = maxPrice * (1 - (longBlueCandleRate * 2));
 
-        if(candle.getTradePrice().compareTo(thresholdPrice) != 1) {
+        log.info("threshold(longBlueCandle) : " + thresholdPrice);
+        log.info("threshold(longBlueCandle * 2) : " + thresholdPrice2);
+        if(candle.getTradePrice().compareTo(thresholdPrice) != 1)
           longBlueCandleCount += 1;
-        }
-        if(longBlueCandleCount >= 2) {
+        if(minPrice.compareTo(thresholdPrice2) != 1)
           return true;
-        }
+        if(longBlueCandleCount >= 2)
+          return true;
       }
-      
     }
 
     return result;
@@ -98,15 +97,19 @@ public class AnalysisForScaleTradingService {
 
   public String getAskPrice(OrdersChanceDto ordersChanceDtoForAsk) {
     Double feeRate = 0.0005;
+    Double marginRate = marginRatePerLevel.get(scaleTradeStatusProperties.getLevel());
+
     String usedBalance = scaleTradeStatusProperties.getUsedBalance();
     String usedFee = scaleTradeStatusProperties.getUsedFee();
     String totalUsedBalance = Double.toString(Double.parseDouble(usedBalance) + Double.parseDouble(usedFee));
     String coinBalance = ordersChanceDtoForAsk.getBalance();
 
-    Double targetBalance = Double.parseDouble(totalUsedBalance) * (1 + targetMargin + feeRate);
+    Double targetBalance = Double.parseDouble(totalUsedBalance) * (1 + marginRate + feeRate);
     String targetPrice = Double.toString(targetBalance / Double.parseDouble(coinBalance));
     String targetPriceAbleOrder = changeAbleOrderPrice(targetPrice);
 
+    log.info("level : marginRate");
+    log.info(Integer.toString(scaleTradeStatusProperties.getLevel()) + " : " + Double.toString(marginRate));
     log.info("usedBalance : usedFee : totalUsedBalance");
     log.info(usedBalance + " : " + usedFee + " : " + totalUsedBalance);
     log.info("coinBalance : targetPrice : targetPriceAbleOrder");
@@ -117,9 +120,13 @@ public class AnalysisForScaleTradingService {
 
   public Boolean compareCurPriceLastBidTradePrice(Double curPrice, Double lastBidTradePrice) {
     Boolean result;
+    Double scaleTradeRate = scaleTradeRatePerLevel.get(scaleTradeStatusProperties.getLevel());
+
     Double thresholdPrice = lastBidTradePrice * (1 - scaleTradeRate);
-    log.info("curPrice : lastBidTradePrice : thresholdPrice");
-    log.info(curPrice.toString() + " : " + lastBidTradePrice.toString() + " : " + thresholdPrice.toString());
+    log.info("curPrice : lastBidTradePrice");
+    log.info(curPrice.toString() + " : " + lastBidTradePrice.toString() + " : ");
+    log.info("scaleTradeRate : thresholdPrice");
+    log.info(scaleTradeRate.toString() + " : " + thresholdPrice.toString());
     if(curPrice.compareTo(thresholdPrice) == -1) {
       result = true;
     } else {
@@ -130,7 +137,7 @@ public class AnalysisForScaleTradingService {
   }
 
   public Double getLossCutPrice(String avgBuyPrice) {
-    return Double.parseDouble(avgBuyPrice) * (1 - (targetMargin * 5.0));
+    return Double.parseDouble(avgBuyPrice) * (1 - lossCutRate);
   }
 
   public String changeAbleOrderPrice(String price) {
